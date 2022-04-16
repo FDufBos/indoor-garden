@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -7,6 +9,10 @@ module.exports = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
+      black: colors.black,
+      slate: colors.slate,
+      gray: colors.gray,
+      red: colors.red,
       'white': '#FCFEF8',
       'purple': '#3f3cbb',
       'grey': {
@@ -24,7 +30,12 @@ module.exports = {
         800: '#3F5214',
       },
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        flexa: ["Flexa", "sans-serif"],
+        alpina: ["Alpina", "serif"],
+      },
+    },
   },
   plugins: [],
 }
