@@ -1,6 +1,6 @@
 export default function PlantItem({children, icon, name, popularName,timeTillNextWater,wateringStreak,level}){
   return(
-    <div className="flex justify-between items-center mb-8">
+    <div className="flex justify-between items-center mb-6">
       <div className="flex">
         <div id="image-circle" className="bg-white w-16 h-16 rounded-full drop-shadow flex flex-col justify-center items-center">
           <div id='plant-image' className="text-4xl text-center">{icon}</div>
