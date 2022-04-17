@@ -26,7 +26,7 @@ export default function Layout({ children }) {
       </header>
       {children}
       <footer className="flex justify-center items-center">
-        👀
+        👀👀
       </footer>
     </div>
   )
