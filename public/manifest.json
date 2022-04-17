@@ -1,6 +1,6 @@
 {
   "name": "Indoor Garden",
-  "short_name": "Indoor",
+  "short_name": "Garden",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#5C8B57",
@@ -8,7 +8,7 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/logo-72x72.png",
+      "src": "/images/app_icons/icon.png",
       "type": "image/png",
       "sizes": "72x72"
     },
