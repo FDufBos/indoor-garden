@@ -23,6 +23,10 @@ module.exports = {
           100: '#FFF3B7',
           400: "#FAD042"
         },
+        'water': {
+          100: '#DDE7FA',
+          400: "#B7DCFF"
+        },
         'monstera': {
           200: '#D7FFB7',
           300: '#8DB572',
