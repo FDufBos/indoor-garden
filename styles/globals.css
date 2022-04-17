@@ -17,5 +17,5 @@ html{
 }
 
 h1{
-  @apply font-alpina text-2xl;
+  @apply font-alpina text-2xl text-white;
 }
