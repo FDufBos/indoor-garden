@@ -2,7 +2,6 @@ import Image from 'next/image'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
-const downArrow = <FontAwesomeIcon icon={faAngleDown} />
 
 
 export default function Layout({ children }) {
