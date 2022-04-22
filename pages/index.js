@@ -1,10 +1,18 @@
 import Head from 'next/head'
-import Image from 'next/image'
+//import Image from 'next/image'
 
 import Layout from './../components/layout'
 import PlantItem from './../components/plantItem'
+import BasicButton from './../components/atoms/basicButton'
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+
+const arrowIcon = <FontAwesomeIcon id="arrow-right" icon={faAngleRight} className="rotate-90" />
+
 
 export default function Home() {
+
   return (
     <Layout>
       <div>
@@ -26,6 +34,7 @@ export default function Home() {
             <PlantItem icon="🌻" name="Herschel" popularName="Sunflower" timeTillNextWater="85" wateringStreak="5" level="2"/>
             <PlantItem icon="🌵" name="Kelper" popularName="Saguaro Cactus" timeTillNextWater="38" wateringStreak="174" level="5"/>
             <PlantItem icon="🥬" name="Bain" popularName="Romaine Lettuce" timeTillNextWater="4" wateringStreak="8" level="1"/>
+            <BasicButton id="more-button" bgColor="bg-water-100" innerText="Less" otherText="More" icon={arrowIcon} />            
           </section>
         </main>
 
