@@ -1,18 +1,26 @@
-import Head from 'next/head'
+import React from "react";
+
+import Head from "next/head";
 //import Image from 'next/image'
 
-import Layout from './../components/layout'
-import PlantItem from './../components/plantItem'
-import BasicButton from './../components/atoms/basicButton'
+import Layout from "./../components/layout";
+import PlantItem from "./../components/plantItem";
+import BasicButton from "./../components/atoms/basicButton";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
+export const Collapsible = CollapsiblePrimitive.Root;
+export const CollapsibleTrigger = CollapsiblePrimitive.Trigger;
+export const CollapsibleContent = CollapsiblePrimitive.Content;
 
-const arrowIcon = <FontAwesomeIcon id="arrow-right" icon={faAngleRight} className="rotate-90" />
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
+const arrowIcon = (
+  <FontAwesomeIcon id="arrow-right" icon={faAngleRight} className="rotate-90" />
+);
 
 export default function Home() {
-
+  const [open, setOpen] = React.useState(false);
   return (
     <Layout>
       <div>
@@ -28,18 +36,60 @@ export default function Home() {
         </Head>
 
         <main className="min-h-screen">
-          <section className=' mx-6'>
-            <PlantItem icon="🌸" name="Doris" popularName="Cherry Blossom" timeTillNextWater="2" wateringStreak="24" level="1"/>
-            <PlantItem icon="🌷" name="Saturn" popularName="Tulip" timeTillNextWater="1" wateringStreak="142" level="3"/>
-            <PlantItem icon="🌻" name="Herschel" popularName="Sunflower" timeTillNextWater="85" wateringStreak="5" level="2"/>
-            <PlantItem icon="🌵" name="Kelper" popularName="Saguaro Cactus" timeTillNextWater="38" wateringStreak="174" level="5"/>
-            <PlantItem icon="🥬" name="Bain" popularName="Romaine Lettuce" timeTillNextWater="4" wateringStreak="8" level="1"/>
-            <BasicButton id="more-button" bgColor="bg-water-100" innerText="Less" otherText="More" icon={arrowIcon} />            
+          <section className=" mx-6">
+            <PlantItem
+              icon="🌸"
+              name="Doris"
+              popularName="Cherry Blossom"
+              timeTillNextWater="2"
+              wateringStreak="24"
+              level="1"
+            />
+            <PlantItem
+              icon="🌷"
+              name="Saturn"
+              popularName="Tulip"
+              timeTillNextWater="1"
+              wateringStreak="142"
+              level="3"
+            />
+            <PlantItem
+              icon="🌻"
+              name="Herschel"
+              popularName="Sunflower"
+              timeTillNextWater="85"
+              wateringStreak="5"
+              level="2"
+            />
+            {/* <BasicButton id="more-button" bgColor="bg-water-100" innerText="Less" otherText="More" icon={arrowIcon} />         */}
+            <Collapsible open={open} onOpenChange={setOpen}>
+              <CollapsibleTrigger className="mb-6">
+                <BasicButton bgColor="bg-water-100">
+                  {open ? "Show less" : "Show more"}
+                </BasicButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <PlantItem
+                  icon="🌵"
+                  name="Kelper"
+                  popularName="Saguaro Cactus"
+                  timeTillNextWater="38"
+                  wateringStreak="174"
+                  level="5"
+                />
+                <PlantItem
+                  icon="🥬"
+                  name="Bain"
+                  popularName="Romaine Lettuce"
+                  timeTillNextWater="4"
+                  wateringStreak="8"
+                  level="1"
+                />
+              </CollapsibleContent>
+            </Collapsible>
           </section>
         </main>
-
-        
       </div>
     </Layout>
-  )
+  );
 }
