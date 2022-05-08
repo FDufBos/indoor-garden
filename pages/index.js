@@ -20,7 +20,7 @@ const arrowIcon = (
   <FontAwesomeIcon id="arrow-right" icon={faAngleRight} className="rotate-90" />
 );
 
-//🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+//🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -69,7 +69,7 @@ getDocs(colRef)
 
 //deleting documents
 
-//🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+//🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -84,6 +84,7 @@ export default function Home() {
       addDoc(colRef, {
         commonName: addPlantForm.commonName.value,
       }).then(() => {
+        alert("added!")
         addPlantForm.reset();
       });
       //console.log("add press");
@@ -173,7 +174,7 @@ export default function Home() {
           </section>
           <section>
             <form className="add flex gap-2">
-              <label for="commonName">Common Name:</label>
+              <label htmlFor="commonName">Common Name:</label>
               <input
                 type="text"
                 name="commonName"
@@ -186,7 +187,7 @@ export default function Home() {
             </form>
             <br></br>
             <form className="delete flex gap-2">
-              <label for="id">Common Name:</label>
+              <label htmlFor="id">Common Name:</label>
               <input type="text" name="id" className="text-black"></input>
 
               <button>
