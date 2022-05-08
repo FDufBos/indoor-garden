@@ -1,7 +1,7 @@
-import {React, useEffect, useState} from "react";
+import { React, useEffect, useState } from "react";
 
 import Head from "next/head";
-import Script from 'next/script'
+import Script from "next/script";
 //import Image from 'next/image'
 
 import Layout from "./../components/layout";
@@ -16,22 +16,24 @@ export const CollapsibleContent = CollapsiblePrimitive.Content;
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
-
 const arrowIcon = (
   <FontAwesomeIcon id="arrow-right" icon={faAngleRight} className="rotate-90" />
 );
 
-
-
 //🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getFirestore, collection, getDocs, doc } from "firebase/firestore";
-
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -40,7 +42,7 @@ const firebaseConfig = {
   projectId: "indoor-garden-b4585",
   storageBucket: "indoor-garden-b4585.appspot.com",
   messagingSenderId: "1093253453203",
-  appId: "1:1093253453203:web:d34b9fe7e402b010d9c466"
+  appId: "1:1093253453203:web:d34b9fe7e402b010d9c466",
 };
 
 // Initialize Firebase
@@ -50,58 +52,57 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 //collection ref
-const colRef = collection(db, 'plants')
+const colRef = collection(db, "plants");
 
 //get collection data
 getDocs(colRef)
-  .then((snapshot)=> {
-    let plants = []
-    snapshot.docs.forEach((plant)=>{
-      plants.push({ ...plant.data(), id: plant.id})
-    })
-    console.log(plants)
+  .then((snapshot) => {
+    let plants = [];
+    snapshot.docs.forEach((plant) => {
+      plants.push({ ...plant.data(), id: plant.id });
+    });
+    console.log(plants);
   })
-  .catch(err => {
-    console.log(err.message)
-  })
-
-
+  .catch((err) => {
+    console.log(err.message);
+  });
 
 //deleting documents
 
 //🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-
-
-
-
-
-
-
 export default function Home() {
   const [open, setOpen] = useState(false);
 
+  //🔥🔥🔥🔥🔥🔥🔥🔥⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-  //🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-  
-  useEffect(()=>{
+  useEffect(() => {
     //adding firestore documents
-    const addPlantForm = document.querySelector('.add')
-    addPlantForm.addEventListener('submit', (e) => {
-      e.preventDefault()
-      console.log("add press")
-    })
+    const addPlantForm = document.querySelector(".add");
+    addPlantForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      addDoc(colRef, {
+        commonName: addPlantForm.commonName.value,
+      }).then(() => {
+        addPlantForm.reset();
+      });
+      //console.log("add press");
+    });
 
     //deleting firestore documents
-    const deletePlantForm  = document.querySelector('.delete')
-    deletePlantForm.addEventListener('submit', (e) => {
-      e.preventDefault()
-      console.log("delete press")
-    })
-  })
-  //🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+    const deletePlantForm = document.querySelector(".delete");
+    deletePlantForm.addEventListener("submit", (e) => {
+      e.preventDefault();
 
+      const docRef = doc(db, "plants", deletePlantForm.id.value);
+      deleteDoc(docRef).then(() => {
+        deletePlantForm.reset();
+      });
 
+      //console.log("delete press");
+    });
+  });
+  //🔥🔥🔥🔥🔥🔥🔥🔥⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
   return (
     <Layout>
@@ -115,8 +116,6 @@ export default function Home() {
           <meta name="theme-color" content="#5C8B57" />
           <link rel="apple-touch-icon" href="/images/app_icons/icon.png" />
           <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
-
-          
         </Head>
 
         <main className="min-h-screen">
@@ -175,16 +174,24 @@ export default function Home() {
           <section>
             <form className="add flex gap-2">
               <label for="commonName">Common Name:</label>
-              <input type="text" name="commonName"></input>
+              <input
+                type="text"
+                name="commonName"
+                className="text-black"
+              ></input>
 
-              <button><BasicButton bgColor="bg-water-100">Add new plant</BasicButton></button>
+              <button>
+                <BasicButton bgColor="bg-water-100">Add new plant</BasicButton>
+              </button>
             </form>
             <br></br>
             <form className="delete flex gap-2">
               <label for="id">Common Name:</label>
-              <input type="text" name="id"></input>
+              <input type="text" name="id" className="text-black"></input>
 
-              <button><BasicButton bgColor="bg-red-300">Delete plant</BasicButton></button>
+              <button>
+                <BasicButton bgColor="bg-red-300">Delete plant</BasicButton>
+              </button>
             </form>
           </section>
         </main>
