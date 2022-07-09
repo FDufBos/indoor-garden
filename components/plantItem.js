@@ -1,4 +1,4 @@
-export default function PlantItem({children, icon, name, popularName,timeTillNextWater,wateringStreak,level}){
+export default function PlantItem({children, icon, name, commonName,timeTillNextWater,wateringStreak,level}){
   return(
     <div className="flex justify-between items-center mb-6">
       <div className="flex">
@@ -8,7 +8,7 @@ export default function PlantItem({children, icon, name, popularName,timeTillNex
         <div id="image-label" className="flex items-center justify-center bg-water-100 h-6 w-6 rounded-full drop-shadow text-grey-600 font-[690] text-sm relative top-11 -left-6">{level}</div>
         <div className="flex flex-col h-full">
           <h3 className="text-xl font-[580]">{name}</h3>
-          <h4 className="text-xs text-water-100">{popularName}</h4>
+          <h4 className="text-xs text-water-100">{commonName}</h4>
           <div className="flex gap-2">
             <div>💧 {timeTillNextWater}</div><div>🔥 {wateringStreak}</div>
           </div>
