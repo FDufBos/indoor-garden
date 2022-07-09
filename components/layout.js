@@ -1,8 +1,5 @@
 import Image from 'next/image'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
-
 
 export default function Layout({ children }) {
   return (
@@ -17,7 +14,6 @@ export default function Layout({ children }) {
         <div id="title-area" className="flex flex-row justify-between items-end w-full">
           <div className="flex flex-row items-baseline gap-3">
             <h1 className='font-alpina'>Indoor Garden</h1>
-            <FontAwesomeIcon icon={faAngleDown} />
           </div>
           <Image src="/images/sun.svg" width="35" height="35"/>
         </div>
