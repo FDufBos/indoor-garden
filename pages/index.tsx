@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 
 import Head from "next/head";
@@ -6,16 +6,34 @@ import Head from "next/head";
 import Layout from "../components/layout";
 import PlantItem from "../components/plantItem";
 import NewForm from "../components/newForm";
+import BasicButton from "../components/atoms/basicButton";
+import OpaqueBG from "../components/atoms/OpaqueBG";
 
-import { Button, ButtonGroup } from '@chakra-ui/react'
+import { Button, ButtonGroup } from "@chakra-ui/react";
 
 import { getPlants, getPlant, addPlant } from "../data/plants";
 
 export default function Home() {
+  // useState for newPlatForm
+  const [newFormOpen, setNewFormOpen] = useState(false);
 
-  const plantList: object[] = []
+  //disable scrolling when newFormOpen is true
+  useEffect(() => {
+    if (newFormOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }
+  , [newFormOpen]);
+  
+
+  const handleNewFormClick = () => {
+    setNewFormOpen(!newFormOpen);
+  };
+
+  const plantList: object[] = [];
   const [plants, setPlants] = useState(plantList);
-
   return (
     <Layout>
       <div>
@@ -46,7 +64,21 @@ export default function Home() {
               />
             ))}
           </section>
-          <NewForm setPlants={setPlants}/>
+          {
+            //show NewForm if setNewFormOpen is true
+            newFormOpen ? (
+              <div>
+                <NewForm setPlants={setPlants} setNewFormOpen={setNewFormOpen} />
+              </div>
+              
+              
+            ) : null
+          }
+          <button onClick={handleNewFormClick} className="mx-6 mb-10">
+            <BasicButton bgColor={"bg-slate-200"} textColor={undefined}>
+              New Plant
+            </BasicButton>
+          </button>
         </main>
       </div>
     </Layout>

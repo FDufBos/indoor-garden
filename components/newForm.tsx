@@ -1,11 +1,12 @@
 import React from "react";
-import { useState } from "react";
 import BasicButton from "../components/atoms/basicButton";
 import { getPlants, getPlant, addPlant } from "../data/plants";
+import { useState } from "react";
+import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function NewForm({ setPlants }) {
-  //handlesubmit of common name form
-  const handleSubmit = (e:any) => {
+export default function NewForm({ setPlants, setNewFormOpen }) {
+  const handleSubmit = (e: any) => {
     function capitalizeFirstLetter(string: string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     }
@@ -35,39 +36,71 @@ export default function NewForm({ setPlants }) {
 
     setPlants([getPlants()]);
 
+    setNewFormOpen(false);
+
     //save new plants array to local storage
     localStorage.setItem("plants", JSON.stringify(getPlants()));
   };
-  return (
-    <section className="mx-6 w-1/2">
-      <form className="add flex flex-col gap-2" onSubmit={handleSubmit}>
-        <label htmlFor="nickname">Nickname:</label>
-        <input
-          type="text"
-          name="nickname"
-          className="text-black rounded-md px-2 font-extralight"
-        />
-        <label htmlFor="commonName">Popular Name:</label>
-        <input
-          type="text"
-          name="commonName"
-          className="text-black rounded-md px-2 font-extralight"
-        />
-        <label htmlFor="icon">Emoji:</label>
-        <input
-          maxLength={2}
-          type="text"
-          name="icon"
-          className="text-black rounded-md px-2 font-extralight"
-        />
 
-        <button type="submit" className="">
-          <BasicButton bgColor="bg-water-100" textColor={"red"}>
-            Add new plant
-          </BasicButton>
-        </button>
-      </form>
-      <br></br>
-    </section>
+  const handleClose = () => {
+    setNewFormOpen(false);
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.section
+      initial={{opacity: 0}}
+      animate={{opacity: 1 }}
+      transition={{ease: "linear", duration: 0.1}}
+      exit={{opacity: 0}}
+        className="fixed z-20 top-1/2 left-1/2 -translate-y-2/4 -translate-x-2/4 flex items-center justify-center bg-slate-900 bg-opacity-0 backdrop-blur-sm text-slate-700 w-full h-full transition-all"
+      >
+        <motion.form
+          initial={{y: 50}}
+          animate={{y: 0 }}
+          transition={{ type: "spring", stiffness: 200, mass: 1 }}
+          exit={{y: -50}}
+          className="add flex flex-col gap-4 bg-slate-100 p-8 rounded-2xl"
+          onSubmit={handleSubmit}
+        >
+          <button onClick={handleClose}>close</button>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="nickname">Nickname:</label>
+            <input
+              required
+              type="text"
+              name="nickname"
+              className="text-black rounded-md px-2 font-extralight"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="commonName">Popular Name:</label>
+            <input
+              required
+              type="text"
+              name="commonName"
+              className="text-black rounded-md px-2 font-extralight"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="icon">Emoji:</label>
+            <input
+              required
+              maxLength={2}
+              type="text"
+              name="icon"
+              className="text-black rounded-md px-2 font-extralight"
+            />
+          </div>
+          <button type="submit" className="max-w-fit">
+            <BasicButton bgColor="bg-water-100" textColor={"red"}>
+              Add new plant
+            </BasicButton>
+          </button>
+        </motion.form>
+        <br></br>
+      </motion.section>
+    </AnimatePresence>
   );
 }
