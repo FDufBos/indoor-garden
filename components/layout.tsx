@@ -3,8 +3,6 @@ import React from "react";
 import { render } from "react-dom";
 import { useState } from "react";
 
-import NewForm from "./NewForm";
-
 export default function Layout({ children}) {
 
   const [newPlantModalOpen, setnewPlantModalOpen] = useState(false);
