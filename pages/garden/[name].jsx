@@ -14,18 +14,17 @@ export default function Plant() {
     if (!router.isReady) return;
     const plant = getPlant(router.query.name);
     setPlant(plant);
-    
-    
   }, [router.isReady]);
 
   return (
     <div>
-      <PlantPage nickname={plant.nickname}
-      commonName={plant.commonName}
-      icon={plant.icon}
-      level={plant.level}
-      timeTillNextWater={plant.timeTillNextWater}
-      wateringStreak={plant.wateringStreak}
+      <PlantPage
+        nickname={plant.nickname}
+        commonName={plant.commonName}
+        icon={plant.icon}
+        level={plant.level}
+        timeTillNextWater={plant.timeTillNextWater}
+        wateringStreak={plant.wateringStreak}
       />
     </div>
   );
