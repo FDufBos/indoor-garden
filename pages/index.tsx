@@ -52,7 +52,7 @@ export default function Home() {
           <section className=" mx-6">
             {getPlants().map((plant, index) => (
               //show local storage plants
-              <Link href={`/garden/${plant.id}`}>
+              <Link href={`/garden/${plant.id}`} key={index}>
                 <a>
                  <PlantItem
                 key={index}
