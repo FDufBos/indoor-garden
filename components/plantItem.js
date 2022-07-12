@@ -1,4 +1,4 @@
-export default function PlantItem({children, icon, name, commonName,timeTillNextWater,wateringStreak,level}){
+export default function PlantItem({icon, name, commonName,timeTillNextWater,wateringStreak,level}){
   return(
     <div className="flex justify-between items-center mb-6">
       <div className="flex">
