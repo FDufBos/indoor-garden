@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/garden/[name].jsx"  ],
+, "pages/garden/[name].jsx", "data/firestore.ts"  ],
   "exclude": [
     "node_modules"
   ]
