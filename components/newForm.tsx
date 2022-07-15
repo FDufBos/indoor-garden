@@ -1,13 +1,13 @@
 import React from "react";
 import BasicButton from "../components/atoms/basicButton";
-import { getPlants, getPlant, addPlant } from "../data/plants";
+import { addPlant } from "../data/firestore";
+import { serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
-import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { getRandomEmoji } from "../data/randomEmoji";
 
-export default function NewForm({ setPlants, setNewFormOpen }) {
+export default function NewForm({ setNewFormOpen }) {
   //state for emoji
   const [emoji, setEmoji] = useState("🌱");
 
@@ -30,10 +30,14 @@ export default function NewForm({ setPlants, setNewFormOpen }) {
   };
 
   const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    //Capitalize first letters
     function capitalizeFirstLetter(string: string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     }
-    e.preventDefault();
+
+    //get values from the form and save them in variables
     const commonName = capitalizeFirstLetter(
       e.currentTarget.elements.commonName.value
     );
@@ -49,21 +53,15 @@ export default function NewForm({ setPlants, setNewFormOpen }) {
       timeTillNextWater: 0,
       wateringStreak: 0,
       level: 1,
-      id: nickname,
+      timeCreated: serverTimestamp(),
+      // id: nickname,
     });
-    //reset form
-    e.currentTarget.reset();
 
-    console.log(getPlants());
-
-    //display new plants
-
-    setPlants([getPlants()]);
-
+    //reset and close form
+    // e.currentTarget.reset();
     setNewFormOpen(false);
 
-    //save new plants array to local storage
-    localStorage.setItem("plants", JSON.stringify(getPlants()));
+    setPlants(true);
   };
 
   const handleClose = () => {
