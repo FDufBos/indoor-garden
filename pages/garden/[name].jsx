@@ -1,5 +1,5 @@
 import Router, { useRouter } from "next/router";
-import { getPlant } from "../../data/plants";
+import { fetchPlant } from "../../data/firestore";
 import { useEffect, useState } from "react";
 
 import React from "react";
@@ -12,8 +12,9 @@ export default function Plant() {
   const router = useRouter();
   useEffect(() => {
     if (!router.isReady) return;
-    const plant = getPlant(router.query.name);
-    setPlant(plant);
+    const plant = fetchPlant(router.query.name).then((plant) => {
+      setPlant(plant);
+    });
   }, [router.isReady]);
 
   return (

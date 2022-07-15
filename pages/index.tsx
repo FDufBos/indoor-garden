@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import * as React from "react";
 
 import Head from "next/head";
-import {useRouter} from "next/router";
 import Link from "next/link";
 
 import Layout from "../components/layout";
@@ -10,12 +9,23 @@ import PlantItem from "../components/plantItem";
 import NewForm from "../components/newForm";
 import BasicButton from "../components/atoms/basicButton";
 
-
-import { getPlants } from "../data/plants";
+import { fetchIDs, fetchPlants } from "../data/firestore";
 
 export default function Home() {
+  //firestore state
+  const [firestorePlants, setFirestorePlants] = useState([]);
+  const [documentIDs, setDocumentIDs] = useState([]);
 
-  
+  useEffect(() => {
+    fetchPlants().then((data) => {
+      setFirestorePlants(data);
+    });
+    fetchIDs().then((data) => {
+      setDocumentIDs(data);
+    }
+    );
+  }, []);
+
   // useState for newPlatForm
   const [newFormOpen, setNewFormOpen] = useState(false);
 
@@ -32,8 +42,7 @@ export default function Home() {
     setNewFormOpen(!newFormOpen);
   };
 
-  const plantList: object[] = [];
-  const [plants, setPlants] = useState(plantList);
+
   return (
     <Layout>
       <div>
@@ -50,31 +59,30 @@ export default function Home() {
 
         <main className="min-h-screen">
           <section className=" mx-6">
-            {getPlants().map((plant, index) => (
-              //show local storage plants
-              <Link href={`/garden/${plant.id}`} key={index}>
-                <a>
-                 <PlantItem
-                key={index}
-                icon={plant.icon}
-                name={plant.nickname}
-                commonName={plant.commonName}
-                timeTillNextWater={plant.timeTillNextWater}
-                wateringStreak={plant.wateringStreak}
-                level={plant.level}
-                
-              />
-              </a>
-              </Link>
-             
-            ))}
+            {firestorePlants &&
+              firestorePlants.map((plant, index) => (
+                //show local storage plants
+                <Link href={`/garden/${documentIDs[index]}`} key={index}>
+                  <a>
+                    <PlantItem
+                      key={index}
+                      icon={plant.icon}
+                      name={plant.nickname}
+                      commonName={plant.commonName}
+                      timeTillNextWater={plant.timeTillNextWater}
+                      wateringStreak={plant.wateringStreak}
+                      level={plant.level}
+                    />
+                  </a>
+                </Link>
+              ))}
           </section>
           {
             //show NewForm if setNewFormOpen is true
             newFormOpen ? (
               <div>
                 <NewForm
-                  setPlants={setPlants}
+
                   setNewFormOpen={setNewFormOpen}
                 />
               </div>
