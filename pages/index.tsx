@@ -22,8 +22,7 @@ export default function Home() {
     });
     fetchIDs().then((data) => {
       setDocumentIDs(data);
-    }
-    );
+    });
   }, []);
 
   // useState for newPlatForm
@@ -41,7 +40,6 @@ export default function Home() {
   const handleNewFormClick = () => {
     setNewFormOpen(!newFormOpen);
   };
-
 
   return (
     <Layout>
@@ -81,10 +79,7 @@ export default function Home() {
             //show NewForm if setNewFormOpen is true
             newFormOpen ? (
               <div>
-                <NewForm
-
-                  setNewFormOpen={setNewFormOpen}
-                />
+                <NewForm setNewFormOpen={setNewFormOpen} />
               </div>
             ) : null
           }
