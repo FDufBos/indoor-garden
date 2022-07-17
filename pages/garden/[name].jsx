@@ -12,7 +12,7 @@ export default function Plant() {
   const router = useRouter();
   useEffect(() => {
     if (!router.isReady) return;
-    const plant = fetchPlant(router.query.name).then((plant) => {
+    fetchPlant(router.query.name).then((plant) => {
       setPlant(plant);
     });
   }, [router.isReady]);
