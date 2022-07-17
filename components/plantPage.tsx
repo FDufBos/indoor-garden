@@ -2,10 +2,24 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
+import { deletePlant } from "../data/firestore";
 
-import { ChevronLeftIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { Divider } from "@chakra-ui/react";
+import { ChevronLeftIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
+import {
+  Divider,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  Button,
+  ModalCloseButton,
+  Tooltip,
+} from "@chakra-ui/react";
+import BasicButton from "./atoms/basicButton";
 
 export default function PlantPage({
   nickname,
@@ -15,13 +29,22 @@ export default function PlantPage({
   timeTillNextWater,
   wateringStreak,
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+
   const handleHomeClick = (e) => {
     e.preventDefault();
     Router.push("/");
   };
 
+  const handleMoreClick = (e) => {
+    e.preventDefault();
+    deletePlant(router.query.name);
+    Router.push("/");
+  };
+
   return (
-    <div className="text-white">
+    <div>
       <Head>
         <title>{nickname} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
@@ -33,14 +56,40 @@ export default function PlantPage({
         <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
       </Head>
 
-
       <nav className="flex justify-between mx-6 py-6">
         <button onClick={handleHomeClick}>
           <ChevronLeftIcon boxSize="2rem" focusable={true} color="white" />
         </button>
-        <button>
-          <HamburgerIcon boxSize="1.5rem" focusable={true} color="white" />
+        <button onClick={onOpen}>
+          <Tooltip label='Delete'>
+            <CloseIcon boxSize="1rem" focusable={true} color="white" />
+          </Tooltip>
         </button>
+
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalCloseButton />
+            <ModalHeader>Delete Plant</ModalHeader>
+            <ModalBody>Are you sure you want to delete this plant?</ModalBody>
+            <ModalFooter className="flex gap-1">
+              
+              <Button onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  onClose();
+                  deletePlant(router.query.name);
+                  Router.push("/");
+                }}
+                colorScheme="red"
+              >
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </nav>
 
       <header
@@ -103,9 +152,12 @@ export default function PlantPage({
           <div className="w-full rounded-md bg-slate-400"></div>
         </div>
       </section>
-      <section id="codex" className="bg-white h-  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none">
+      <section
+        id="codex"
+        className="bg-white h-96  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none"
+      >
         <h1 className="text-monstera-400">Codex</h1>
-        <hr className="bg-monstera-400 h-[3px] "/>
+        <hr className="bg-monstera-400 h-[3px] " />
       </section>
     </div>
   );
