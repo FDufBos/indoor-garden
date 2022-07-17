@@ -60,8 +60,6 @@ export default function NewForm({ setNewFormOpen }) {
     //reset and close form
     // e.currentTarget.reset();
     setNewFormOpen(false);
-
-    setPlants(true);
   };
 
   const handleClose = () => {
