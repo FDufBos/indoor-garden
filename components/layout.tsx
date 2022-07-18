@@ -55,7 +55,7 @@ export const SignUpButton = ({
               <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="text-sm">
-                    Name
+                    What is your name
                   </label>
                   <input
                     required
