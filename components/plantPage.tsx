@@ -20,6 +20,10 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import BasicButton from "./atoms/basicButton";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth()
 
 export default function PlantPage({
   nickname,
@@ -30,6 +34,7 @@ export default function PlantPage({
   wateringStreak,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
 
   const handleHomeClick = (e) => {
@@ -39,7 +44,7 @@ export default function PlantPage({
 
   const handleMoreClick = (e) => {
     e.preventDefault();
-    deletePlant(router.query.name);
+    deletePlant(router.query.name, user);
     Router.push("/");
   };
 
@@ -80,7 +85,7 @@ export default function PlantPage({
               <Button
                 onClick={() => {
                   onClose();
-                  deletePlant(router.query.name);
+                  deletePlant(router.query.name, user.uid);
                   Router.push("/");
                 }}
                 colorScheme="red"

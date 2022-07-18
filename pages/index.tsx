@@ -10,35 +10,47 @@ import NewForm from "../components/newForm";
 import BasicButton from "../components/atoms/basicButton";
 
 import { fetchIDs, fetchPlants } from "../data/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { serverTimestamp } from "firebase/firestore";
+
+import { useDisclosure } from "@chakra-ui/react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const auth = getAuth();
+const user = auth.currentUser;
 
 export default function Home() {
   //firestore state
   const [firestorePlants, setFirestorePlants] = useState([]);
   const [documentIDs, setDocumentIDs] = useState([]);
+  const [signedIn, setSignedIn] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    fetchPlants().then((data) => {
-      setFirestorePlants(data);
-    });
-    fetchIDs().then((data) => {
-      setDocumentIDs(data);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setSignedIn(true);
+
+        fetchPlants(user.uid).then((data) => {
+          setFirestorePlants(data);
+        });
+        fetchIDs(user.uid).then((data) => {
+          setDocumentIDs(data);
+        });
+      } else {
+        // User is signed out
+        setSignedIn(false);
+        setFirestorePlants([]);
+      }
     });
   }, []);
 
   // useState for newPlatForm
   const [newFormOpen, setNewFormOpen] = useState(false);
 
-  //disable scrolling when newFormOpen is true
-  useEffect(() => {
-    if (newFormOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [newFormOpen]);
-
-  const handleNewFormClick = () => {
-    setNewFormOpen(!newFormOpen);
+  const handleNewFormClick = (e) => {
+    e.preventDefault();
+    onOpen();
   };
 
   return (
@@ -61,33 +73,46 @@ export default function Home() {
               firestorePlants.map((plant, index) => (
                 //show local storage plants
                 <Link href={`/garden/${documentIDs[index]}`} key={index}>
-                  <a>
-                    <PlantItem
-                      key={index}
-                      icon={plant.icon}
-                      name={plant.nickname}
-                      commonName={plant.commonName}
-                      timeTillNextWater={plant.timeTillNextWater}
-                      wateringStreak={plant.wateringStreak}
-                      level={plant.level}
-                    />
-                  </a>
+                  
+                    <div
+                      
+                    >
+                      <PlantItem
+                        key={index}
+                        icon={plant.icon}
+                        name={plant.nickname}
+                        commonName={plant.commonName}
+                        timeTillNextWater={plant.timeTillNextWater}
+                        wateringStreak={plant.wateringStreak}
+                        level={plant.level}
+                        timeCreated={plant.timeCreated}
+                      />
+                    </div>
+                  
                 </Link>
               ))}
           </section>
-          {
-            //show NewForm if setNewFormOpen is true
-            newFormOpen ? (
-              <div>
-                <NewForm setNewFormOpen={setNewFormOpen} />
-              </div>
-            ) : null
-          }
-          <button onClick={handleNewFormClick} className="mx-6 mb-10">
-            <BasicButton bgColor={"bg-slate-200"} textColor={undefined}>
-              New Plant
-            </BasicButton>
-          </button>
+
+          <div>
+            <NewForm
+              isOpen={isOpen}
+              onClose={onClose}
+              setFirestorePlants={setFirestorePlants}
+              firestorePlants={firestorePlants}
+            />
+          </div>
+
+          {signedIn ? (
+            <button onClick={handleNewFormClick} className="mx-6 mb-10">
+              <BasicButton bgColor={"bg-slate-200"} textColor={undefined}>
+                New Plant
+              </BasicButton>
+            </button>
+          ) : (
+            <div className="mx-6 mb-10">
+              <div>Sign In to Add a Plant</div>
+            </div>
+          )}
         </main>
       </div>
     </Layout>

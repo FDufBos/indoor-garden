@@ -1,5 +1,4 @@
 import Image from "next/image";
-import React from "react";
 import { createUser, logOut, signIn } from "../data/firestore";
 import {
   Button,
@@ -11,27 +10,28 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  useControllableProp,
-  useControllableState,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-const auth = getAuth();
+const auth = getAuth()
 
 export const SignUpButton = ({
-  isLoggedIn,
-  onLoginStatusChange,
-  setUserEmail,
+  showLoadingSpinner,
+  setShowLoadingSpinner,
+  loading,
+  user,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLoginStatusChange(true);
-    createUser(e.target.elements.email.value, e.target.elements.password.value);
-    setUserEmail(e.target.elements.email.value);
-    onClose();
+    setShowLoadingSpinner(true);
+    createUser(e.target.elements.email.value, e.target.elements.password.value, e.target.elements.name.value);
+    setTimeout(() => {
+      setShowLoadingSpinner(false);
+    }, 400);
   };
   return (
     <div>
@@ -51,12 +51,26 @@ export const SignUpButton = ({
           <ModalHeader>Create Account</ModalHeader>
           <form onSubmit={handleSubmit}>
             <ModalBody>
+              
               <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
+                  <label htmlFor="email" className="text-sm">
+                    Name
+                  </label>
+                  <input
+                    required
+                    id="name"
+                    name="name"
+                    type="text"
+                    className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
+                  />
+                </div>
                 <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="text-sm">
                     Email
                   </label>
                   <input
+                    required
                     id="email"
                     name="email"
                     type="email"
@@ -68,6 +82,7 @@ export const SignUpButton = ({
                     Password
                   </label>
                   <input
+                    required
                     id="password"
                     name="password"
                     type="password"
@@ -77,7 +92,11 @@ export const SignUpButton = ({
               </div>
             </ModalBody>
             <ModalFooter className="flex gap-1">
-              <Button type="submit" colorScheme="green">
+              <Button
+                type="submit"
+                colorScheme="green"
+                isLoading={showLoadingSpinner}
+              >
                 Create Account
               </Button>
             </ModalFooter>
@@ -89,18 +108,22 @@ export const SignUpButton = ({
 };
 
 export const SignInButton = ({
-  isLoggedIn,
-  onLoginStatusChange,
-  setUserEmail,
+  showLoadingSpinner,
+  setShowLoadingSpinner,
+  loading,
+  user,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLoginStatusChange(true);
+    setShowLoadingSpinner(true);
     signIn(e.target.elements.email.value, e.target.elements.password.value);
-    setUserEmail(e.target.elements.email.value);
-    onClose();
+    setTimeout(() => {
+      onClose();
+      setShowLoadingSpinner(false);
+    }, 400);
   };
+
   return (
     <div className="flex flex-row gap-4">
       <Button
@@ -145,7 +168,11 @@ export const SignInButton = ({
               </div>
             </ModalBody>
             <ModalFooter className="flex gap-1">
-              <Button type="submit" colorScheme="green">
+              <Button
+                type="submit"
+                colorScheme="green"
+                isLoading={showLoadingSpinner}
+              >
                 Sign In
               </Button>
             </ModalFooter>
@@ -156,98 +183,12 @@ export const SignInButton = ({
   );
 };
 
-export function AccountButtons({
-  isLoggedIn,
-  onLoginStatusChange,
-  setUserEmail,
+export function LoginNav({
+  showLoadingSpinner,
+  setShowLoadingSpinner,
+  loading,
+  user,
 }) {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     // User is signed in, see docs for a list of available properties
-  //     // https://firebase.google.com/docs/reference/js/firebase.User
-  //     const uid = user.uid;
-  //     const email = user.email;
-  //     console.log(email);
-  //     return (
-  //       <nav
-  //         id="explore"
-  //         className=" flex flex-row justify-between items-center h-[40px] w-full"
-  //       >
-  //         <div
-  //           id="profile-pic"
-  //           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
-  //         >
-  //           <Image
-  //             src="/images/memoji/male-1.png"
-  //             width="30"
-  //             height="30"
-  //             className="drop-shadow"
-  //           />
-  //         </div>
-
-  //         <div className="flex items-center flex-row gap-4 text-white">
-  //           <div className="text-sm">{email}</div>
-  //           <Button
-  //             id="exchange-button"
-  //             className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
-  //             borderRadius="999px"
-  //             leftIcon={<p>👋</p>}
-  //             isLoading={isLoading}
-  //             onClick={() => {
-  //               setIsLoading(true);
-  //               setTimeout(() => {
-  //                 setLoggedIn(false);
-  //                 setIsLoading(false);
-  //                 logOut();
-  //               }, 1600);
-  //             }}
-  //           >
-  //             Log Out
-  //           </Button>
-  //         </div>
-  //       </nav>
-  //     );
-  //   } else {
-  //     // User is signed out
-  //     console.log("you are not signed in");
-  //     return (
-  //       <nav
-  //         id="explore"
-  //         className=" flex flex-row justify-between items-center h-[40px] w-full"
-  //       >
-  //         <div
-  //           id="profile-pic"
-  //           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
-  //         >
-  //           <Image
-  //             src="/images/memoji/male-1.png"
-  //             width="30"
-  //             height="30"
-  //             className="drop-shadow"
-  //           />
-  //         </div>
-
-  //         <div className="flex flex-row gap-4">
-  //           <SignInButton
-  //             isLoggedIn={loggedIn}
-  //             onLoginStatusChange={setLoggedIn}
-  //             setUserEmail={setEmail}
-  //           />
-  //           <SignUpButton
-  //             isLoggedIn={loggedIn}
-  //             onLoginStatusChange={setLoggedIn}
-  //             setUserEmail={setEmail}
-  //           />
-  //         </div>
-  //       </nav>
-  //     );
-  //   }
-  // });
-
   return (
     <nav
       id="explore"
@@ -264,61 +205,96 @@ export function AccountButtons({
           className="drop-shadow"
         />
       </div>
+      <div className="flex flex-row gap-4">
+        <SignInButton
+          showLoadingSpinner={showLoadingSpinner}
+          setShowLoadingSpinner={setShowLoadingSpinner}
+          loading={loading}
+          user={user}
+        />
+        <SignUpButton
+          showLoadingSpinner={showLoadingSpinner}
+          setShowLoadingSpinner={setShowLoadingSpinner}
+          loading={loading}
+          user={user}
+        />
+      </div>
+    </nav>
+  );
+}
 
-      {!loggedIn ? (
-        <div className="flex flex-row gap-4">
-          <SignInButton
-            isLoggedIn={loggedIn}
-            onLoginStatusChange={setLoggedIn}
-            setUserEmail={setEmail}
-          />
-          <SignUpButton
-            isLoggedIn={loggedIn}
-            onLoginStatusChange={setLoggedIn}
-            setUserEmail={setEmail}
-          />
-        </div>
-      ) : (
-        <div className="flex items-center flex-row gap-4 text-white">
-          <div className="text-sm">{email}</div>
-          <Button
-            id="exchange-button"
-            className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
-            borderRadius="999px"
-            leftIcon={<p>👋</p>}
-            isLoading={isLoading}
-            onClick={() => {
-              setIsLoading(true);
-              setTimeout(() => {
-                setLoggedIn(false);
-                setIsLoading(false);
-                logOut();
-              }, 1600);
-            }}
-          >
-            Log Out
-          </Button>
-        </div>
-      )}
+export function SignOutNav({
+  user,
+  setShowLoadingSpinner,
+  showLoadingSpinner,
+}) {
+  return (
+    <nav
+      id="explore"
+      className=" flex flex-row justify-between items-center h-[40px] w-full"
+    >
+      <div
+        id="profile-pic"
+        className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
+      >
+        <Image
+          src="/images/memoji/male-1.png"
+          width="30"
+          height="30"
+          className="drop-shadow"
+        />
+      </div>
+      <div className="flex items-center flex-row gap-4 text-white">
+        <div className="text-sm">{user}</div>
+        <Button
+          id="exchange-button"
+          className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
+          borderRadius="999px"
+          leftIcon={<p>🚪</p>}
+          isLoading={showLoadingSpinner}
+          onClick={() => {
+            setShowLoadingSpinner(true);
+            setTimeout(() => {
+              logOut();
+              setShowLoadingSpinner(false);
+            }, 400);
+          }}
+        >
+          Log Out
+        </Button>
+      </div>
     </nav>
   );
 }
 
 export default function Layout({ children }) {
+  const [user, loading, error] = useAuthState(auth);
+  const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+
   return (
     <div className=" text-white">
       <header className="flex flex-col gap-4 mt-4 mx-6">
-        <AccountButtons
-          isLoggedIn={undefined}
-          onLoginStatusChange={undefined}
-          setUserEmail={undefined}
-        />
+        {user ? (
+          <SignOutNav
+            user={user.email}
+            setShowLoadingSpinner={setShowLoadingSpinner}
+            showLoadingSpinner={showLoadingSpinner}
+          />
+        ) : (
+          <LoginNav
+            showLoadingSpinner={showLoadingSpinner}
+            setShowLoadingSpinner={setShowLoadingSpinner}
+            loading={loading}
+            user={user}
+          />
+        )}
         <div
           id="title-area"
           className="flex flex-row justify-between items-end w-full"
         >
           <div className="flex flex-row items-baseline gap-3">
             <h1 className="font-alpina">Indoor Garden</h1>
+            <div></div>
           </div>
           <Image src="/images/sun.svg" width="35" height="35" />
         </div>

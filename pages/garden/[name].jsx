@@ -1,6 +1,9 @@
 import Router, { useRouter } from "next/router";
 import { fetchPlant } from "../../data/firestore";
 import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const auth = getAuth();
 
 import React from "react";
 
@@ -10,12 +13,24 @@ export default function Plant() {
   //create state to store plant query param
   const [plant, setPlant] = useState("");
   const router = useRouter();
+
+  //useEffect to get plant query param
   useEffect(() => {
-    if (!router.isReady) return;
-    fetchPlant(router.query.name).then((plant) => {
-      setPlant(plant);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+
+        if (!router.isReady) return;
+        fetchPlant(router.query.name, user.uid).then((plant) => {
+          setPlant(plant);
+        });
+      } else {
+        // User is signed out
+      }
     });
-  }, [router.isReady]);
+  }, []);
+
 
   return (
     <div>

@@ -9,8 +9,22 @@ import {
   getDoc,
   doc,
   addDoc,
+  setDoc,
   deleteDoc,
+  serverTimestamp,
+  orderBy,
+  query,
+  limit,
 } from "firebase/firestore";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -28,31 +42,33 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 
+const auth = getAuth();
+
 //collection ref
-const colRef = collection(db, "plants");
+const usersCollection = collection(db, "users");
 
 //CREATE
 
-export const addPlant = async (plant) => {
-  await addDoc(colRef, plant);
+export const addPlant = async (plant, user) => {
+  await addDoc(collection(db, `users/${user}/garden`), plant);
 };
 
 //READ
 
-export const fetchPlants = async () => {
-  const plantsSanpshot = await getDocs(collection(db, "plants"));
+export const fetchPlants = async (user) => {
+  const plantsSanpshot = await getDocs(collection(db, `users/${user}/garden`));
   const plantsList = plantsSanpshot.docs.map((doc) => doc.data());
   return plantsList;
 };
 
-export const fetchIDs = async () => {
-  const plantsSanpshot = await getDocs(collection(db, "plants"));
+export const fetchIDs = async (user) => {
+  const plantsSanpshot = await getDocs(collection(db, `users/${user}/garden`));
   const idList = plantsSanpshot.docs.map((doc) => doc.id);
   return idList;
 };
 
-export const fetchPlant = async (nickname) => {
-  const plantSnapshot = await getDoc(doc(db, "plants", nickname));
+export const fetchPlant = async (nickname, user) => {
+  const plantSnapshot = await getDoc(doc(db, `users/${user}/garden`, nickname));
   if (plantSnapshot.exists()) {
     return plantSnapshot.data();
   } else {
@@ -60,32 +76,35 @@ export const fetchPlant = async (nickname) => {
   }
 };
 
-//DELETE
-export const deletePlant = async (plant) => {
-  await deleteDoc(doc(db, "plants", plant));
+//DELETE PLANT
+export const deletePlant = async (plant, user) => {
+  console.log(plant)
+  console.log(user)
+  await deleteDoc(doc(db, `users/${user}/garden`, plant));
 };
 
 //🔒🔒🔒🔒🔒🔒🔒 AUTH 🔒🔒🔒🔒🔒🔒🔒🔒🔒
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-} from "firebase/auth";
-const auth = getAuth();
+//👶 CREATE NEW USER 👶
 
-//👶 Create a new user with email and password
-
-export const createUser = async (email: string, password) => {
+export const createUser = async (
+  email: string,
+  password: string,
+  name: string
+) => {
   await createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(async (userCredential) => {
       // Signed in
       const user = userCredential.user;
-      console.log(user);
-      //console log the user's email address
+      //update display name
+
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        authProvider: "Username and Password",
+        email,
+        name: name,
+        timeCreated: serverTimestamp(),
+      });
     })
     .then(async () => {
       await sendEmailVerification(auth.currentUser);
@@ -93,12 +112,13 @@ export const createUser = async (email: string, password) => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
+      alert(errorMessage);
       // ..
     });
 };
 
-//sign in with email and password
-export const signIn = async (email: string, password) => {
+//🧑 SIGN IN WITH EMAIL AND PASSWORD 🧑
+export const signIn = async (email: string, password: string) => {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
@@ -109,17 +129,14 @@ export const signIn = async (email: string, password) => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
+      alert(errorMessage);
     });
 };
 
-
-
-//👋 Sign out
+//🚪 SIGN OUT 🚪
 export const logOut = async () => {
   signOut(auth)
-    .then(() => {
-      console.log("Signed out");
-    })
+    .then(() => {})
     .catch((error) => {
       // An error happened.
     });
