@@ -3,14 +3,14 @@ An app to help you keep track of your indoor plants
 <br><br>
 
 ## **Features**
-***
+
 * Save and access your garden across devices by making an account
 * Keep track of your plants with counters
   * How long until you need to water
   * Streak of how many days you've meet watering schedule
   <br><br>
 ## **To do**
-***
+
 * <input type="checkbox" disabled>🐛 First time someone clicks a plant to see plant page after logging in it returns undefined instead of the plant
 <br/><br/>
 * <input type="checkbox" disabled>🚨 Reduce the number of times Firestore is called
