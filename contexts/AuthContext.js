@@ -7,15 +7,26 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 
-import { auth } from "../utils/firebaseUtils";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+} from "firebase/firestore";
+
+import { auth, db } from "../utils/firebaseUtils";
 
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState("");
+  const [name, setName] = useState("");
 
   function signUp(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password)
+    return createUserWithEmailAndPassword(auth, email, password);
   }
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
@@ -23,11 +34,20 @@ export function UserAuthContextProvider({ children }) {
   function logOut() {
     return signOut(auth);
   }
-  
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+    //   const userSnapshot = await getDoc(doc(db, "users", user.uid));
+    //   if (userSnapshot.exists()) {
+    //     setName(userSnapshot.data().name);
+    //   } else {
+    //     console.log(
+    //       "User doesn't exist || This is being called from getUserNameFromFirebase"
+    //     );
+    //   }
     });
+
     return () => {
       unsubscribe();
     };
