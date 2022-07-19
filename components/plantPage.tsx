@@ -1,7 +1,5 @@
 import React from "react";
 import Head from "next/head";
-import Link from "next/link";
-import Image from "next/image";
 import Router, { useRouter } from "next/router";
 import { deletePlant } from "../data/firestore";
 
@@ -19,11 +17,10 @@ import {
   ModalCloseButton,
   Tooltip,
 } from "@chakra-ui/react";
-import BasicButton from "./atoms/basicButton";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { getAuth } from "firebase/auth";
 
-const auth = getAuth()
+import { useUserAuth } from "../contexts/AuthContext";
+
+// const auth = getAuth()
 
 export default function PlantPage({
   nickname,
@@ -33,8 +30,10 @@ export default function PlantPage({
   timeTillNextWater,
   wateringStreak,
 }) {
+  const { user } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [user, loading, error] = useAuthState(auth);
+
+  
   const router = useRouter();
 
   const handleHomeClick = (e) => {
