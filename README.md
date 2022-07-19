@@ -17,7 +17,7 @@ An app to help you keep track of your indoor plants
   * Put objects in state instead of calling directly
   <br/><br/>
 * <input type="checkbox" disabled>🚨 Reduce the number of times Auth is called
-  * Put objects in state instead of calling directly
+  * 🏗️ Put objects in useContext instead of calling directly
   <br/><br/>
 * <input type="checkbox" disabled>✨ Create counters
   * <input type="checkbox" disabled>💧 Time until next water 
@@ -30,5 +30,7 @@ An app to help you keep track of your indoor plants
 <br/><br/>
 * 🙊 Give plants personality
   * <input type="checkbox" disabled> 🗃️ Create database of personalities and things they say
+<br/><br/>
+* <input type="checkbox" disabled> ✨ Create User Profile Page
 <br/><br/>
 * <input type="checkbox" disabled> ✨ Create User Profile Page
