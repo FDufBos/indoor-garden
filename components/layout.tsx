@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { createUser, logOut, signIn } from "../data/firestore";
+import // getUserNameFromFirebase,
+"../data/firestore";
 import {
   Button,
   Modal,
@@ -10,29 +11,73 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
-import { getAuth } from "firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
+import {
+  doc,
+  setDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import {
+  getAuth,
+  sendEmailVerification,
+} from "firebase/auth";
 
-const auth = getAuth()
+import { useUserAuth } from "../contexts/AuthContext";
+import { db } from "../utils/firebaseUtils";
 
-export const SignUpButton = ({
-  showLoadingSpinner,
-  setShowLoadingSpinner,
-  loading,
-  user,
-}) => {
+//called for sendEmailVerification
+const auth = getAuth();
+
+export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
+  
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleSubmit = (e) => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+
+  const { signUp, user } = useUserAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowLoadingSpinner(true);
-    createUser(e.target.elements.email.value, e.target.elements.password.value, e.target.elements.name.value);
-    setTimeout(() => {
-      setShowLoadingSpinner(false);
-    }, 400);
+    setError("");
+    try {
+      await signUp(email, password)
+        .then(async () => {
+          await sendEmailVerification(auth.currentUser);
+        })
+        .then(async () => {
+          await setDoc(doc(db, "users", auth.currentUser.uid), {
+            uid: auth.currentUser.uid,
+            authProvider: "Username and Password",
+            email,
+            name: name,
+            timeCreated: serverTimestamp(),
+          });
+        })
+        .then(() => {
+          setShowLoadingSpinner(true);
+          setTimeout(() => {
+            setShowLoadingSpinner(false);
+            onClose();
+          }, 1000);
+        });
+    } catch (err) {
+      if (err.code === "auth/email-already-in-use") {
+        setError(`Email already in use`);
+      } else {
+        setError(err.code);
+      }
+    }
   };
+
   return (
     <div>
       <Button
@@ -47,13 +92,16 @@ export const SignUpButton = ({
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton />
+          <ModalCloseButton
+            onClick={() => {
+              setError("");
+            }}
+          />
           <ModalHeader>Create Account</ModalHeader>
           <form onSubmit={handleSubmit}>
             <ModalBody>
-              
-              <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
                   <label htmlFor="email" className="text-sm">
                     Name
                   </label>
@@ -63,9 +111,10 @@ export const SignUpButton = ({
                     name="name"
                     type="text"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                   <label htmlFor="email" className="text-sm">
                     Email
                   </label>
@@ -75,9 +124,10 @@ export const SignUpButton = ({
                     name="email"
                     type="email"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                   <label htmlFor="password" className="text-sm">
                     Password
                   </label>
@@ -87,8 +137,15 @@ export const SignUpButton = ({
                     name="password"
                     type="password"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+                {error && (
+                  <Alert status="error" borderRadius="xl">
+                    <AlertIcon />
+                    <AlertDescription fontSize="sm">{error}</AlertDescription>
+                  </Alert>
+                )}
               </div>
             </ModalBody>
             <ModalFooter className="flex gap-1">
@@ -107,22 +164,39 @@ export const SignUpButton = ({
   );
 };
 
-export const SignInButton = ({
-  showLoadingSpinner,
-  setShowLoadingSpinner,
-  loading,
-  user,
-}) => {
+export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleSubmit = (e) => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const { logIn } = useUserAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowLoadingSpinner(true);
-    signIn(e.target.elements.email.value, e.target.elements.password.value);
-    setTimeout(() => {
-      onClose();
-      setShowLoadingSpinner(false);
-    }, 400);
+    setError("");
+    try {
+      await logIn(email, password).then(() => {
+        setShowLoadingSpinner(true);
+        setTimeout(() => {
+          setShowLoadingSpinner(false);
+          onClose();
+        }, 400);
+      });
+    } catch (err) {
+      // setError(err.message);
+      if (err.code === "auth/wrong-password") {
+        setError("Wrong password friend");
+      } else if (err.code === "auth/user-not-found") {
+        setError(`Email doesn't exist`);
+      } else {
+        setError(err.code);
+      }
+    }
   };
+
+
 
   return (
     <div className="flex flex-row gap-4">
@@ -142,7 +216,7 @@ export const SignInButton = ({
           <ModalHeader>Sign In</ModalHeader>
           <form onSubmit={handleSubmit}>
             <ModalBody>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="text-sm">
                     Email
@@ -152,6 +226,7 @@ export const SignInButton = ({
                     name="email"
                     type="email"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -163,10 +238,18 @@ export const SignInButton = ({
                     name="password"
                     type="password"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+                {error && (
+                  <Alert status="error" borderRadius="xl">
+                    <AlertIcon />
+                    <AlertDescription fontSize="sm">{error}</AlertDescription>
+                  </Alert>
+                )}
               </div>
             </ModalBody>
+
             <ModalFooter className="flex gap-1">
               <Button
                 type="submit"
@@ -183,12 +266,7 @@ export const SignInButton = ({
   );
 };
 
-export function LoginNav({
-  showLoadingSpinner,
-  setShowLoadingSpinner,
-  loading,
-  user,
-}) {
+export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
   return (
     <nav
       id="explore"
@@ -209,25 +287,19 @@ export function LoginNav({
         <SignInButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
-          loading={loading}
-          user={user}
         />
         <SignUpButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
-          loading={loading}
-          user={user}
         />
       </div>
     </nav>
   );
 }
 
-export function SignOutNav({
-  user,
-  setShowLoadingSpinner,
-  showLoadingSpinner,
-}) {
+export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
+  const { logOut, user } = useUserAuth();
+
   return (
     <nav
       id="explore"
@@ -245,7 +317,7 @@ export function SignOutNav({
         />
       </div>
       <div className="flex items-center flex-row gap-4 text-white">
-        <div className="text-sm">{user}</div>
+        <div className="text-sm">{user.email}</div>
         <Button
           id="exchange-button"
           className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
@@ -268,7 +340,8 @@ export function SignOutNav({
 }
 
 export default function Layout({ children }) {
-  const [user, loading, error] = useAuthState(auth);
+  const { user } = useUserAuth();
+
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
   return (
@@ -276,7 +349,7 @@ export default function Layout({ children }) {
       <header className="flex flex-col gap-4 mt-4 mx-6">
         {user ? (
           <SignOutNav
-            user={user.email}
+            // user={name}
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
           />
@@ -284,8 +357,6 @@ export default function Layout({ children }) {
           <LoginNav
             showLoadingSpinner={showLoadingSpinner}
             setShowLoadingSpinner={setShowLoadingSpinner}
-            loading={loading}
-            user={user}
           />
         )}
         <div
