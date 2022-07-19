@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {useState} from "react";
+import { useState } from "react";
 // Firebase SDKs Here
 // https://firebase.google.com/docs/web/setup#available-libraries
 import {
@@ -10,22 +10,10 @@ import {
   getDoc,
   doc,
   addDoc,
-  setDoc,
   deleteDoc,
-  serverTimestamp,
-  orderBy,
-  query,
-  limit,
 } from "firebase/firestore";
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 export const firebaseConfig = {
@@ -80,15 +68,17 @@ export const fetchPlant = async (nickname, user) => {
 export const getUserNameFromFirebase = async (user) => {
   const userSnapshot = await getDoc(doc(db, "users", user));
   if (userSnapshot.exists()) {
-    return userSnapshot.data().name
+    return userSnapshot.data().name;
   } else {
-    console.log("User doesn't exist || This is being called from getUserNameFromFirebase");
+    console.log(
+      "User doesn't exist || This is being called from getUserNameFromFirebase"
+    );
   }
-}
+};
 
 //DELETE PLANT
 export const deletePlant = async (plant, user) => {
-  console.log(plant)
-  console.log(user)
+  console.log(plant);
+  console.log(user);
   await deleteDoc(doc(db, `users/${user}/garden`, plant));
 };
