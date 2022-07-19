@@ -11,7 +11,7 @@ An app to help you keep track of your indoor plants
   <br><br>
 ## **To do**
 
-* <input type="checkbox" disabled>🐛 First time someone clicks a plant to see plant page after logging in it returns undefined instead of the plant
+* <input type="checkbox" disabled checked>🐛 First time someone clicks a plant to see plant page after logging in it returns undefined instead of the plant
 <br/><br/>
 * <input type="checkbox" disabled>🚨 Reduce the number of times Firestore is called
   * Put objects in state instead of calling directly
@@ -33,4 +33,4 @@ An app to help you keep track of your indoor plants
 <br/><br/>
 * <input type="checkbox" disabled> ✨ Create User Profile Page
 <br/><br/>
-* <input type="checkbox" disabled> ✨ Create User Profile Page
+* <input type="checkbox" disabled> 📈 Create data vis
