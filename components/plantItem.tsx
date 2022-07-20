@@ -11,12 +11,12 @@ export default function PlantItem({
 }) {
   return (
     <div className="flex justify-between items-center mb-6">
-      <AnimatePresence>
-        <motion.div
-          initial={{ x: -40, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -50, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+
+        <div
+          // initial={{ x: -40, opacity: 0 }}
+          // animate={{ x: 0, opacity: 1 }}
+          // exit={{ x: -50, opacity: 0 }}
+          // transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
           className="flex"
         >
           <div
@@ -41,8 +41,7 @@ export default function PlantItem({
               <div>🔥 {wateringStreak}</div>
             </div>
           </div>
-        </motion.div>
-      </AnimatePresence>
+        </div>
       <div id="more-info">
         <div className="bg-[#7ea981] flex justify-center align-middle font-alpina h-6 w-6 rounded-full border-[#c6dfc8] border-2 text-sm">
           <p>i</p>
