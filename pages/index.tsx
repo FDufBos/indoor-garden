@@ -17,7 +17,9 @@ import { useDisclosure } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const auth = getAuth();
-const user = auth.currentUser;
+// const user = auth.currentUser;
+
+import { useUserAuth } from "../contexts/AuthContext";
 
 export default function Home() {
   //firestore state
@@ -25,6 +27,7 @@ export default function Home() {
   const [documentIDs, setDocumentIDs] = useState([]);
   const [signedIn, setSignedIn] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user, userDocument } = useUserAuth();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -43,10 +46,27 @@ export default function Home() {
         setFirestorePlants([]);
       }
     });
-  }, []);
+    // async function getData() {
+    //   const data = await fetchPlants(user.uid);
+    //   setFirestorePlants(data);
+    // }
+    // async function getIDs() {
+    //   const data = await fetchIDs(user.uid);
+    //   setDocumentIDs(data);
+    // }
+    // if (user) {
 
-  // useState for newPlatForm
-  const [newFormOpen, setNewFormOpen] = useState(false);
+    //   console.log(user.uid);
+    //   console.log(userDocument);
+
+    //   getData();
+    //   getIDs();
+    // } else {
+
+    //   setFirestorePlants([]);
+
+    // }
+  }, []);
 
   const handleNewFormClick = (e) => {
     e.preventDefault();
@@ -66,29 +86,27 @@ export default function Home() {
           <link rel="apple-touch-icon" href="/images/app_icons/icon.png" />
           <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
         </Head>
-
+        
         <main className="min-h-screen">
           <section className=" mx-6">
-            {firestorePlants &&
+            {user &&
+              firestorePlants &&
               firestorePlants.map((plant, index) => (
                 //show local storage plants
                 <Link href={`/garden/${documentIDs[index]}`} key={index}>
-                  
-                    <div
-                      
-                    >
-                      <PlantItem
-                        key={index}
-                        icon={plant.icon}
-                        name={plant.nickname}
-                        commonName={plant.commonName}
-                        timeTillNextWater={plant.timeTillNextWater}
-                        wateringStreak={plant.wateringStreak}
-                        level={plant.level}
-                        timeCreated={plant.timeCreated}
-                      />
-                    </div>
-                  
+                  <div 
+                  className="cursor-pointer">
+                    <PlantItem
+                      key={index}
+                      icon={plant.icon}
+                      name={plant.nickname}
+                      commonName={plant.commonName}
+                      timeTillNextWater={plant.timeTillNextWater}
+                      wateringStreak={plant.wateringStreak}
+                      level={plant.level}
+                      timeCreated={plant.timeCreated}
+                    />
+                  </div>
                 </Link>
               ))}
           </section>
@@ -102,7 +120,7 @@ export default function Home() {
             />
           </div>
 
-          {signedIn ? (
+          {user ? (
             <button onClick={handleNewFormClick} className="mx-6 mb-10">
               <BasicButton bgColor={"bg-slate-200"} textColor={undefined}>
                 New Plant
