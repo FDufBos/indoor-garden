@@ -1,6 +1,7 @@
 import Image from "next/image";
-import // getUserNameFromFirebase,
-"../data/firestore";
+import { useRouter } from "next/router";
+import Link from "next/link";
+("../data/firestore");
 import {
   Button,
   Modal,
@@ -15,18 +16,12 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Input,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
-import {
-  doc,
-  setDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import {
-  getAuth,
-  sendEmailVerification,
-} from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { getAuth, sendEmailVerification } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebaseUtils";
@@ -35,7 +30,7 @@ import { db } from "../utils/firebaseUtils";
 const auth = getAuth();
 
 export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
-  
+  // const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [email, setEmail] = useState("");
@@ -48,6 +43,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setShowLoadingSpinner(true);
     try {
       await signUp(email, password)
         .then(async () => {
@@ -63,15 +59,16 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
           });
         })
         .then(() => {
-          setShowLoadingSpinner(true);
           setTimeout(() => {
             setShowLoadingSpinner(false);
             onClose();
-          }, 1000);
+          }, 200);
         });
     } catch (err) {
       if (err.code === "auth/email-already-in-use") {
         setError(`Email already in use`);
+      } else if (err.code === "auth/internal-error") {
+        setError(`Have you filled everything out?`);
       } else {
         setError(err.code);
       }
@@ -176,27 +173,27 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setShowLoadingSpinner(true);
     try {
-      await logIn(email, password).then(() => {
-        setShowLoadingSpinner(true);
-        setTimeout(() => {
-          setShowLoadingSpinner(false);
-          onClose();
-        }, 400);
-      });
+      await logIn(email, password);
     } catch (err) {
       // setError(err.message);
       if (err.code === "auth/wrong-password") {
         setError("Wrong password friend");
       } else if (err.code === "auth/user-not-found") {
         setError(`Email doesn't exist`);
+      } else if (err.code === "auth/internal-error") {
+        setError(`Have you filled everything out?`);
       } else {
         setError(err.code);
       }
+    } finally {
+      setTimeout(() => {
+        setShowLoadingSpinner(false);
+        onClose();
+      }, 700);
     }
   };
-
-
 
   return (
     <div className="flex flex-row gap-4">
@@ -221,7 +218,8 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
                   <label htmlFor="email" className="text-sm">
                     Email
                   </label>
-                  <input
+                  <Input
+                    required
                     id="email"
                     name="email"
                     type="email"
@@ -233,7 +231,8 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
                   <label htmlFor="password" className="text-sm">
                     Password
                   </label>
-                  <input
+                  <Input
+                    required
                     id="password"
                     name="password"
                     type="password"
@@ -272,18 +271,20 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
       id="explore"
       className=" flex flex-row justify-between items-center h-[40px] w-full"
     >
-      <div
+      {/* <div
         id="profile-pic"
         className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
       >
-        <Image
-          src="/images/memoji/male-1.png"
-          width="30"
-          height="30"
-          className="drop-shadow"
-        />
-      </div>
-      <div className="flex flex-row gap-4">
+        
+          <Image
+            src=""
+            width="30"
+            height="30"
+            className="drop-shadow"
+          />
+        
+      </div> */}
+      <div className="flex flex-row gap-4 md:justify-end w-full">
         <SignInButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
@@ -298,26 +299,27 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
 }
 
 export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
-  const { logOut, user } = useUserAuth();
+  const { logOut, user, name } = useUserAuth();
 
   return (
     <nav
       id="explore"
       className=" flex flex-row justify-between items-center h-[40px] w-full"
     >
-      <div
-        id="profile-pic"
-        className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
-      >
-        <Image
-          src="/images/memoji/male-1.png"
-          width="30"
-          height="30"
-          className="drop-shadow"
-        />
-      </div>
+      <Link href="/profile">
+        <div
+          id="profile-pic"
+          className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
+        >
+          <Image
+            src="/images/memoji/male-1.png"
+            width="30"
+            height="30"
+            className="drop-shadow"
+          />
+        </div>
+      </Link>
       <div className="flex items-center flex-row gap-4 text-white">
-        <div className="text-sm">{user.email}</div>
         <Button
           id="exchange-button"
           className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
@@ -340,16 +342,16 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
 }
 
 export default function Layout({ children }) {
-  const { user } = useUserAuth();
+  const { user, userDocument } = useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
   return (
     <div className=" text-white">
-      <header className="flex flex-col gap-4 mt-4 mx-6">
+      <header className="flex flex-col gap-4 pt-4 mx-6">
+      <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
         {user ? (
           <SignOutNav
-            // user={name}
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
           />
@@ -359,11 +361,12 @@ export default function Layout({ children }) {
             setShowLoadingSpinner={setShowLoadingSpinner}
           />
         )}
-        <div
-          id="title-area"
-          className="flex flex-row justify-between items-end w-full"
-        >
-          <div className="flex flex-row items-baseline gap-3">
+        
+          <div
+            id="title-area"
+            className="flex flex-row justify-between items-end w-full"
+          >
+            <div className="flex flex-row items-baseline gap-3">
               {!user ? (
                 <h1 className="md:absolute text-2xl md:text-3xl md:top-6 md:left-6 z-10">
                   Indoor Garden
@@ -372,14 +375,14 @@ export default function Layout({ children }) {
                 <h1>{userDocument.name + "'s Garden"}</h1>
               )}
           
-          </div>
+            </div>
             <Image
               src="/images/sun.svg"
               width="35"
               height="35"
               className="hidden"
             />
-        </div>
+          </div>
         </div>
 
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
