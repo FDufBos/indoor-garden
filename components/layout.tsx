@@ -364,11 +364,24 @@ export default function Layout({ children }) {
           className="flex flex-row justify-between items-end w-full"
         >
           <div className="flex flex-row items-baseline gap-3">
-            <h1 className="font-alpina">Indoor Garden</h1>
-            <div></div>
+              {!user ? (
+                <h1 className="md:absolute text-2xl md:text-3xl md:top-6 md:left-6 z-10">
+                  Indoor Garden
+                </h1>
+              ) : (
+                <h1>{userDocument.name + "'s Garden"}</h1>
+              )}
+          
           </div>
-          <Image src="/images/sun.svg" width="35" height="35" />
+            <Image
+              src="/images/sun.svg"
+              width="35"
+              height="35"
+              className="hidden"
+            />
         </div>
+        </div>
+
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
       </header>
       {children}
