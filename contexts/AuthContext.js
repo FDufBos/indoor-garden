@@ -24,6 +24,7 @@ const userAuthContext = createContext();
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState("");
   const [name, setName] = useState("");
+  const [userDocument, setUserDocument] = useState("");
 
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -35,17 +36,33 @@ export function UserAuthContextProvider({ children }) {
     return signOut(auth);
   }
 
+  function sendPasswordResetEmail(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
+  function getUser() {
+    return auth.currentUser;
+  }
+
+  function getUserDocument() {
+    return userDocument;
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-    //   const userSnapshot = await getDoc(doc(db, "users", user.uid));
-    //   if (userSnapshot.exists()) {
-    //     setName(userSnapshot.data().name);
-    //   } else {
-    //     console.log(
-    //       "User doesn't exist || This is being called from getUserNameFromFirebase"
-    //     );
-    //   }
+      //function to set user document
+      if (currentUser) {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        const docData = docSnap.data();
+
+        if (docSnap.exists()) {
+          setUserDocument(docData);
+        } else {
+          console.log("No such document!");
+        }
+      }
     });
 
     return () => {
@@ -54,7 +71,7 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, signUp, logIn, logOut }}>
+    <userAuthContext.Provider value={{ user, userDocument, signUp, logIn, logOut }}>
       {children}
     </userAuthContext.Provider>
   );

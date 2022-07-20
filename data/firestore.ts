@@ -65,16 +65,16 @@ export const fetchPlant = async (nickname, user) => {
   }
 };
 
-export const getUserNameFromFirebase = async (user) => {
-  const userSnapshot = await getDoc(doc(db, "users", user));
-  if (userSnapshot.exists()) {
-    return userSnapshot.data().name;
-  } else {
-    console.log(
-      "User doesn't exist || This is being called from getUserNameFromFirebase"
-    );
-  }
-};
+// export const getUserNameFromFirebase = async (user) => {
+//   const userSnapshot = await getDoc(doc(db, "users", user));
+//   if (userSnapshot.exists()) {
+//     return userSnapshot.data().name;
+//   } else {
+//     console.log(
+//       "User doesn't exist || This is being called from getUserNameFromFirebase"
+//     );
+//   }
+// };
 
 //DELETE PLANT
 export const deletePlant = async (plant, user) => {
