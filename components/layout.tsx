@@ -17,6 +17,7 @@ import {
   AlertTitle,
   AlertDescription,
   Input,
+  Avatar
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
@@ -299,7 +300,7 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
 }
 
 export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
-  const { logOut, user, name } = useUserAuth();
+  const { logOut, user, name, userDocument } = useUserAuth();
 
   return (
     <nav
@@ -311,12 +312,18 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
         >
-          <Image
+          {/* <Image
             src="/images/memoji/male-1.png"
             width="30"
             height="30"
             className="drop-shadow"
-          />
+          /> */}
+          { user.photoURL? (<Image
+            src={user.photoURL}
+            width="30"
+            height="30"
+            className="drop-shadow"
+          />):(<Avatar w="38px" h="38px" name={userDocument.name} src={userDocument.avatarURL}></Avatar>) }
         </div>
       </Link>
       <div className="flex items-center flex-row gap-4 text-white">
