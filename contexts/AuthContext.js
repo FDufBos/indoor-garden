@@ -15,6 +15,7 @@ import {
   doc,
   addDoc,
   deleteDoc,
+  setDoc,
 } from "firebase/firestore";
 
 import { auth, db } from "../utils/firebaseUtils";
@@ -38,14 +39,6 @@ export function UserAuthContextProvider({ children }) {
 
   function sendPasswordResetEmail(email) {
     return sendPasswordResetEmail(auth, email);
-  }
-
-  function getUser() {
-    return auth.currentUser;
-  }
-
-  function getUserDocument() {
-    return userDocument;
   }
 
   useEffect(() => {
