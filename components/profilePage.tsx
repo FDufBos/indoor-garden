@@ -55,7 +55,7 @@ import { useState, useEffect } from "react";
 import { updateCurrentUser } from "firebase/auth";
 
 
-export default function ProfilePage({ name, email, avatar }) {
+export default function ProfilePage({ name}) {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const { user, userDocument, uploadProfilePic } = useUserAuth();
