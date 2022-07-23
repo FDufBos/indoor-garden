@@ -5,6 +5,7 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  updateProfile
 } from "firebase/auth";
 
 import {
@@ -18,7 +19,9 @@ import {
   setDoc,
 } from "firebase/firestore";
 
-import { auth, db } from "../utils/firebaseUtils";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { auth, db, storage } from "../utils/firebaseUtils";
 
 const userAuthContext = createContext();
 
@@ -39,6 +42,17 @@ export function UserAuthContextProvider({ children }) {
 
   function sendPasswordResetEmail(email) {
     return sendPasswordResetEmail(auth, email);
+  }
+
+  async function uploadProfilePic(file, user, setLoading) {
+    const fileRef = ref(storage, 'profilepics/' + user.uid);
+    setLoading(true)
+    const snapshot = await uploadBytes(fileRef, file)
+    const photoURL = await getDownloadURL(fileRef)
+    //save photoURL to local storage
+    localStorage.setItem('photoURL', photoURL)
+    updateProfile(user, {photoURL})
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -64,7 +78,9 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, userDocument, signUp, logIn, logOut }}>
+    <userAuthContext.Provider
+      value={{ user, userDocument, signUp, logIn, logOut, uploadProfilePic }}
+    >
       {children}
     </userAuthContext.Provider>
   );
