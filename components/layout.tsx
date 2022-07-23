@@ -17,7 +17,8 @@ import {
   AlertTitle,
   AlertDescription,
   Input,
-  Avatar
+  Avatar,
+  SkeletonCircle,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
@@ -318,12 +319,7 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
             height="30"
             className="drop-shadow"
           /> */}
-          { user.photoURL? (<Image
-            src={user.photoURL}
-            width="30"
-            height="30"
-            className="drop-shadow"
-          />):(<Avatar w="38px" h="38px" name={userDocument.name} src={userDocument.avatarURL}></Avatar>) }
+          <Avatar w={10} h={10} icon={<SkeletonCircle size="10" />} src={user.photoURL}></Avatar>
         </div>
       </Link>
       <div className="flex items-center flex-row gap-4 text-white">
