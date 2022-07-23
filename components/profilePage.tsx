@@ -24,6 +24,7 @@ import {
   Button,
   Input,
   FormLabel,
+  SkeletonCircle
 } from "@chakra-ui/react";
 
 import {
@@ -37,38 +38,63 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {updateProfile} from "firebase/auth";
+
 import { auth, db } from "../utils/firebaseUtils";
 import { useUserAuth } from "../contexts/AuthContext";
 
+const storage = getStorage();
+
+// 'file' comes from the Blob or File API
 
 import Head from "next/head";
 import { ChevronRightIcon, SettingsIcon, CloseIcon } from "@chakra-ui/icons";
 import Router, { useRouter } from "next/router";
-import { useState, createContext } from "react";
+import { useState, useEffect } from "react";
+import { updateCurrentUser } from "firebase/auth";
 
 
 export default function ProfilePage({ name, email, avatar }) {
-  const { user, userDocument } = useUserAuth();
-  
-  const [photoURL, setPhotoURL] = useState("null");
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { user, userDocument, uploadProfilePic } = useUserAuth();
+  const [loading, setLoading] = useState(false);
+  const [photoURL, setPhotoURL] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
+
+  const storageRef = ref(storage, `profilepics/${user.uid}`);
 
   const handleHomeClick = (e) => {
     e.preventDefault();
     Router.push("/");
   };
 
-  const handlePhotoURLSubmit = async (e) => {
-    e.preventDefault()
-    //setDoc in firestore for user with avatarURL set to photoURL
-    await updateDoc(doc(db, "users", user.uid), {
-      avatarURL: photoURL,
-    });
-    onClose();
-    console.log(photoURL);
-    
+  const handleChange = (e) => {
+    // e.preventDefault();
+    if (e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
+    }
+
   }
+
+  useEffect (() => {
+    if (user?.photoURL) {
+      setPhotoURL(user.photoURL);
+    }
+    
+  }, [user])
+
+  const handlePhotoURLSubmit = async (e) => {
+    e.preventDefault();
+    uploadProfilePic(selectedImage, user, setLoading ).then((url) => {
+      onClose()
+    }).then(() => {
+      //reload page
+      Router.reload();
+    })
+
+  };
 
   return (
     <div>
@@ -92,29 +118,46 @@ export default function ProfilePage({ name, email, avatar }) {
         </button>
       </nav>
       <Flex direction="column" align="center" gap="16px">
-        <Avatar name={name} src={userDocument.avatarURL} onClick={onOpen} cursor="pointer"></Avatar>
+        <Avatar
+            src={photoURL}
+            icon={<SkeletonCircle size="12" />}
+            onClick={onOpen}
+            cursor="pointer"
+          ></Avatar>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <form onSubmit={handlePhotoURLSubmit}
-          >
+          <form onSubmit={handlePhotoURLSubmit}>
             <ModalContent>
               <ModalCloseButton />
+
               <ModalHeader>Set Profile Pic</ModalHeader>
 
               <ModalBody>
-                <FormLabel>
-                  URL
-                </FormLabel>
+                {/* {selectedImage && (
+                  <div>
+                    <img
+                      alt="not found"
+                      width={"80px"}
+                      src={URL.createObjectURL(selectedImage)}
+                    />
+                    <br />
+                    <button onClick={() => setSelectedImage(null)}>
+                      Remove
+                    </button>
+                  </div>
+                )} */}
+                <FormLabel>URL</FormLabel>
+
                 <Input
-                  name="photoURL"
-                  onChange={(e) => {
-                    setPhotoURL(e.target.value);
-                  }}
+                  type="file"
+                  name="profile-pic"
+                  onChange={handleChange}
+                  accept="image/*"
                 ></Input>
               </ModalBody>
               <ModalFooter className="flex gap-1">
                 {/* <Button onClick={onClose}>Set image</Button> */}
-                <Button type="submit" colorScheme="green">
+                <Button disabled={loading || !selectedImage} type="submit" colorScheme="green">
                   Set Image
                 </Button>
               </ModalFooter>
