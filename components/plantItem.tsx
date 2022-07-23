@@ -9,14 +9,15 @@ export default function PlantItem({
   level,
   timeCreated,
 }) {
+
+  const handleLevelClick=(e)=>{
+    e.preventDefault();
+    console.log("hello")
+  }
   return (
     <div className="flex justify-between items-center mb-6">
 
         <div
-          // initial={{ x: -40, opacity: 0 }}
-          // animate={{ x: 0, opacity: 1 }}
-          // exit={{ x: -50, opacity: 0 }}
-          // transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
           className="flex"
         >
           <div
@@ -27,12 +28,12 @@ export default function PlantItem({
               {icon}
             </div>
           </div>
-          <div
+          <button onClick={handleLevelClick}
             id="image-label"
             className="flex items-center justify-center bg-water-100 h-6 w-6 rounded-full drop-shadow text-grey-600 font-[690] text-sm relative top-11 -left-6"
           >
             {level}
-          </div>
+          </button>
           <div className="flex flex-col h-full">
             <h3 className="text-xl font-[580]">{name}</h3>
             <h4 className="text-xs text-water-100">{commonName}</h4>
