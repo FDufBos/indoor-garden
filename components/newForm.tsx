@@ -82,6 +82,7 @@ export default function NewForm({
         wateringStreak: 0,
         level: 1,
         timeCreated: timestamp,
+        timeLastWatered: timestamp,
         // id: nickname,
       },
       uid
@@ -100,6 +101,7 @@ export default function NewForm({
           wateringStreak: 0,
           level: 1,
           timeCreated: serverTimestamp(),
+          timeLastWatered : serverTimestamp(),
           // id: nickname,
         },
       ])

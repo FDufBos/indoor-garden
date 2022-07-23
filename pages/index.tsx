@@ -27,7 +27,7 @@ export default function Home() {
   const [documentIDs, setDocumentIDs] = useState([]);
   const [signedIn, setSignedIn] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user, userDocument } = useUserAuth();
+  const { user, userDocument, daysSinceStart } = useUserAuth();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -86,7 +86,7 @@ export default function Home() {
           <link rel="apple-touch-icon" href="/images/app_icons/icon.png" />
           <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
         </Head>
-        
+
         <main className="min-h-screen">
           <section className=" mx-6">
             {user &&
@@ -94,15 +94,26 @@ export default function Home() {
               firestorePlants.map((plant, index) => (
                 //show local storage plants
                 <Link href={`/garden/${documentIDs[index]}`} key={index}>
-                  <div 
-                  className="cursor-pointer">
+                  <div className="cursor-pointer">
                     <PlantItem
                       key={index}
                       icon={plant.icon}
                       name={plant.nickname}
                       commonName={plant.commonName}
-                      timeTillNextWater={plant.timeTillNextWater}
-                      wateringStreak={plant.wateringStreak}
+                      timeTillNextWater={
+                        Math.floor(
+                        (Date.now() - plant.timeLastWatered.toDate()) /
+                          (1000 * 60 * 60 * 24)
+                      )
+                      // 5
+                    }
+                      wateringStreak={
+                        //calculate number of days since plant was created
+                        Math.floor(
+                          (Date.now() - plant.timeCreated.toDate()) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                      }
                       level={plant.level}
                       timeCreated={plant.timeCreated}
                     />
