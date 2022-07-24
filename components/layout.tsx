@@ -340,9 +340,17 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
 }
 
 export default function Layout({ children }) {
-  const { user, userDocument } = useUserAuth();
+  const { user, userDocument, photoURL, setPhotoURL, name } = useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+
+  useEffect(() => {
+    if (photoURL) {
+      setPhotoURL(photoURL);
+    } else if (user?.photoURL) {
+      setPhotoURL(user.photoURL);
+    }
+  }, [user]);
 
   return (
     <div className=" text-white">
