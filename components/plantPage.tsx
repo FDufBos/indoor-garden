@@ -33,7 +33,6 @@ export default function PlantPage({
   const { user } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  
   const router = useRouter();
 
   const handleHomeClick = (e) => {
