@@ -22,7 +22,7 @@ export default function PlantItem({
         >
           <div
             id="image-circle"
-            className="bg-white w-16 h-16 rounded-full drop-shadow flex flex-col justify-center items-center"
+            className="bg-[#FCFEF8] w-16 h-16 rounded-full drop-shadow flex flex-col justify-center items-center"
           >
             <div id="plant-image" className="text-4xl text-center">
               {icon}
