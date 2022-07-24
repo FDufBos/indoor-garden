@@ -221,7 +221,7 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
         <Spacer px="2px" />
         <ArrowForwardIcon w={4} h={4} />
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal trapFocus={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton
