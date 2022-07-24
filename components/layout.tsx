@@ -201,15 +201,25 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   };
 
   return (
-    <div className="flex flex-row gap-4">
+    <div>
       <Button
         id="exchange-button"
-        className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
+        size="sm"
+        background="none"
+        className="drop-shadow-sm rounded-full"
         borderRadius="999px"
-        leftIcon={<p>☀️</p>}
+        color="#FCFEF8"
+        display="flex"
+        alignItems="center"
+        leftIcon={<div>☀️</div>}
         onClick={onOpen}
+        _hover={{
+          textDecoration: "underline",
+        }}
       >
-        Sign In
+        <p>Sign In</p>
+        <Spacer px="2px" />
+        <ArrowForwardIcon w={4} h={4} />
       </Button>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
