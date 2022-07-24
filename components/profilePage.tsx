@@ -168,8 +168,8 @@ export default function ProfilePage({}) {
             </ModalContent>
           </form>
         </Modal>
-        <Heading as="h1" size="md">
-          {name}
+        <Heading as="h1" size="lg">
+          {userDocument ? userDocument.name : name}
         </Heading>
       </Flex>
     </div>
