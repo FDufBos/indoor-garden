@@ -93,13 +93,8 @@ export default function NewForm({
       ;
     });
     onClose();
-    // console.log("firestoreplants list in newForm.tsx: ");
-    console.warn(firestorePlants);
   };
 
-  const handleClose = () => {
-    onClose();
-  };
 
   return (
     <div>
