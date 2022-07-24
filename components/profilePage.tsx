@@ -59,7 +59,7 @@ export default function ProfilePage({}) {
     uploadProfilePic(selectedImage, user, setLoading)
       .then(() => {
         onClose();
-    })
+      })
       .then(() => {
         setPhotoURL(URL.createObjectURL(selectedImage));
       })
@@ -93,46 +93,75 @@ export default function ProfilePage({}) {
         </button>
       </nav>
       <Flex direction="column" align="center" gap="16px">
-        <Avatar
+        <Tooltip label="Set Profile Image" placement="top" openDelay={400}>
+          <Avatar
             src={photoURL}
-            icon={<SkeletonCircle size="12" />}
+            icon={<SkeletonCircle isLoaded={loading} size="12" />}
             onClick={onOpen}
             cursor="pointer"
+            size="lg"
           ></Avatar>
-        <Modal isOpen={isOpen} onClose={onClose}>
+        </Tooltip>
+        <Modal
+          isOpen={isOpen}
+          onClose={() => {
+            onClose();
+            setSelectedImage(null);
+          }}
+        >
           <ModalOverlay />
           <form onSubmit={handlePhotoURLSubmit}>
-            <ModalContent>
+            <ModalContent bg="#FCFEF8" color="#606F73" borderRadius={8}>
               <ModalCloseButton />
 
               <ModalHeader>Set Profile Pic</ModalHeader>
 
               <ModalBody>
-                {/* {selectedImage && (
-                  <div>
+                {selectedImage && (
+                  <div className="flex flex-col justify-center items-center mb-8">
                     <img
-                      alt="not found"
-                      width={"80px"}
+                      alt="Not found"
+                      width={"250px"}
+                      height={"250px"}
                       src={URL.createObjectURL(selectedImage)}
+                      className=" rounded-full shadow-md w-28 h-28"
                     />
                     <br />
-                    <button onClick={() => setSelectedImage(null)}>
-                      Remove
-                    </button>
                   </div>
-                )} */}
-                <FormLabel>URL</FormLabel>
-
-                <Input
-                  type="file"
-                  name="profile-pic"
-                  onChange={handleChange}
-                  accept="image/*"
-                ></Input>
+                )}
+                <FormLabel
+                  p={8}
+                  cursor="pointer"
+                  bg="#FFF3B7"
+                  border="5px dotted #FAD042"
+                  textAlign={"center"}
+                  className="hover:scale-[99%] transition-all"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files[0]) {
+                      setSelectedImage(e.dataTransfer.files[0]);
+                    }
+                  }}
+                >
+                  <Input
+                    type="file"
+                    name="profile-pic"
+                    onChange={handleChange}
+                    accept="image/*"
+                  ></Input>
+                  Browse
+                  <br /> or <br />
+                  drag and drop a file
+                </FormLabel>
               </ModalBody>
               <ModalFooter className="flex gap-1">
-                {/* <Button onClick={onClose}>Set image</Button> */}
-                <Button disabled={loading || !selectedImage} type="submit" colorScheme="green">
+                <Button
+                  isLoading={loading}
+                  disabled={loading || !selectedImage}
+                  type="submit"
+                  colorScheme="green"
+                >
                   Set Image
                 </Button>
               </ModalFooter>
