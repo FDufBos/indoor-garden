@@ -71,29 +71,38 @@ export default function ProfilePage({ name}) {
   };
 
   const handleChange = (e) => {
-    // e.preventDefault();
     if (e.target.files[0]) {
       setSelectedImage(e.target.files[0]);
     }
+  };
 
-  }
-
-  useEffect (() => {
-    if (user?.photoURL) {
+  useEffect(() => {
+    if (photoURL) {
+      setPhotoURL(photoURL);
+    } else if (user?.photoURL) {
       setPhotoURL(user.photoURL);
+    } else {
+      setPhotoURL(null);
     }
-    
-  }, [user])
+  }, [user]);
 
   const handlePhotoURLSubmit = async (e) => {
     e.preventDefault();
-    uploadProfilePic(selectedImage, user, setLoading ).then((url) => {
-      onClose()
-    }).then(() => {
-      //reload page
-      Router.reload();
+    console.log(selectedImage);
+    console.log(user);
+    uploadProfilePic(selectedImage, user, setLoading)
+      .then(() => {
+        onClose();
     })
-
+      .then(() => {
+        setPhotoURL(URL.createObjectURL(selectedImage));
+      })
+      .then(() => {
+        setSelectedImage(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
