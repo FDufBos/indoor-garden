@@ -322,7 +322,7 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
       <div className="flex items-center flex-row gap-4 text-white">
         <Button
           id="exchange-button"
-          className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
+          className="drop-shadow-sm rounded-full text-grey-600"
           borderRadius="999px"
           leftIcon={<p>🚪</p>}
           isLoading={showLoadingSpinner}
