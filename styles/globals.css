@@ -24,3 +24,7 @@ body{
 h1{
   @apply font-alpina text-2xl text-white;
 }
+
+input[type="file"] {
+  display: none;
+}

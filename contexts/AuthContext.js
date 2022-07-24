@@ -5,36 +5,119 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  updateProfile,
 } from "firebase/auth";
 
-import { auth } from "../utils/firebaseUtils";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
+
+import Router from "next/router";
+
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { auth, db, storage } from "../utils/firebaseUtils";
 
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState("");
+  const [name, setName] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
+  const [userDocument, setUserDocument] = useState("");
 
   function signUp(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password)
+    return createUserWithEmailAndPassword(auth, email, password);
   }
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
   function logOut() {
+    setPhotoURL("");
+    setUserDocument("");
+    setUser("");
+    Router.push("/");
     return signOut(auth);
   }
-  
+
+  function sendPasswordResetEmail(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
+  async function uploadProfilePic(file, user, setLoading) {
+    const fileRef = ref(storage, "profilepics/" + user.uid);
+    setLoading(true);
+    const snapshot = await uploadBytes(fileRef, file);
+    const photoURL = await getDownloadURL(fileRef);
+    //save photoURL to local storage
+    localStorage.setItem("photoURL", photoURL);
+    updateProfile(user, { photoURL });
+    setLoading(false);
+  }
+
+  async function getUserDocument(user) {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    const docData = docSnap.data();
+
+    if (docSnap.exists()) {
+      console.log("docSnap Exists!");
+      setUserDocument(docData);
+    } else {
+      console.log("No such document!");
+    }
+  }
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      // console.log(currentUser);
+      //function to set user document
+      if (currentUser) {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        const docData = docSnap.data();
+
+        setPhotoURL(currentUser.photoURL);
+
+        if (docSnap.exists()) {
+          // console.log("docSnap Exists!");
+          setUserDocument(docData);
+        } else {
+          console.log("No such document!");
+        }
+      }
     });
+
     return () => {
       unsubscribe();
     };
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, signUp, logIn, logOut }}>
+    <userAuthContext.Provider
+      value={{
+        user,
+        userDocument,
+        setUserDocument,
+        signUp,
+        logIn,
+        logOut,
+        uploadProfilePic,
+        photoURL,
+        setPhotoURL,
+        name,
+        setName,
+        getUserDocument,
+      }}
+    >
       {children}
     </userAuthContext.Provider>
   );

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import // getUserNameFromFirebase,
-"../data/firestore";
+import Link from "next/link";
+("../data/firestore");
 import {
   Button,
   Modal,
@@ -13,20 +13,17 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
-  AlertTitle,
   AlertDescription,
+  Input,
+  Avatar,
+  SkeletonCircle,
+  Spacer,
 } from "@chakra-ui/react";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 
-import {
-  doc,
-  setDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import {
-  getAuth,
-  sendEmailVerification,
-} from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { getAuth, sendEmailVerification } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebaseUtils";
@@ -35,19 +32,18 @@ import { db } from "../utils/firebaseUtils";
 const auth = getAuth();
 
 export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
-  
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  const { signUp, user } = useUserAuth();
+  const { signUp, name, setName } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setShowLoadingSpinner(true);
     try {
       await signUp(email, password)
         .then(async () => {
@@ -61,17 +57,21 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             name: name,
             timeCreated: serverTimestamp(),
           });
+          setName(name);
         })
         .then(() => {
-          setShowLoadingSpinner(true);
           setTimeout(() => {
             setShowLoadingSpinner(false);
+
             onClose();
-          }, 1000);
+          }, 200);
         });
     } catch (err) {
+      setShowLoadingSpinner(false);
       if (err.code === "auth/email-already-in-use") {
         setError(`Email already in use`);
+      } else if (err.code === "auth/internal-error") {
+        setError(`Have you filled everything out?`);
       } else {
         setError(err.code);
       }
@@ -89,7 +89,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
       >
         Create Account
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal trapFocus={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton
@@ -111,7 +111,9 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
                     name="name"
                     type="text"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-1">
@@ -169,50 +171,64 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const { logIn } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setShowLoadingSpinner(true);
     try {
       await logIn(email, password).then(() => {
-        setShowLoadingSpinner(true);
         setTimeout(() => {
           setShowLoadingSpinner(false);
           onClose();
-        }, 400);
+        }, 700);
       });
     } catch (err) {
       // setError(err.message);
+      setShowLoadingSpinner(false);
       if (err.code === "auth/wrong-password") {
         setError("Wrong password friend");
       } else if (err.code === "auth/user-not-found") {
         setError(`Email doesn't exist`);
+      } else if (err.code === "auth/internal-error") {
+        setError(`Have you filled everything out?`);
       } else {
         setError(err.code);
       }
     }
   };
 
-
-
   return (
-    <div className="flex flex-row gap-4">
+    <div>
       <Button
         id="exchange-button"
-        className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
+        size="sm"
+        background="none"
+        className="drop-shadow-sm rounded-full"
         borderRadius="999px"
-        leftIcon={<p>☀️</p>}
+        color="#FCFEF8"
+        display="flex"
+        alignItems="center"
+        leftIcon={<div>☀️</div>}
         onClick={onOpen}
+        _hover={{
+          textDecoration: "underline",
+        }}
       >
-        Sign In
+        <p>Sign In</p>
+        <Spacer px="2px" />
+        <ArrowForwardIcon w={4} h={4} />
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal trapFocus={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton />
+          <ModalCloseButton
+            onClick={() => {
+              setError("");
+            }}
+          />
           <ModalHeader>Sign In</ModalHeader>
           <form onSubmit={handleSubmit}>
             <ModalBody>
@@ -221,7 +237,8 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
                   <label htmlFor="email" className="text-sm">
                     Email
                   </label>
-                  <input
+                  <Input
+                    required
                     id="email"
                     name="email"
                     type="email"
@@ -233,7 +250,8 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
                   <label htmlFor="password" className="text-sm">
                     Password
                   </label>
-                  <input
+                  <Input
+                    required
                     id="password"
                     name="password"
                     type="password"
@@ -268,27 +286,13 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
 
 export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
   return (
-    <nav
-      id="explore"
-      className=" flex flex-row justify-between items-center h-[40px] w-full"
-    >
-      <div
-        id="profile-pic"
-        className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
-      >
-        <Image
-          src="/images/memoji/male-1.png"
-          width="30"
-          height="30"
-          className="drop-shadow"
-        />
-      </div>
-      <div className="flex flex-row gap-4">
-        <SignInButton
+    <nav id="explore" className="">
+      <div className="flex flex-row md:gap-4 items-center justify-between md:justify-end w-full ">
+        <SignUpButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
         />
-        <SignUpButton
+        <SignInButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
         />
@@ -298,29 +302,25 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
 }
 
 export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
-  const { logOut, user } = useUserAuth();
+  const { logOut, photoURL } = useUserAuth();
 
   return (
     <nav
       id="explore"
       className=" flex flex-row justify-between items-center h-[40px] w-full"
     >
-      <div
-        id="profile-pic"
-        className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
-      >
-        <Image
-          src="/images/memoji/male-1.png"
-          width="30"
-          height="30"
-          className="drop-shadow"
-        />
-      </div>
+      <Link href="/profile">
+        <div
+          id="profile-pic"
+          className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
+        >
+          <Avatar w={10} h={10} src={photoURL}></Avatar>
+        </div>
+      </Link>
       <div className="flex items-center flex-row gap-4 text-white">
-        <div className="text-sm">{user.email}</div>
         <Button
           id="exchange-button"
-          className="bg-white drop-shadow-sm rounded-full text-grey-600 px-4 py-2 text-center font-[558] transition-all"
+          className="drop-shadow-sm rounded-full text-grey-600"
           borderRadius="999px"
           leftIcon={<p>🚪</p>}
           isLoading={showLoadingSpinner}
@@ -340,35 +340,46 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
 }
 
 export default function Layout({ children }) {
-  const { user } = useUserAuth();
+  const { user, userDocument, photoURL, setPhotoURL, name } = useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
+  useEffect(() => {
+    if (photoURL) {
+      setPhotoURL(photoURL);
+    } else if (user?.photoURL) {
+      setPhotoURL(user.photoURL);
+    }
+  }, [user]);
+
   return (
     <div className=" text-white">
-      <header className="flex flex-col gap-4 mt-4 mx-6">
-        {user ? (
+      <header className="flex flex-col gap-4 pt-4 mx-6">
+        <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
           <SignOutNav
-            // user={name}
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
           />
-        ) : (
-          <LoginNav
-            showLoadingSpinner={showLoadingSpinner}
-            setShowLoadingSpinner={setShowLoadingSpinner}
-          />
-        )}
-        <div
-          id="title-area"
-          className="flex flex-row justify-between items-end w-full"
-        >
-          <div className="flex flex-row items-baseline gap-3">
-            <h1 className="font-alpina">Indoor Garden</h1>
-            <div></div>
+          <div
+            id="title-area"
+            className="flex flex-row justify-between items-end w-full"
+          >
+            <div className="flex flex-row items-baseline gap-3">
+              {userDocument ? (
+                <h1>{userDocument.name + "'s Garden"}</h1>
+              ) : (
+                <h1>{name}</h1>
+              )}
+            </div>
+            <Image
+              src="/images/sun.svg"
+              width="35"
+              height="35"
+              className="hidden"
+            />
           </div>
-          <Image src="/images/sun.svg" width="35" height="35" />
         </div>
+
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
       </header>
       {children}

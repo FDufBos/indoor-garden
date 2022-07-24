@@ -13,7 +13,7 @@
       "sizes": "72x72"
     },
     {
-      "src": "/logo-96x96.png",
+      "src": "/images/app_icons/logo-96x96.png",
       "type": "image/png",
       "sizes": "96x96"
     },
@@ -23,7 +23,7 @@
       "sizes": "128x128"
     },
     {
-      "src": "/logo-144x144.png",
+      "src": "images/app_icons/logo-144x144.png",
       "type": "image/png",
       "sizes": "144x144"
     },
