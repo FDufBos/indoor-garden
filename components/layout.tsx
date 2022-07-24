@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
 import Link from "next/link";
 ("../data/firestore");
 import {
@@ -14,12 +13,13 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
-  AlertTitle,
   AlertDescription,
   Input,
   Avatar,
   SkeletonCircle,
+  Spacer,
 } from "@chakra-ui/react";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
