@@ -355,7 +355,7 @@ export default function Layout({ children }) {
   return (
     <div className=" text-white">
       <header className="flex flex-col gap-4 pt-4 mx-6">
-      <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
+        <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
           <SignOutNav
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
