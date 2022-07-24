@@ -272,29 +272,13 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
 
 export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
   return (
-    <nav
-      id="explore"
-      className=" flex flex-row justify-between items-center h-[40px] w-full"
-    >
-      {/* <div
-        id="profile-pic"
-        className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full"
-      >
-        
-          <Image
-            src=""
-            width="30"
-            height="30"
-            className="drop-shadow"
-          />
-        
-      </div> */}
-      <div className="flex flex-row gap-4 md:justify-end w-full">
-        <SignInButton
+    <nav id="explore" className="">
+      <div className="flex flex-row md:gap-4 items-center justify-between md:justify-end w-full ">
+        <SignUpButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
         />
-        <SignUpButton
+        <SignInButton
           showLoadingSpinner={showLoadingSpinner}
           setShowLoadingSpinner={setShowLoadingSpinner}
         />
