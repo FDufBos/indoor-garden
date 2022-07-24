@@ -13,7 +13,7 @@ export default function User() {
 
   return (
     <div>
-      <ProfilePage name={userDocument.name} email={user.email}></ProfilePage>
+      <ProfilePage name={userDocument.name} ></ProfilePage>
     </div>
   );
 }
