@@ -40,7 +40,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  const { signUp, user } = useUserAuth();
+  const { signUp, name, setName } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,10 +59,12 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             name: name,
             timeCreated: serverTimestamp(),
           });
+          setName(name);
         })
         .then(() => {
           setTimeout(() => {
             setShowLoadingSpinner(false);
+
             onClose();
           }, 200);
         });
