@@ -1,16 +1,8 @@
+import Head from "next/head";
+import Router from "next/router";
 import {
   Avatar,
-  AvatarBadge,
-  AvatarGroup,
-  Badge,
-  Text,
-  Highlight,
   Heading,
-  Editable,
-  EditableInput,
-  EditableTextarea,
-  EditablePreview,
-  Switch,
   Flex,
   useDisclosure,
   Tooltip,
@@ -24,46 +16,20 @@ import {
   Button,
   Input,
   FormLabel,
-  SkeletonCircle
+  SkeletonCircle,
 } from "@chakra-ui/react";
+import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
 
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  deleteDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {updateProfile} from "firebase/auth";
-
-import { auth, db } from "../utils/firebaseUtils";
 import { useUserAuth } from "../contexts/AuthContext";
-
-const storage = getStorage();
-
-// 'file' comes from the Blob or File API
-
-import Head from "next/head";
-import { ChevronRightIcon, SettingsIcon, CloseIcon } from "@chakra-ui/icons";
-import Router, { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { updateCurrentUser } from "firebase/auth";
 
-
-export default function ProfilePage({ name}) {
-
-  const [selectedImage, setSelectedImage] = useState(null);
-  const { user, userDocument, uploadProfilePic } = useUserAuth();
-  const [loading, setLoading] = useState(false);
-  const [photoURL, setPhotoURL] = useState("");
+export default function ProfilePage({}) {
+  const { user, userDocument, uploadProfilePic, photoURL, setPhotoURL, name } =
+    useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const storageRef = ref(storage, `profilepics/${user.uid}`);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleHomeClick = (e) => {
     e.preventDefault();
