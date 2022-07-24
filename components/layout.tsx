@@ -365,14 +365,11 @@ export default function Layout({ children }) {
             className="flex flex-row justify-between items-end w-full"
           >
             <div className="flex flex-row items-baseline gap-3">
-              {!user ? (
-                <h1 className="md:absolute text-2xl md:text-3xl md:top-6 md:left-6 z-10">
-                  Indoor Garden
-                </h1>
-              ) : (
+              {userDocument ? (
                 <h1>{userDocument.name + "'s Garden"}</h1>
+              ) : (
+                <h1>{name}</h1>
               )}
-          
             </div>
             <Image
               src="/images/sun.svg"
