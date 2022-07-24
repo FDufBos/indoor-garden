@@ -171,7 +171,6 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const { logIn } = useUserAuth();
 
