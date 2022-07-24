@@ -47,7 +47,7 @@ export default function NewForm({
     setEmoji(e.target.value);
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const user = auth.currentUser;
     const uid = user.uid;
@@ -68,7 +68,7 @@ export default function NewForm({
     const timestamp = serverTimestamp();
     // console.log(timestamp);
 
-    addPlant(
+    await addPlant(
       {
         icon: icon,
         commonName: commonName,
@@ -78,29 +78,23 @@ export default function NewForm({
         level: 1,
         timeCreated: timestamp,
         timeLastWatered: timestamp,
-        // id: nickname,
       },
       uid
-    );
-
-    //reset and close form
-    // e.currentTarget.reset();
+    ).then(() => {
+      // console.log("plant added");
+      //update firestorePlants with new plant
+      fetchPlants(uid).then((data) => {
+        // console.log(data);
+        setFirestorePlants(data);
+      })
+      fetchIDs(uid).then((data) => {
+        // console.log(data);
+        setDocumentIDs(data);})
+      ;
+    });
     onClose();
-    setFirestorePlants(
-      firestorePlants.concat([
-        {
-          icon: icon,
-          commonName: commonName,
-          nickname: nickname,
-          timeTillNextWater: 0,
-          wateringStreak: 0,
-          level: 1,
-          timeCreated: serverTimestamp(),
-          timeLastWatered : serverTimestamp(),
-          // id: nickname,
-        },
-      ])
-    );
+    // console.log("firestoreplants list in newForm.tsx: ");
+    console.warn(firestorePlants);
   };
 
   const handleClose = () => {
