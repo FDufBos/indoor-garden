@@ -25,6 +25,7 @@ export default function NewForm({
   isOpen,
   onClose,
   setFirestorePlants,
+  setDocumentIDs,
   firestorePlants,
 }) {
   //state for emoji
