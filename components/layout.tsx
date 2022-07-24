@@ -316,13 +316,7 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
         >
-          {/* <Image
-            src="/images/memoji/male-1.png"
-            width="30"
-            height="30"
-            className="drop-shadow"
-          /> */}
-          <Avatar w={10} h={10} icon={<SkeletonCircle size="10" />} src={user.photoURL}></Avatar>
+          <Avatar w={10} h={10} src={photoURL}></Avatar>
         </div>
       </Link>
       <div className="flex items-center flex-row gap-4 text-white">
