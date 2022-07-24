@@ -61,6 +61,18 @@ export function UserAuthContextProvider({ children }) {
     updateProfile(user, { photoURL });
     setLoading(false);
   }
+
+  async function getUserDocument(user) {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    const docData = docSnap.data();
+
+    if (docSnap.exists()) {
+      console.log("docSnap Exists!");
+      setUserDocument(docData);
+    } else {
+      console.log("No such document!");
+    }
   }
 
   useEffect(() => {
