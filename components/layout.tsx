@@ -32,12 +32,10 @@ import { db } from "../utils/firebaseUtils";
 const auth = getAuth();
 
 export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
-  // const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
 
   const { signUp, name, setName } = useUserAuth();
