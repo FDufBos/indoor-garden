@@ -89,7 +89,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
       >
         Create Account
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal trapFocus={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton
