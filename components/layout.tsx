@@ -356,18 +356,10 @@ export default function Layout({ children }) {
     <div className=" text-white">
       <header className="flex flex-col gap-4 pt-4 mx-6">
       <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
-        {user ? (
           <SignOutNav
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
           />
-        ) : (
-          <LoginNav
-            showLoadingSpinner={showLoadingSpinner}
-            setShowLoadingSpinner={setShowLoadingSpinner}
-          />
-        )}
-        
           <div
             id="title-area"
             className="flex flex-row justify-between items-end w-full"
