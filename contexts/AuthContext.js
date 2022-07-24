@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
+  updateEmail
 } from "firebase/auth";
 
 import {
@@ -74,6 +75,7 @@ export function UserAuthContextProvider({ children }) {
       console.log("No such document!");
     }
   }
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
