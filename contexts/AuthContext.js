@@ -19,6 +19,8 @@ import {
   setDoc,
 } from "firebase/firestore";
 
+import Router from "next/router";
+
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import { auth, db, storage } from "../utils/firebaseUtils";
@@ -28,6 +30,7 @@ const userAuthContext = createContext();
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState("");
   const [name, setName] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
   const [userDocument, setUserDocument] = useState("");
 
   function signUp(email, password) {
@@ -37,6 +40,10 @@ export function UserAuthContextProvider({ children }) {
     return signInWithEmailAndPassword(auth, email, password);
   }
   function logOut() {
+    setPhotoURL("");
+    setUserDocument("");
+    setUser("");
+    Router.push("/");
     return signOut(auth);
   }
 
