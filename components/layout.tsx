@@ -67,6 +67,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
           }, 200);
         });
     } catch (err) {
+      setShowLoadingSpinner(false);
       if (err.code === "auth/email-already-in-use") {
         setError(`Email already in use`);
       } else if (err.code === "auth/internal-error") {
