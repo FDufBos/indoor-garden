@@ -304,7 +304,7 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
 }
 
 export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
-  const { logOut, user, name, userDocument } = useUserAuth();
+  const { logOut, photoURL } = useUserAuth();
 
   return (
     <nav
