@@ -78,13 +78,17 @@ export function UserAuthContextProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      // console.log(currentUser);
       //function to set user document
       if (currentUser) {
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         const docData = docSnap.data();
 
+        setPhotoURL(currentUser.photoURL);
+
         if (docSnap.exists()) {
+          // console.log("docSnap Exists!");
           setUserDocument(docData);
         } else {
           console.log("No such document!");
