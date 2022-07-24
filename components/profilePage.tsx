@@ -61,18 +61,20 @@ export default function ProfilePage({}) {
 
   const handleEmailChange = async (e) => {
     const docRef = doc(db, "users", user.uid);
-    await updateDoc(docRef, {
-      email: e,
-    });
-    console.log("doc updated");
-    updateEmail(user, e)
-      .then(async () => {
-        console.log("new email is: " + user.email);
-        Router.push("/");
-      })
-      .catch((error) => {
-        console.log(error);
+    if (e != userDocument.email ) {
+      await updateDoc(docRef, {
+        email: e,
       });
+      console.log("doc updated");
+      updateEmail(user, e)
+        .then(async () => {
+          console.log("new email is: " + user.email);
+          Router.push("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   useEffect(() => {
