@@ -17,8 +17,25 @@ import {
   Input,
   FormLabel,
   SkeletonCircle,
+  Editable,
+  EditablePreview,
+  EditableInput,
 } from "@chakra-ui/react";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { auth, db, storage } from "../utils/firebaseUtils";
+
 import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
+import { updateEmail } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { useState, useEffect } from "react";
@@ -42,6 +59,22 @@ export default function ProfilePage({}) {
     }
   };
 
+  const handleEmailChange = async (e) => {
+    const docRef = doc(db, "users", user.uid);
+    await updateDoc(docRef, {
+      email: e,
+    });
+    console.log("doc updated");
+    updateEmail(user, e)
+      .then(async () => {
+        console.log("new email is: " + user.email);
+        Router.push("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     if (photoURL) {
       setPhotoURL(photoURL);
@@ -56,19 +89,23 @@ export default function ProfilePage({}) {
     e.preventDefault();
     console.log(selectedImage);
     console.log(user);
-    uploadProfilePic(selectedImage, user, setLoading)
-      .then(() => {
-        onClose();
-      })
-      .then(() => {
-        setPhotoURL(URL.createObjectURL(selectedImage));
-      })
-      .then(() => {
-        setSelectedImage(null);
-      })
-      .catch((err) => {
+    try {
+      uploadProfilePic(selectedImage, user, setLoading)
+        .then(() => {
+          onClose();
+        })
+        .then(() => {
+          setPhotoURL(URL.createObjectURL(selectedImage));
+        })
+        .then(() => {
+          setSelectedImage(null);
+        });
+    } catch {
+      (err) => {
+        setLoading(false);
         console.log(err);
-      });
+      };
+    }
   };
 
   return (
@@ -171,6 +208,15 @@ export default function ProfilePage({}) {
         <Heading as="h1" size="lg">
           {userDocument ? userDocument.name : name}
         </Heading>
+        <Editable
+          defaultValue={userDocument.email}
+          border="2px solid white"
+          w={80}
+          onSubmit={handleEmailChange}
+        >
+          <EditablePreview w={80} />
+          <EditableInput w={80} />
+        </Editable>
       </Flex>
     </div>
   );
