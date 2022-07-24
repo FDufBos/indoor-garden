@@ -180,9 +180,15 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
     setError("");
     setShowLoadingSpinner(true);
     try {
-      await logIn(email, password);
+      await logIn(email, password).then(() => {
+        setTimeout(() => {
+          setShowLoadingSpinner(false);
+          onClose();
+        }, 700);
+      });
     } catch (err) {
       // setError(err.message);
+      setShowLoadingSpinner(false);
       if (err.code === "auth/wrong-password") {
         setError("Wrong password friend");
       } else if (err.code === "auth/user-not-found") {
@@ -192,11 +198,6 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
       } else {
         setError(err.code);
       }
-    } finally {
-      setTimeout(() => {
-        setShowLoadingSpinner(false);
-        onClose();
-      }, 700);
     }
   };
 
