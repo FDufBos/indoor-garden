@@ -224,7 +224,11 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton />
+          <ModalCloseButton
+            onClick={() => {
+              setError("");
+            }}
+          />
           <ModalHeader>Sign In</ModalHeader>
           <form onSubmit={handleSubmit}>
             <ModalBody>
