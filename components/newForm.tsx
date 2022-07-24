@@ -1,6 +1,5 @@
 import React from "react";
-import BasicButton from "../components/atoms/basicButton";
-import { addPlant } from "../data/firestore";
+import { addPlant, fetchPlants, fetchIDs } from "../data/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,15 +8,11 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   FormControl,
   FormLabel,
-  FormErrorMessage,
-  FormHelperText,
   Input,
 } from "@chakra-ui/react";
 
