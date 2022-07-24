@@ -110,7 +110,9 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
                     name="name"
                     type="text"
                     className="bg-grey-100 rounded-md border-2 border-grey-300 px-4 py-2 text-sm"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-1">
