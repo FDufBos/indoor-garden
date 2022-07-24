@@ -5,7 +5,7 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
 } from "firebase/auth";
 
 import {
@@ -52,14 +52,15 @@ export function UserAuthContextProvider({ children }) {
   }
 
   async function uploadProfilePic(file, user, setLoading) {
-    const fileRef = ref(storage, 'profilepics/' + user.uid);
-    setLoading(true)
-    const snapshot = await uploadBytes(fileRef, file)
-    const photoURL = await getDownloadURL(fileRef)
+    const fileRef = ref(storage, "profilepics/" + user.uid);
+    setLoading(true);
+    const snapshot = await uploadBytes(fileRef, file);
+    const photoURL = await getDownloadURL(fileRef);
     //save photoURL to local storage
-    localStorage.setItem('photoURL', photoURL)
-    updateProfile(user, {photoURL})
-    setLoading(false)
+    localStorage.setItem("photoURL", photoURL);
+    updateProfile(user, { photoURL });
+    setLoading(false);
+  }
   }
 
   useEffect(() => {
