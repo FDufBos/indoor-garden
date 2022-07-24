@@ -64,8 +64,13 @@ export default function PlantPage({
           <ChevronLeftIcon boxSize="2rem" focusable={true} color="white" />
         </button>
         <button onClick={onOpen}>
-          <Tooltip label='Delete'>
-            <CloseIcon boxSize="1rem" focusable={true} color="white" />
+          <Tooltip label="Delete" openDelay={400} rounded="full">
+
+            <CloseIcon
+              boxSize="1rem"
+              focusable={true}
+              color="white"
+            />
           </Tooltip>
         </button>
 
@@ -76,10 +81,7 @@ export default function PlantPage({
             <ModalHeader>Delete Plant</ModalHeader>
             <ModalBody>Are you sure you want to delete this plant?</ModalBody>
             <ModalFooter className="flex gap-1">
-              
-              <Button onClick={onClose}>
-                Cancel
-              </Button>
+              <Button onClick={onClose}>Cancel</Button>
               <Button
                 onClick={() => {
                   onClose();
