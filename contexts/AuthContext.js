@@ -9,6 +9,8 @@ import {
   updateEmail,
 } from "firebase/auth";
 
+import { fetchIDs, fetchPlants } from "../data/firestore";
+
 import {
   getFirestore,
   collection,
@@ -31,6 +33,10 @@ import { auth, db, storage } from "../utils/firebaseUtils";
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
+  const [firestorePlants, setFirestorePlants] = useState([]);
+  const [documentIDs, setDocumentIDs] = useState([]);
+
+
   const [user, setUser] = useState("");
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
@@ -109,6 +115,15 @@ export function UserAuthContextProvider({ children }) {
         } else {
           console.log("No such document!");
         }
+
+        fetchPlants(user.uid).then((data) => {
+          setFirestorePlants(data);
+        });
+        fetchIDs(user.uid).then((data) => {
+          setDocumentIDs(data);
+        });
+      } else {
+        setFirestorePlants([]);
       }
     });
 
@@ -135,6 +150,10 @@ export function UserAuthContextProvider({ children }) {
         getUserDocument,
         codex,
         setCodex,
+        firestorePlants,
+        setFirestorePlants,
+        documentIDs,
+        setDocumentIDs,
       }}
     >
       {children}
