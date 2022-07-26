@@ -83,15 +83,14 @@ export default function NewForm({
       uid
     ).then(() => {
       // console.log("plant added");
-      //update firestorePlants with new plant
+      //update firestorePlants state with new plant
       fetchPlants(uid).then((data) => {
-        // console.log(data);
         setFirestorePlants(data);
-      })
+      });
+      //update documentIDs to reflex new plant
       fetchIDs(uid).then((data) => {
-        // console.log(data);
-        setDocumentIDs(data);})
-      ;
+        setDocumentIDs(data);
+      });
     });
     onClose();
   };
