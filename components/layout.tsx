@@ -383,8 +383,9 @@ export default function Layout({ children }) {
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
       </header>
       {children}
-      <footer className="flex flex-col justify-center items-center">
+      <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
+        <Link href={"/addToCodex"}><Button size="xs">Add to codex</Button></Link>
         👀👀
       </footer>
     </div>
