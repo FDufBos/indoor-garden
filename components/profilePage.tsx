@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Router from "next/router";
+import Image from "next/image";
 import {
   Avatar,
   Heading,
@@ -162,7 +163,7 @@ export default function ProfilePage({}) {
               <ModalBody>
                 {selectedImage && (
                   <div className="flex flex-col justify-center items-center mb-8">
-                    <img
+                    <Image
                       alt="Not found"
                       width={"250px"}
                       height={"250px"}
