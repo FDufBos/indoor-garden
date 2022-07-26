@@ -48,7 +48,7 @@ export default function addToCodexForm() {
 
   return (
     <div className="m-6">
-      <Link href={'/'}>
+      <Link href={'/'} passHref>
       <Button size="xs">Home</Button>
       </Link>
       

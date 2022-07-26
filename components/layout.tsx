@@ -323,7 +323,7 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
       id="explore"
       className=" flex flex-row justify-between items-center h-[40px] w-full"
     >
-      <Link href="/profile">
+      <Link href="/profile" passHref>
         <div
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
@@ -399,7 +399,7 @@ export default function Layout({ children }) {
       {children}
       <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
-        <Link href={"/addToCodex"}><Button size="xs">Add to codex</Button></Link>
+        <Link href={"/addToCodex"} passHref><Button size="xs">Add to codex</Button></Link>
         👀👀
       </footer>
     </div>
