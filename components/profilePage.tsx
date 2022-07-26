@@ -20,6 +20,8 @@ import {
   Editable,
   EditablePreview,
   EditableInput,
+  IconButton,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import {
   getFirestore,
@@ -34,7 +36,7 @@ import {
 } from "firebase/firestore";
 import { auth, db, storage } from "../utils/firebaseUtils";
 
-import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon, SettingsIcon, CheckIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { updateEmail } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
@@ -60,12 +62,13 @@ export default function ProfilePage({}) {
   };
 
   const handleEmailChange = async (e) => {
+    console.log(e)
     const docRef = doc(db, "users", user.uid);
-    if (e != userDocument.email ) {
+    if (e != userDocument.email) {
       await updateDoc(docRef, {
         email: e,
-      });
-      console.log("doc updated");
+      }).then(() => {console.log("doc updated");});
+      
       updateEmail(user, e)
         .then(async () => {
           console.log("new email is: " + user.email);
@@ -85,6 +88,7 @@ export default function ProfilePage({}) {
     } else {
       setPhotoURL(null);
     }
+    
   }, [user]);
 
   const handlePhotoURLSubmit = async (e) => {
