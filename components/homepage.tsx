@@ -65,6 +65,7 @@ export default function Homepage() {
                 <Link href={`/garden/${documentIDs[index]}`} key={index}>
                   <div className="cursor-pointer">
                     <PlantItem
+                      index={index}
                       key={index}
                       icon={plant.icon}
                       name={plant.nickname}
