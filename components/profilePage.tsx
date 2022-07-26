@@ -211,14 +211,25 @@ export default function ProfilePage({}) {
           {userDocument ? userDocument.name : name}
         </Heading>
         <Editable
-          defaultValue={userDocument.email}
-          border="2px solid white"
-          w={80}
+          defaultValue={user?.email ? user.email : userDocument.email}
+          
           onSubmit={handleEmailChange}
         >
-          <EditablePreview w={80} />
-          <EditableInput w={80} />
+          <div className="flex items-center gap-4">
+            <FormLabel color="#FCFEF8">Email:</FormLabel> 
+            <Input as={EditablePreview} w={80} color="#FCFEF8" position="relative" />
+            <Input name="email" as={EditableInput} w={80} color="#FFF3B7" />
+            <Button
+              aria-label="Submit"
+              // icon={<ChevronRightIcon />}
+              // onSubmit={e => {e.preventDefault()
+              //   handleEmailChange(e)
+              // }}
+              type="submit"
+            >Submit</Button>
+          </div>
         </Editable>
+        
       </Flex>
     </div>
   );
