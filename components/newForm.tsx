@@ -2,7 +2,7 @@ import React from "react";
 import { addPlant, fetchPlants, fetchIDs } from "../data/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Button,
   Modal,
@@ -14,10 +14,12 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
 } from "@chakra-ui/react";
 
 import { getRandomEmoji } from "../data/randomEmoji";
 import { getAuth } from "firebase/auth";
+import { useUserAuth } from "../contexts/AuthContext";
 
 const auth = getAuth();
 
@@ -26,10 +28,11 @@ export default function NewForm({
   onClose,
   setFirestorePlants,
   setDocumentIDs,
-  firestorePlants,
 }) {
   //state for emoji
   const [emoji, setEmoji] = useState("🌱");
+
+  const { codex } = useUserAuth();
 
   const handleEmojiClick = (e) => {
     e.preventDefault();
@@ -94,7 +97,6 @@ export default function NewForm({
     });
     onClose();
   };
-
 
   return (
     <div>
