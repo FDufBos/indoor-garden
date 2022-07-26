@@ -26,15 +26,21 @@ const theme = extendTheme({
       },
     },
     Button: {
-      baseStyle: {
-        bg: "blue",
+      baseStyle:{
+        bg: "FCFEF8",
+        borderRadius: "999px",
+        color: "#606F73",
         "&:hover": {
           // bg: "blue",
           // color: "white",
         },
-      },
+      }
     },
+    Editable: {}
   },
+  Input:{
+    
+  }
 });
 
 
