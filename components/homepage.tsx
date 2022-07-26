@@ -11,7 +11,7 @@ import BasicButton from "./atoms/basicButton";
 
 import { fetchIDs, fetchPlants } from "../data/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // const auth = getAuth();
