@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
-  updateEmail
+  updateEmail,
 } from "firebase/auth";
 
 import {
@@ -18,6 +18,8 @@ import {
   addDoc,
   deleteDoc,
   setDoc,
+  query,
+  orderBy,
 } from "firebase/firestore";
 
 import Router from "next/router";
@@ -33,6 +35,7 @@ export function UserAuthContextProvider({ children }) {
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [userDocument, setUserDocument] = useState("");
+  const [codex, setCodex] = useState(null);
 
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -75,9 +78,20 @@ export function UserAuthContextProvider({ children }) {
       console.log("No such document!");
     }
   }
-  
+
+  const fetchCodex = async () => {
+    const q = query(collection(db, "plants"), orderBy("commonName"));
+    const codexSnapshot = await getDocs(q);
+    const codexList = codexSnapshot.docs.map((doc) => doc.data());
+    setCodex(codexList);
+    // return codexList;
+  };
+
+
 
   useEffect(() => {
+
+    fetchCodex();
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       // console.log(currentUser);
@@ -101,7 +115,8 @@ export function UserAuthContextProvider({ children }) {
     return () => {
       unsubscribe();
     };
-  }, []);
+  // }, [codex]);
+}, []);
 
   return (
     <userAuthContext.Provider
@@ -118,6 +133,8 @@ export function UserAuthContextProvider({ children }) {
         name,
         setName,
         getUserDocument,
+        codex,
+        setCodex,
       }}
     >
       {children}
