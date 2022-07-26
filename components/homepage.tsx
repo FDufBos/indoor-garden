@@ -104,11 +104,9 @@ export default function Homepage() {
           </div>
 
           {user ? (
-            <button onClick={handleNewFormClick} className="mx-6 mb-10">
-              <BasicButton bgColor={"bg-slate-200"} textColor={undefined}>
-                New Plant
-              </BasicButton>
-            </button>
+            <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+              New Plant
+            </Button>
           ) : (
             <div className="mx-6 mb-10">
               <div>Sign In to Add a Plant</div>
