@@ -14,8 +14,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useDisclosure, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// const auth = getAuth();
-
 import { useUserAuth } from "../contexts/AuthContext";
 import { auth, db, storage } from "../utils/firebaseUtils";
 
