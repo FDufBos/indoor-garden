@@ -27,6 +27,7 @@ import { getAuth, sendEmailVerification } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebaseUtils";
+import { addPlant } from "../data/firestore";
 
 //called for sendEmailVerification
 const auth = getAuth();
@@ -38,7 +39,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const { signUp, name, setName } = useUserAuth();
+  const { signUp, name, setName, user } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +59,19 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             timeCreated: serverTimestamp(),
           });
           setName(name);
+          addPlant(
+            {
+              icon: "🌱",
+              commonName: "Welcome Plant",
+              nickname: "Hi!",
+              timeTillNextWater: 0,
+              wateringStreak: 0,
+              level: 1,
+              timeCreated: serverTimestamp(),
+              timeLastWatered: serverTimestamp(),
+            },
+            user.uid
+          )
         })
         .then(() => {
           setTimeout(() => {
