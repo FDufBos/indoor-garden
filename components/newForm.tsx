@@ -150,13 +150,16 @@ export default function NewForm({
                 >
                   Type of Plant:
                 </FormLabel>
-                <Input
-                  placeholder="e.g. Monstera"
-                  required
-                  type="text"
-                  name="commonName"
-                  className="rounded-md px-2 py-1 bg-[#e7f9ec] placeholder-monstera-400 placeholder-opacity-60 border-[1px] border-[#ccebd7] text-green-900 outline-[#5bb98c] outline-2 focus:outline focus:border-[#e7f9ec]"
-                />
+                <Select name="commonName">
+                  {codex &&
+                    codex.map((item, index) => {
+                      return (
+                        <option key={index} value={item.commonName[0]}>
+                          {item.commonName[0]}
+                        </option>
+                      );
+                    })}
+                </Select>
               </FormControl>
             </ModalBody>
             <ModalFooter
