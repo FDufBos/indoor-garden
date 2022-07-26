@@ -317,10 +317,10 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
           <Avatar w={10} h={10} src={photoURL}></Avatar>
         </div>
       </Link>
-      <div className="flex items-center flex-row gap-4 text-white">
+      <div>
         <Button
           id="exchange-button"
-          className="drop-shadow-sm rounded-full text-grey-600"
+          className="drop-shadow-sm"
           borderRadius="999px"
           leftIcon={<p>🚪</p>}
           isLoading={showLoadingSpinner}
