@@ -7,6 +7,10 @@ import {
   doc,
   addDoc,
   deleteDoc,
+  setDoc,
+  query,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 
 //CREATE
@@ -15,16 +19,23 @@ export const addPlant = async (plant, user) => {
   await addDoc(collection(db, `users/${user}/garden`), plant);
 };
 
+export const addToCodex = async (botanicalName, plant) => {
+  await setDoc(doc(db, "plants", botanicalName), plant);
+};
+
 //READ
 
 export const fetchPlants = async (user) => {
-  const plantsSanpshot = await getDocs(collection(db, `users/${user}/garden`));
+  const q = query(collection(db, `users/${user}/garden`), orderBy("timeCreated"));
+  const plantsSanpshot = await getDocs(q);
   const plantsList = plantsSanpshot.docs.map((doc) => doc.data());
   return plantsList;
 };
 
 export const fetchIDs = async (user) => {
-  const plantsSanpshot = await getDocs(collection(db, `users/${user}/garden`));
+  const q = query(collection(db, `users/${user}/garden`), orderBy("timeCreated"));
+
+  const plantsSanpshot = await getDocs(q);
   const idList = plantsSanpshot.docs.map((doc) => doc.id);
   return idList;
 };
@@ -39,6 +50,15 @@ export const fetchPlant = async (nickname, user) => {
     }
   }
 };
+
+//READ CODEX
+//fetch codex from plant collection
+// export const fetchCodex = async () => {
+//   const q = query(collection(db, "plants"), orderBy("commonName"));
+//   const codexSnapshot = await getDocs(q);
+//   const codexList = codexSnapshot.docs.map((doc) => doc.data());
+//   return codexList;
+// }
 
 //DELETE PLANT
 export const deletePlant = async (plant, user) => {
