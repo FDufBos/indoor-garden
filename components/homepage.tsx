@@ -15,13 +15,15 @@ import { useDisclosure, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useUserAuth } from "../contexts/AuthContext";
-import { auth, db, storage } from "../utils/firebaseUtils";
+import { auth } from "../utils/firebaseUtils";
 
 export default function Homepage() {
   const [firestorePlants, setFirestorePlants] = useState([]);
   const [documentIDs, setDocumentIDs] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { user, firestorePlants, documentIDs, setFirestorePlants, setDocumentIDs } = useUserAuth();
   const { user } = useUserAuth();
+
 
   useEffect(() => {
     // console.log("homepage.tsx firestorePlants in useEffect: " + firestorePlants)
@@ -38,6 +40,8 @@ export default function Homepage() {
       }
     });
   }, []);
+
+
 
   const handleNewFormClick = (e) => {
     e.preventDefault();
@@ -97,7 +101,6 @@ export default function Homepage() {
               isOpen={isOpen}
               onClose={onClose}
               setFirestorePlants={setFirestorePlants}
-              firestorePlants={firestorePlants}
               setDocumentIDs={setDocumentIDs}
             />
           </div>
