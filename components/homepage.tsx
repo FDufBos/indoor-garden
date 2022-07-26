@@ -7,8 +7,6 @@ import Link from "next/link";
 import Layout from "./layout";
 import PlantItem from "./plantItem";
 import NewForm from "./newForm";
-import BasicButton from "./atoms/basicButton";
-
 import { fetchIDs, fetchPlants } from "../data/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDisclosure, Button } from "@chakra-ui/react";
