@@ -41,16 +41,17 @@ export default function GetStarted(props) {
       <Head>
         <title>Indoor Garden 🌱</title>
       </Head>
-      <div className="h-3/4">
+      <div className="h-[80%]">
         <h1 className="absolute top-[36%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-4xl text-sun-100">
           Indoor Garden
         </h1>
       </div>
-      <Divider size="lg" />
-      <div className="flex flex-col items-center justify-center h-1/4">
+      {/* <Divider size="lg" /> */}
+      {/* TODO: make it so that this bottom part is attached to bottom isntead of being below the block above. */}
+      <div className="flex flex-col items-center justify-center h-[50%]">
         <Flex
           direction="column"
-          gap="24px"
+          gap="32px"
           alignItems="center"
           justifyContent="center"
           w="100%"
@@ -60,7 +61,7 @@ export default function GetStarted(props) {
             showLoadingSpinner={showLoadingSpinner}
             setShowLoadingSpinner={setShowLoadingSpinner}
           ></SignUpButton>
-          <Button onClick={handleGoogleClick} leftIcon={<FcGoogle />} size="sm">
+          <Button onClick={handleGoogleClick} leftIcon={<FcGoogle />} size="sm" className="text-sm">
             Sign in with google
           </Button>
           <SignInButton
