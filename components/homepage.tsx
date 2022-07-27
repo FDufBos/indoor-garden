@@ -66,11 +66,7 @@ export default function Homepage() {
           <section className=" mx-6">
             {firestorePlants &&
               firestorePlants.map((plant, index) => (
-                <Link
-                  href={`/garden/${documentIDs[index]}`}
-                  key={index}
-                  passHref
-                >
+                <Link href={`/garden/${documentIDs[index]}`} key={index} passHref>
                   <div className="cursor-pointer">
                     <PlantItem
                       index={index}
