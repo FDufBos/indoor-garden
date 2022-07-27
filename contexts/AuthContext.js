@@ -131,7 +131,7 @@ export function UserAuthContextProvider({ children }) {
       unsubscribe();
     };
   // }, [codex]);
-}, []);
+});
 
   return (
     <userAuthContext.Provider

@@ -22,11 +22,11 @@ export default function Homepage() {
   // const { user, firestorePlants, documentIDs, setFirestorePlants, setDocumentIDs } = useUserAuth();
   const { user } = useUserAuth();
 
-
   useEffect(() => {
     // console.log("homepage.tsx firestorePlants in useEffect: " + firestorePlants)
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log(user.providerData[0].providerId);
         fetchPlants(user.uid).then((data) => {
           setFirestorePlants(data);
         });
@@ -37,9 +37,7 @@ export default function Homepage() {
         setFirestorePlants([]);
       }
     });
-  }, []);
-
-
+  });
 
   const handleNewFormClick = (e) => {
     e.preventDefault();
@@ -64,7 +62,11 @@ export default function Homepage() {
           <section className=" mx-6">
             {firestorePlants &&
               firestorePlants.map((plant, index) => (
-                <Link href={`/garden/${documentIDs[index]}`} key={index} passHref>
+                <Link
+                  href={`/garden/${documentIDs[index]}`}
+                  key={index}
+                  passHref
+                >
                   <div className="cursor-pointer">
                     <PlantItem
                       index={index}
