@@ -128,7 +128,7 @@ export function UserAuthContextProvider({ children }) {
       unsubscribe();
     };
     // }, [codex]);
-  }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs, user]);
+  }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs]);
 
   return (
     <userAuthContext.Provider
