@@ -12,7 +12,6 @@ import {
 import { fetchIDs, fetchPlants } from "../data/firestore";
 
 import {
-  getFirestore,
   collection,
   getDocs,
   getDoc,
@@ -35,7 +34,6 @@ const userAuthContext = createContext();
 export function UserAuthContextProvider({ children }) {
   const [firestorePlants, setFirestorePlants] = useState([]);
   const [documentIDs, setDocumentIDs] = useState([]);
-
 
   const [user, setUser] = useState("");
   const [name, setName] = useState("");
@@ -93,10 +91,7 @@ export function UserAuthContextProvider({ children }) {
     // return codexList;
   };
 
-
-
   useEffect(() => {
-
     fetchCodex();
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -116,22 +111,24 @@ export function UserAuthContextProvider({ children }) {
           console.log("No such document!");
         }
 
-        fetchPlants(user.uid).then((data) => {
+        fetchPlants(currentUser.uid).then((data) => {
           setFirestorePlants(data);
+          console.warn("fetchPlants here");
         });
-        fetchIDs(user.uid).then((data) => {
+        fetchIDs(currentUser.uid).then((data) => {
           setDocumentIDs(data);
         });
-      } else {
-        setFirestorePlants([]);
       }
+      // else {
+      //   setFirestorePlants([]);
+      // }
     });
 
     return () => {
       unsubscribe();
     };
-  // }, [codex]);
-});
+    // }, [codex]);
+  }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs, user]);
 
   return (
     <userAuthContext.Provider
