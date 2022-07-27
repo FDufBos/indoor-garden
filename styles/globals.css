@@ -28,3 +28,8 @@ h1{
 input[type="file"] {
   display: none;
 }
+
+input {
+  -webkit-appearance: none;
+  outline: none;
+}

@@ -2,8 +2,10 @@ import { useRouter } from "next/router";
 import { fetchPlant } from "../../data/firestore";
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+// import { doc, data } from "firebase/firestore";
 
 const auth = getAuth();
+import { useUserAuth } from "../../contexts/AuthContext";
 
 import React from "react";
 
@@ -12,7 +14,10 @@ import PlantPage from "../../components/plantPage";
 export default function Plant() {
   //create state to store plant query param
   const [plant, setPlant] = useState("");
+  // const [codex, setCodex] = useState("");
   const router = useRouter();
+  const { user, codex, setCodex } = useUserAuth();
+  const [codexPlant, setCodexPlant] = useState("");
 
   //useEffect to get plant query param
   useEffect(() => {
@@ -21,16 +26,31 @@ export default function Plant() {
         if (!router.isReady) return;
         await fetchPlant(router.query.name, user.uid).then((plant) => {
           setPlant(plant);
-          console.log(plant)
+          if (codex) {
+            codex.forEach((doc) => {
+              const codexCommonName = doc.commonName[0];
+              const plantCommonName = plant.commonName;
+              // console.log(codexCommonName);
+              // console.log(plantCommonName);
+              if (codexCommonName === plantCommonName) {
+                setCodexPlant(doc);
+                console.log(doc)
+              }
+            });
+          }
         });
       } else {
         // User is signed out
       }
     });
+    if(codexPlant.sunExposure){
+      console.log(codexPlant.sunExposure.join(", "));
+    }
   }, []);
-
+  
 
   return (
+    
     <div>
       <PlantPage
         nickname={plant.nickname}
@@ -39,6 +59,9 @@ export default function Plant() {
         level={plant.level}
         timeTillNextWater={plant.timeTillNextWater}
         wateringStreak={plant.wateringStreak}
+        botanicalName={codexPlant.botanicalName}
+        sunExposure={codexPlant.sunExposure}
+        wateringFrequency={codexPlant.baseDaysBetweenWatering}
       />
     </div>
   );

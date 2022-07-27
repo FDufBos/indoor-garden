@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Router from "next/router";
+import Image from "next/image";
 import {
   Avatar,
   Heading,
@@ -17,8 +18,27 @@ import {
   Input,
   FormLabel,
   SkeletonCircle,
+  Editable,
+  EditablePreview,
+  EditableInput,
+  IconButton,
+  ButtonGroup,
 } from "@chakra-ui/react";
-import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { auth, db, storage } from "../utils/firebaseUtils";
+
+import { ChevronRightIcon, SettingsIcon, CheckIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
+import { updateEmail } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { useState, useEffect } from "react";
@@ -42,6 +62,25 @@ export default function ProfilePage({}) {
     }
   };
 
+  const handleEmailChange = async (e) => {
+    console.log(e)
+    const docRef = doc(db, "users", user.uid);
+    if (e != userDocument.email) {
+      await updateDoc(docRef, {
+        email: e,
+      }).then(() => {console.log("doc updated");});
+      
+      updateEmail(user, e)
+        .then(async () => {
+          console.log("new email is: " + user.email);
+          Router.push("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
   useEffect(() => {
     if (photoURL) {
       setPhotoURL(photoURL);
@@ -50,25 +89,30 @@ export default function ProfilePage({}) {
     } else {
       setPhotoURL(null);
     }
+    
   }, [user]);
 
   const handlePhotoURLSubmit = async (e) => {
     e.preventDefault();
     console.log(selectedImage);
     console.log(user);
-    uploadProfilePic(selectedImage, user, setLoading)
-      .then(() => {
-        onClose();
-      })
-      .then(() => {
-        setPhotoURL(URL.createObjectURL(selectedImage));
-      })
-      .then(() => {
-        setSelectedImage(null);
-      })
-      .catch((err) => {
+    try {
+      uploadProfilePic(selectedImage, user, setLoading)
+        .then(() => {
+          onClose();
+        })
+        .then(() => {
+          setPhotoURL(URL.createObjectURL(selectedImage));
+        })
+        .then(() => {
+          setSelectedImage(null);
+        });
+    } catch {
+      (err) => {
+        setLoading(false);
         console.log(err);
-      });
+      };
+    }
   };
 
   return (
@@ -119,7 +163,7 @@ export default function ProfilePage({}) {
               <ModalBody>
                 {selectedImage && (
                   <div className="flex flex-col justify-center items-center mb-8">
-                    <img
+                    <Image
                       alt="Not found"
                       width={"250px"}
                       height={"250px"}
@@ -171,6 +215,26 @@ export default function ProfilePage({}) {
         <Heading as="h1" size="lg">
           {userDocument ? userDocument.name : name}
         </Heading>
+        <Editable
+          defaultValue={user?.email ? user.email : userDocument.email}
+          
+          onSubmit={handleEmailChange}
+        >
+          <div className="flex items-center gap-4">
+            <FormLabel color="#FCFEF8">Email:</FormLabel> 
+            <Input as={EditablePreview} w={80} color="#FCFEF8" position="relative" />
+            <Input name="email" as={EditableInput} w={80} color="#FFF3B7" />
+            <Button
+              aria-label="Submit"
+              // icon={<ChevronRightIcon />}
+              // onSubmit={e => {e.preventDefault()
+              //   handleEmailChange(e)
+              // }}
+              type="submit"
+            >Submit</Button>
+          </div>
+        </Editable>
+        
       </Flex>
     </div>
   );

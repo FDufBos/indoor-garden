@@ -27,6 +27,7 @@ import { getAuth, sendEmailVerification } from "firebase/auth";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebaseUtils";
+import { addPlant } from "../data/firestore";
 
 //called for sendEmailVerification
 const auth = getAuth();
@@ -38,7 +39,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const { signUp, name, setName } = useUserAuth();
+  const { signUp, name, setName, user } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +59,19 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             timeCreated: serverTimestamp(),
           });
           setName(name);
+          addPlant(
+            {
+              icon: "🌱",
+              commonName: "Welcome Plant",
+              nickname: "Hi!",
+              timeTillNextWater: 0,
+              wateringStreak: 0,
+              level: 1,
+              timeCreated: serverTimestamp(),
+              timeLastWatered: serverTimestamp(),
+            },
+            user.uid
+          )
         })
         .then(() => {
           setTimeout(() => {
@@ -309,7 +323,7 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
       id="explore"
       className=" flex flex-row justify-between items-center h-[40px] w-full"
     >
-      <Link href="/profile">
+      <Link href="/profile" passHref>
         <div
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
@@ -317,10 +331,10 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
           <Avatar w={10} h={10} src={photoURL}></Avatar>
         </div>
       </Link>
-      <div className="flex items-center flex-row gap-4 text-white">
+      <div>
         <Button
           id="exchange-button"
-          className="drop-shadow-sm rounded-full text-grey-600"
+          className="drop-shadow-sm"
           borderRadius="999px"
           leftIcon={<p>🚪</p>}
           isLoading={showLoadingSpinner}
@@ -383,8 +397,9 @@ export default function Layout({ children }) {
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
       </header>
       {children}
-      <footer className="flex flex-col justify-center items-center">
+      <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
+        <Link href={"/addToCodex"} passHref><Button size="xs">Add to codex</Button></Link>
         👀👀
       </footer>
     </div>

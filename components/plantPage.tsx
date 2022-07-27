@@ -29,6 +29,9 @@ export default function PlantPage({
   level,
   timeTillNextWater,
   wateringStreak,
+  botanicalName,
+  sunExposure,
+  wateringFrequency,
 }) {
   const { user } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -118,6 +121,7 @@ export default function PlantPage({
         <div id="titles" className="flex flex-col items-center">
           <h1 className="font-flexa">{nickname}</h1>
           <h2 className="text-white">{commonName}</h2>
+          <h3>{botanicalName}</h3>
         </div>
         <div className="flex flex-col items-center text-water-100 gap-0">
           <div>💧 Water in {timeTillNextWater} days</div>
@@ -131,10 +135,10 @@ export default function PlantPage({
             Living Room
           </div>
           <div className="bg-sun-100 text-amber-600 rounded-md w-full py-[1px] text-md">
-            Sun Lover
+            {sunExposure}
           </div>
           <div className="bg-sky-100 text-sky-600 rounded-md w-full py-[1px] text-md">
-            Water Lover
+            Water every {wateringFrequency} days
           </div>
         </div>
       </header>

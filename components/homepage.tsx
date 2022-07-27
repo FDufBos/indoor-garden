@@ -7,23 +7,21 @@ import Link from "next/link";
 import Layout from "./layout";
 import PlantItem from "./plantItem";
 import NewForm from "./newForm";
-import BasicButton from "./atoms/basicButton";
-
 import { fetchIDs, fetchPlants } from "../data/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// const auth = getAuth();
-
 import { useUserAuth } from "../contexts/AuthContext";
-import { auth, db, storage } from "../utils/firebaseUtils";
+import { auth } from "../utils/firebaseUtils";
 
 export default function Homepage() {
   const [firestorePlants, setFirestorePlants] = useState([]);
   const [documentIDs, setDocumentIDs] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { user, firestorePlants, documentIDs, setFirestorePlants, setDocumentIDs } = useUserAuth();
   const { user } = useUserAuth();
+
 
   useEffect(() => {
     // console.log("homepage.tsx firestorePlants in useEffect: " + firestorePlants)
@@ -40,6 +38,8 @@ export default function Homepage() {
       }
     });
   }, []);
+
+
 
   const handleNewFormClick = (e) => {
     e.preventDefault();
@@ -64,9 +64,10 @@ export default function Homepage() {
           <section className=" mx-6">
             {firestorePlants &&
               firestorePlants.map((plant, index) => (
-                <Link href={`/garden/${documentIDs[index]}`} key={index}>
+                <Link href={`/garden/${documentIDs[index]}`} key={index} passHref>
                   <div className="cursor-pointer">
                     <PlantItem
+                      index={index}
                       key={index}
                       icon={plant.icon}
                       name={plant.nickname}
@@ -98,17 +99,14 @@ export default function Homepage() {
               isOpen={isOpen}
               onClose={onClose}
               setFirestorePlants={setFirestorePlants}
-              firestorePlants={firestorePlants}
               setDocumentIDs={setDocumentIDs}
             />
           </div>
 
           {user ? (
-            <button onClick={handleNewFormClick} className="mx-6 mb-10">
-              <BasicButton bgColor={"bg-slate-200"} textColor={undefined}>
-                New Plant
-              </BasicButton>
-            </button>
+            <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+              New Plant
+            </Button>
           ) : (
             <div className="mx-6 mb-10">
               <div>Sign In to Add a Plant</div>

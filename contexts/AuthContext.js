@@ -6,7 +6,10 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
+  updateEmail,
 } from "firebase/auth";
+
+import { fetchIDs, fetchPlants } from "../data/firestore";
 
 import {
   getFirestore,
@@ -17,6 +20,8 @@ import {
   addDoc,
   deleteDoc,
   setDoc,
+  query,
+  orderBy,
 } from "firebase/firestore";
 
 import Router from "next/router";
@@ -28,10 +33,15 @@ import { auth, db, storage } from "../utils/firebaseUtils";
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
+  const [firestorePlants, setFirestorePlants] = useState([]);
+  const [documentIDs, setDocumentIDs] = useState([]);
+
+
   const [user, setUser] = useState("");
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [userDocument, setUserDocument] = useState("");
+  const [codex, setCodex] = useState(null);
 
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -75,7 +85,19 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
+  const fetchCodex = async () => {
+    const q = query(collection(db, "plants"), orderBy("commonName"));
+    const codexSnapshot = await getDocs(q);
+    const codexList = codexSnapshot.docs.map((doc) => doc.data());
+    setCodex(codexList);
+    // return codexList;
+  };
+
+
+
   useEffect(() => {
+
+    fetchCodex();
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       // console.log(currentUser);
@@ -93,13 +115,23 @@ export function UserAuthContextProvider({ children }) {
         } else {
           console.log("No such document!");
         }
+
+        fetchPlants(user.uid).then((data) => {
+          setFirestorePlants(data);
+        });
+        fetchIDs(user.uid).then((data) => {
+          setDocumentIDs(data);
+        });
+      } else {
+        setFirestorePlants([]);
       }
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  // }, [codex]);
+}, []);
 
   return (
     <userAuthContext.Provider
@@ -116,6 +148,12 @@ export function UserAuthContextProvider({ children }) {
         name,
         setName,
         getUserDocument,
+        codex,
+        setCodex,
+        firestorePlants,
+        setFirestorePlants,
+        documentIDs,
+        setDocumentIDs,
       }}
     >
       {children}
