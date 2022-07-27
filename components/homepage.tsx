@@ -16,28 +16,32 @@ import { useUserAuth } from "../contexts/AuthContext";
 import { auth } from "../utils/firebaseUtils";
 
 export default function Homepage() {
-  const [firestorePlants, setFirestorePlants] = useState([]);
-  const [documentIDs, setDocumentIDs] = useState([]);
+  // const [firestorePlants, setFirestorePlants] = useState([]);
+  // const [documentIDs, setDocumentIDs] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const { user, firestorePlants, documentIDs, setFirestorePlants, setDocumentIDs } = useUserAuth();
-  const { user } = useUserAuth();
+  const { user, firestorePlants, documentIDs, setFirestorePlants, setDocumentIDs } = useUserAuth();
+  // const { user } = useUserAuth();
+
 
   useEffect(() => {
     // console.log("homepage.tsx firestorePlants in useEffect: " + firestorePlants)
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log(user.providerData[0].providerId);
-        fetchPlants(user.uid).then((data) => {
-          setFirestorePlants(data);
-        });
-        fetchIDs(user.uid).then((data) => {
-          setDocumentIDs(data);
-        });
-      } else {
-        setFirestorePlants([]);
-      }
-    });
-  });
+    // onAuthStateChanged(auth, async (user) => {
+    //   if (user) {
+    //     console.log(user.providerData[0].providerId);
+    //     console.warn("data leaking here, unnecessary fetchPlants calls")
+    //     fetchPlants(user.uid).then((data) => {
+    //       setFirestorePlants(data);
+    //     });
+    //     fetchIDs(user.uid).then((data) => {
+    //       setDocumentIDs(data);
+    //     });
+    //   } else {
+    //     setFirestorePlants([]);
+    //   }
+    // });
+  }, []);
+
+
 
   const handleNewFormClick = (e) => {
     e.preventDefault();
