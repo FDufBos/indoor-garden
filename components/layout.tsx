@@ -203,7 +203,7 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
       // setError(err.message);
       setShowLoadingSpinner(false);
       if (err.code === "auth/wrong-password") {
-        setError("Wrong password friend");
+        setError("Wrong password - did you sign up with Google?");
       } else if (err.code === "auth/user-not-found") {
         setError(`Email doesn't exist`);
       } else if (err.code === "auth/internal-error") {
