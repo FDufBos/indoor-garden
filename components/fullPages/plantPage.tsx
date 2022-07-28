@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
 import { deletePlant } from "../../data/firestore";
+import { motion } from "framer-motion";
 
 import { ChevronLeftIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import {
@@ -22,6 +23,12 @@ import { useUserAuth } from "../../contexts/AuthContext";
 
 // const auth = getAuth()
 
+const variants = {
+  hidden: { x: "20px", opacity: 0 },
+  enter: { x: "0px", opacity: 1 },
+  exit: { x: "100px", opacity: 0, delay: 0.2 },
+};
+
 export default function PlantPage({
   nickname,
   commonName,
@@ -40,7 +47,7 @@ export default function PlantPage({
 
   const handleHomeClick = (e) => {
     e.preventDefault();
-    Router.push("/");
+    Router.push("/garden");
   };
 
   const handleMoreClick = (e) => {
@@ -50,7 +57,13 @@ export default function PlantPage({
   };
 
   return (
-    <div>
+    <motion.div
+      variants={variants}
+      initial="hidden"
+      animate="enter"
+      exit={"exit"}
+      transition={{ type: "intertia" }}
+    >
       <Head>
         <title>{nickname} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
@@ -68,12 +81,7 @@ export default function PlantPage({
         </button>
         <button onClick={onOpen}>
           <Tooltip label="Delete" openDelay={400} rounded="full">
-
-            <CloseIcon
-              boxSize="1rem"
-              focusable={true}
-              color="white"
-            />
+            <CloseIcon boxSize="1rem" focusable={true} color="white" />
           </Tooltip>
         </button>
 
@@ -121,7 +129,7 @@ export default function PlantPage({
         <div id="titles" className="flex flex-col items-center">
           <h1 className="font-flexa">{nickname}</h1>
           <h2 className="text-white">{commonName}</h2>
-          <h3>{botanicalName}</h3>
+          {/* <h3>{botanicalName}</h3> */}
         </div>
         <div className="flex flex-col items-center text-water-100 gap-0">
           <div>💧 Water in {timeTillNextWater} days</div>
@@ -168,6 +176,6 @@ export default function PlantPage({
         <h1 className="text-monstera-400">Codex</h1>
         <hr className="bg-monstera-400 h-[3px] " />
       </section>
-    </div>
+    </motion.div>
   );
 }
