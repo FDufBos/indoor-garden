@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
-import { deletePlant } from "../data/firestore";
+import { deletePlant } from "../../data/firestore";
 
 import { ChevronLeftIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import {
@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 
-import { useUserAuth } from "../contexts/AuthContext";
+import { useUserAuth } from "../../contexts/AuthContext";
 
 // const auth = getAuth()
 

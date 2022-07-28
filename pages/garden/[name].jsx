@@ -9,7 +9,7 @@ import { useUserAuth } from "../../contexts/AuthContext";
 
 import React from "react";
 
-import PlantPage from "../../components/plantPage";
+import PlantPage from "../../components/fullPages/plantPage";
 
 export default function Plant() {
   //create state to store plant query param
@@ -21,6 +21,7 @@ export default function Plant() {
 
   //useEffect to get plant query param
   useEffect(() => {
+    console.log("useEffect ran on [name]")
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         if (!router.isReady) return;
@@ -34,7 +35,7 @@ export default function Plant() {
               // console.log(plantCommonName);
               if (codexCommonName === plantCommonName) {
                 setCodexPlant(doc);
-                console.log(doc)
+                // console.log(doc)
               }
             });
           }
@@ -43,10 +44,10 @@ export default function Plant() {
         // User is signed out
       }
     });
-    if(codexPlant.sunExposure){
-      console.log(codexPlant.sunExposure.join(", "));
-    }
-  }, []);
+    // if(codexPlant.sunExposure){
+    //   console.log(codexPlant.sunExposure.join(", "));
+    // }
+  },[]);
   
 
   return (

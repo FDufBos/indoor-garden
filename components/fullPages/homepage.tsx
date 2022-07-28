@@ -4,16 +4,16 @@ import * as React from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-import Layout from "./layout";
-import PlantItem from "./plantItem";
-import NewForm from "./newForm";
-import { fetchIDs, fetchPlants } from "../data/firestore";
+import Layout from "../layout";
+import PlantItem from "../atoms/plantItem";
+import NewForm from "../forms/newForm";
+import { fetchIDs, fetchPlants } from "../../data/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDisclosure, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { useUserAuth } from "../contexts/AuthContext";
-import { auth } from "../utils/firebaseUtils";
+import { useUserAuth } from "../../contexts/AuthContext";
+import { auth } from "../../utils/firebaseUtils";
 
 export default function Homepage() {
   // const [firestorePlants, setFirestorePlants] = useState([]);

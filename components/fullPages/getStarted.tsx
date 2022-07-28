@@ -1,5 +1,5 @@
 import { Divider, Flex, Button, Icon } from "@chakra-ui/react";
-import { SignInButton, SignUpButton } from "./layout";
+import { SignInButton, SignUpButton } from "../layout";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 

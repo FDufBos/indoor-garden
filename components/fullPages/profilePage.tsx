@@ -35,12 +35,12 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { auth, db, storage } from "../utils/firebaseUtils";
+import { auth, db, storage } from "../../utils/firebaseUtils";
 
 import { ChevronRightIcon, SettingsIcon, CheckIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
 import { updateEmail } from "firebase/auth";
 
-import { useUserAuth } from "../contexts/AuthContext";
+import { useUserAuth } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 
 export default function ProfilePage({}) {
