@@ -92,6 +92,7 @@ export function UserAuthContextProvider({ children }) {
   };
 
   useEffect(() => {
+    console.log("useEffect @ AuthContext");
     fetchCodex();
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -113,7 +114,7 @@ export function UserAuthContextProvider({ children }) {
 
         fetchPlants(currentUser.uid).then((data) => {
           setFirestorePlants(data);
-          console.warn("fetchPlants here");
+          // console.log("fetchPlants @ AuthContext useEffect");
         });
         fetchIDs(currentUser.uid).then((data) => {
           setDocumentIDs(data);
@@ -128,7 +129,11 @@ export function UserAuthContextProvider({ children }) {
       unsubscribe();
     };
     // }, [codex]);
-  }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs]);
+  }, [setFirestorePlants, setDocumentIDs]);
+  // }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs]);
+
+  //or is it:
+  // }, [firestorePlants, documentIDs]);
 
   return (
     <userAuthContext.Provider
