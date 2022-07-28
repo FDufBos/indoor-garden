@@ -1,7 +1,7 @@
 import Router, { useRouter } from "next/router";
 import { useUserAuth } from "../contexts/AuthContext";
 
-import ProfilePage from "../components/profilePage";
+import ProfilePage from "../components/fullPages/profilePage";
 
 export default function User() {
   //create state to store plant query param
