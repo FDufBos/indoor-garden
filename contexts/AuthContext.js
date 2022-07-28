@@ -176,6 +176,7 @@ export function UserAuthContextProvider({ children }) {
         setFirestorePlants,
         documentIDs,
         setDocumentIDs,
+        getthreeUserIDs,
       }}
     >
       {children}
