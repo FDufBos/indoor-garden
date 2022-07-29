@@ -11,5 +11,6 @@ export default function Home() {
       Router.push("/garden");
     }
   }, [user]);
-  return <GetStarted />;
+  return (
+  <GetStarted />);
 }
