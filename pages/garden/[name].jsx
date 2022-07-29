@@ -16,34 +16,34 @@ export default function Plant() {
   const [plant, setPlant] = useState("");
   // const [codex, setCodex] = useState("");
   const router = useRouter();
-  const { user, codex, setCodex } = useUserAuth();
+  const { user, codex, setCodex, documentIDs } = useUserAuth();
   const [codexPlant, setCodexPlant] = useState("");
 
   //useEffect to get plant query param
   useEffect(() => {
-    console.log("useEffect ran on [name]")
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        if (!router.isReady) return;
-        await fetchPlant(router.query.name, user.uid).then((plant) => {
-          setPlant(plant);
-          if (codex) {
-            codex.forEach((doc) => {
-              const codexCommonName = doc.commonName[0];
-              const plantCommonName = plant.commonName;
-              // console.log(codexCommonName);
-              // console.log(plantCommonName);
-              if (codexCommonName === plantCommonName) {
-                setCodexPlant(doc);
-                // console.log(doc)
-              }
-            });
-          }
-        });
-      } else {
-        // User is signed out
-      }
-    });
+    console.log("useEffect ran on [name]");
+    // onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      if (!router.isReady) return;
+      fetchPlant(router.query.name, user.uid).then((plant) => {
+        setPlant(plant);
+        if (codex) {
+          codex.forEach((doc) => {
+            const codexCommonName = doc.commonName[0];
+            const plantCommonName = plant.commonName;
+            // console.log(codexCommonName);
+            // console.log(plantCommonName);
+            if (codexCommonName === plantCommonName) {
+              setCodexPlant(doc);
+              // console.log(doc)
+            }
+          });
+        }
+      });
+    } else {
+      // User is signed out
+    }
+    // });
     // if(codexPlant.sunExposure){
     //   console.log(codexPlant.sunExposure.join(", "));
     // }
