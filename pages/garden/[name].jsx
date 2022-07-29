@@ -51,19 +51,25 @@ export default function Plant() {
   
 
   return (
-    
     <div>
-      <PlantPage
-        nickname={plant.nickname}
-        commonName={plant.commonName}
-        icon={plant.icon}
-        level={plant.level}
-        timeTillNextWater={plant.timeTillNextWater}
-        wateringStreak={plant.wateringStreak}
-        botanicalName={codexPlant.botanicalName}
-        sunExposure={codexPlant.sunExposure}
-        wateringFrequency={codexPlant.baseDaysBetweenWatering}
-      />
+      {plant && codexPlant ? (
+        <div>
+          {<div>{documentIDs[2]}</div>}
+          <PlantPage
+            nickname={plant.nickname}
+            commonName={plant.commonName}
+            icon={plant.icon}
+            level={plant.level}
+            timeTillNextWater={plant.timeTillNextWater}
+            wateringStreak={plant.wateringStreak}
+            botanicalName={codexPlant.botanicalName}
+            sunExposure={codexPlant.sunExposure}
+            wateringFrequency={codexPlant.baseDaysBetweenWatering}
+          />
+        </div>
+      ) : (
+        <SkeletonPlantPage></SkeletonPlantPage>
+      )}
     </div>
   );
 }
