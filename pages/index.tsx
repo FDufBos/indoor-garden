@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Router from "next/router";
 
-import GetStarted from "../components/getStarted";
+import GetStarted from "../components/fullPages/getStarted";
 import { useUserAuth } from "../contexts/AuthContext";
 
 export default function Home() {
@@ -11,5 +11,6 @@ export default function Home() {
       Router.push("/garden");
     }
   }, [user]);
-  return <GetStarted />;
+  return (
+  <GetStarted />);
 }

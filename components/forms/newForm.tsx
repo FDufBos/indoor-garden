@@ -1,5 +1,5 @@
 import React from "react";
-import { addPlant, fetchPlants, fetchIDs } from "../data/firestore";
+import { addPlant, fetchPlants, fetchIDs } from "../../data/firestore";
 import { serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -17,9 +17,9 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-import { getRandomEmoji } from "../data/randomEmoji";
+import { getRandomEmoji } from "../../data/randomEmoji";
 import { getAuth } from "firebase/auth";
-import { useUserAuth } from "../contexts/AuthContext";
+import { useUserAuth } from "../../contexts/AuthContext";
 
 const auth = getAuth();
 

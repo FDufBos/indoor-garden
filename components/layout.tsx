@@ -203,7 +203,7 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
       // setError(err.message);
       setShowLoadingSpinner(false);
       if (err.code === "auth/wrong-password") {
-        setError("Wrong password friend");
+        setError("Wrong password - did you sign up with Google?");
       } else if (err.code === "auth/user-not-found") {
         setError(`Email doesn't exist`);
       } else if (err.code === "auth/internal-error") {
@@ -354,7 +354,7 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
 }
 
 export default function Layout({ children }) {
-  const { user, userDocument, photoURL, setPhotoURL, name } = useUserAuth();
+  const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } = useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
@@ -400,6 +400,7 @@ export default function Layout({ children }) {
       <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
         <Link href={"/addToCodex"} passHref><Button size="xs">Add to codex</Button></Link>
+        <Button onClick={getthreeUserIDs}>hi</Button>
         👀👀
       </footer>
     </div>

@@ -9,60 +9,67 @@ import { useUserAuth } from "../../contexts/AuthContext";
 
 import React from "react";
 
-import PlantPage from "../../components/plantPage";
+import PlantPage from "../../components/fullPages/plantPage";
+import SkeletonPlantPage from "../../components/loading/skeletonPlantPage";
 
 export default function Plant() {
   //create state to store plant query param
   const [plant, setPlant] = useState("");
   // const [codex, setCodex] = useState("");
   const router = useRouter();
-  const { user, codex, setCodex } = useUserAuth();
+  const { user, codex, setCodex, documentIDs } = useUserAuth();
   const [codexPlant, setCodexPlant] = useState("");
 
   //useEffect to get plant query param
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        if (!router.isReady) return;
-        await fetchPlant(router.query.name, user.uid).then((plant) => {
-          setPlant(plant);
-          if (codex) {
-            codex.forEach((doc) => {
-              const codexCommonName = doc.commonName[0];
-              const plantCommonName = plant.commonName;
-              // console.log(codexCommonName);
-              // console.log(plantCommonName);
-              if (codexCommonName === plantCommonName) {
-                setCodexPlant(doc);
-                console.log(doc)
-              }
-            });
-          }
-        });
-      } else {
-        // User is signed out
-      }
-    });
-    if(codexPlant.sunExposure){
-      console.log(codexPlant.sunExposure.join(", "));
+    console.log("useEffect ran on [name]");
+    // onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      if (!router.isReady) return;
+      fetchPlant(router.query.name, user.uid).then((plant) => {
+        setPlant(plant);
+        if (codex) {
+          codex.forEach((doc) => {
+            const codexCommonName = doc.commonName[0];
+            const plantCommonName = plant.commonName;
+            // console.log(codexCommonName);
+            // console.log(plantCommonName);
+            if (codexCommonName === plantCommonName) {
+              setCodexPlant(doc);
+              // console.log(doc)
+            }
+          });
+        }
+      });
+    } else {
+      // User is signed out
     }
+    // });
+    // if(codexPlant.sunExposure){
+    //   console.log(codexPlant.sunExposure.join(", "));
+    // }
   }, []);
-  
 
   return (
-    
     <div>
-      <PlantPage
-        nickname={plant.nickname}
-        commonName={plant.commonName}
-        icon={plant.icon}
-        level={plant.level}
-        timeTillNextWater={plant.timeTillNextWater}
-        wateringStreak={plant.wateringStreak}
-        botanicalName={codexPlant.botanicalName}
-        sunExposure={codexPlant.sunExposure}
-        wateringFrequency={codexPlant.baseDaysBetweenWatering}
-      />
+      {plant && codexPlant ? (
+        <div>
+          {<div>{documentIDs[2]}</div>}
+          <PlantPage
+            nickname={plant.nickname}
+            commonName={plant.commonName}
+            icon={plant.icon}
+            level={plant.level}
+            timeTillNextWater={plant.timeTillNextWater}
+            wateringStreak={plant.wateringStreak}
+            botanicalName={codexPlant.botanicalName}
+            sunExposure={codexPlant.sunExposure}
+            wateringFrequency={codexPlant.baseDaysBetweenWatering}
+          />
+        </div>
+      ) : (
+        <SkeletonPlantPage></SkeletonPlantPage>
+      )}
     </div>
   );
 }

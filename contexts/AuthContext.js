@@ -12,7 +12,6 @@ import {
 import { fetchIDs, fetchPlants } from "../data/firestore";
 
 import {
-  getFirestore,
   collection,
   getDocs,
   getDoc,
@@ -35,7 +34,6 @@ const userAuthContext = createContext();
 export function UserAuthContextProvider({ children }) {
   const [firestorePlants, setFirestorePlants] = useState([]);
   const [documentIDs, setDocumentIDs] = useState([]);
-
 
   const [user, setUser] = useState("");
   const [name, setName] = useState("");
@@ -85,6 +83,26 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
+  async function getthreeUserIDs(){
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+    //create reference for the user collection
+    const userCollection = collection(db, "users");
+    const uidList = []
+    //get the first 3 users
+    
+    for (let i = 0; i < 3; i++) {
+      const docSnap = await getDocs(userCollection);
+      const docData = docSnap.docs.map((doc)=>doc.data());
+      const x = getRandomInt(docData.length-1)
+      console.log(x)
+      uidList.push(docData[x].uid)
+    }
+    console.log(uidList)
+    
+  }
+
   const fetchCodex = async () => {
     const q = query(collection(db, "plants"), orderBy("commonName"));
     const codexSnapshot = await getDocs(q);
@@ -93,10 +111,8 @@ export function UserAuthContextProvider({ children }) {
     // return codexList;
   };
 
-
-
   useEffect(() => {
-
+    console.log("useEffect @ AuthContext");
     fetchCodex();
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -116,22 +132,28 @@ export function UserAuthContextProvider({ children }) {
           console.log("No such document!");
         }
 
-        fetchPlants(user.uid).then((data) => {
+        fetchPlants(currentUser.uid).then((data) => {
           setFirestorePlants(data);
+          // console.log("fetchPlants @ AuthContext useEffect");
         });
-        fetchIDs(user.uid).then((data) => {
+        fetchIDs(currentUser.uid).then((data) => {
           setDocumentIDs(data);
         });
-      } else {
-        setFirestorePlants([]);
       }
+      // else {
+      //   setFirestorePlants([]);
+      // }
     });
 
     return () => {
       unsubscribe();
     };
-  // }, [codex]);
-}, []);
+    // }, [codex]);
+  }, [setFirestorePlants, setDocumentIDs]);
+  // }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs]);
+
+  //or is it:
+  // }, [firestorePlants, documentIDs]);
 
   return (
     <userAuthContext.Provider
@@ -154,6 +176,7 @@ export function UserAuthContextProvider({ children }) {
         setFirestorePlants,
         documentIDs,
         setDocumentIDs,
+        getthreeUserIDs,
       }}
     >
       {children}
