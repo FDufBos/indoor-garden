@@ -10,6 +10,7 @@ import { useUserAuth } from "../../contexts/AuthContext";
 import React from "react";
 
 import PlantPage from "../../components/fullPages/plantPage";
+import SkeletonPlantPage from "../../components/loading/skeletonPlantPage";
 
 export default function Plant() {
   //create state to store plant query param
@@ -47,8 +48,7 @@ export default function Plant() {
     // if(codexPlant.sunExposure){
     //   console.log(codexPlant.sunExposure.join(", "));
     // }
-  },[]);
-  
+  }, []);
 
   return (
     <div>
