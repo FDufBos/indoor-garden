@@ -34,28 +34,27 @@ export default function Homepage() {
   } = useUserAuth();
   // const { user } = useUserAuth();
 
-  useEffect(() => {
-    // console.log("homepage.tsx firestorePlants in useEffect: " + firestorePlants)
-    // onAuthStateChanged(auth, async (user) => {
-    //   if (user) {
-    //     console.log(user.providerData[0].providerId);
-    //     console.warn("data leaking here, unnecessary fetchPlants calls")
-    //     fetchPlants(user.uid).then((data) => {
-    //       setFirestorePlants(data);
-    //     });
-    //     fetchIDs(user.uid).then((data) => {
-    //       setDocumentIDs(data);
-    //     });
-    //   } else {
-    //     setFirestorePlants([]);
-    //   }
-    // });
-  }, []);
-
-  const handleNewFormClick = (e) => {
+  const handleNewFormClick = async (e) => {
+    if (user.emailVerified === false) {
+      await sendEmailVerification(user);
+      toast({
+        title: "Please verify your email",
+        position: "top",
+        description: "Check your email for a verification link",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+        containerStyle: {
+          width: "95vw",
+          maxWidth: "900px",
+        },
+      });
+      logOut();
+  } else {
     e.preventDefault();
     onOpen();
-  };
+  };}
 
   return (
     <motion.div
