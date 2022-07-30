@@ -24,6 +24,7 @@ const variants = {
 export default function Homepage() {
   // const [firestorePlants, setFirestorePlants] = useState([]);
   // const [documentIDs, setDocumentIDs] = useState([]);
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     user,
@@ -31,8 +32,8 @@ export default function Homepage() {
     documentIDs,
     setFirestorePlants,
     setDocumentIDs,
+    logOut
   } = useUserAuth();
-  // const { user } = useUserAuth();
 
   const handleNewFormClick = async (e) => {
     if (user.emailVerified === false) {
