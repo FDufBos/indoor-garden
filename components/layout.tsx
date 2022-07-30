@@ -354,7 +354,8 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
 }
 
 export default function Layout({ children }) {
-  const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } = useUserAuth();
+  const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } =
+    useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
