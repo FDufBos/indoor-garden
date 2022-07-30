@@ -178,6 +178,9 @@ export function UserAuthContextProvider({ children }) {
         documentIDs,
         setDocumentIDs,
         getthreeUserIDs,
+        timeSinceLastWatered,
+        updateUserPassword,
+        forgotPassword,
       }}
     >
       {children}
