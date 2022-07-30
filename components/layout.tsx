@@ -71,7 +71,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
               timeLastWatered: serverTimestamp(),
             },
             user.uid
-          )
+          );
         })
         .then(() => {
           setTimeout(() => {
