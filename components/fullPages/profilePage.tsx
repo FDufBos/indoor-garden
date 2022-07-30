@@ -242,16 +242,33 @@ export default function ProfilePage({}) {
         <Heading as="h1" size="lg">
           {userDocument ? userDocument.name : name}
         </Heading>
-        <Editable
-          defaultValue={user?.email ? user.email : userDocument.email}
-          
-          onSubmit={handleEmailChange}
-        >
-          <div className="flex items-center gap-4">
-            <FormLabel color="#FCFEF8">Email:</FormLabel> 
-            <Input as={EditablePreview} w={80} color="#FCFEF8" position="relative" />
-            <Input name="email" as={EditableInput} w={80} color="#FFF3B7" />
-            <Button
+          <form
+            onSubmit={handleEmailChange}
+            className="flex flex-wrap items-center md:gap-4 justify-between"
+          >
+            <FormLabel color="#FCFEF8">Email:</FormLabel>
+            <div className="flex gap-2">
+              <Input
+                required
+                id="email"
+                name="email"
+                type="email"
+                placeholder={user?.email ? user.email : userDocument.email}
+                onChange={handleEmailInputChange}
+                color="#FFF3B7"
+className="placeholder:text-water-100 placeholder:opacity-70"
+              />
+              <Button
+                disabled={emailButtonEnabled}
+                type="submit"
+                onClick={() => {
+                  console.log("blick");
+                }}
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
               aria-label="Submit"
               // icon={<ChevronRightIcon />}
               // onSubmit={e => {e.preventDefault()
