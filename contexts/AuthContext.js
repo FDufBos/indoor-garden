@@ -110,6 +110,16 @@ export function UserAuthContextProvider({ children }) {
     // return codexList;
   };
 
+  async function timeSinceLastWatered(plant) {
+    return Math.floor(
+      (Date.now() - plant.timeLastWatered.toDate()) / (1000 * 60 * 60 * 24)
+    );
+  }
+
+  const forgotPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  }
+
   useEffect(() => {
     console.log("useEffect @ AuthContext");
     fetchCodex();
