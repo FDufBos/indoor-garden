@@ -7,8 +7,8 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"
-// import { getPerformance } from "firebase/performance";
+// import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"
+import { getPerformance } from "firebase/performance";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -22,22 +22,18 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LcM5DMhAAAAABMKraBQ_kXP5SaG46dILmzjXCOP"),
-  isTokenAutoRefreshEnabled: true,
-});
-
+// const appCheck = initializeAppCheck(app, {
+//   provider: new ReCaptchaV3Provider("6LcM5DMhAAAAABMKraBQ_kXP5SaG46dILmzjXCOP"),
+//   isTokenAutoRefreshEnabled: true,
+// });
 
 const db = getFirestore(app, {
   cacheSize: CACHE_SIZE_UNLIMITED,
 });
 
-// const db = getFirestore(app, {
-//   cacheSize: CACHE_SIZE_UNLIMITED,
-// });
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-export { db, auth, storage, appCheck };
+export { db, auth, storage };
 
 export default app;
