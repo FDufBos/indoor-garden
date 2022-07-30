@@ -62,18 +62,45 @@ export default function ProfilePage({}) {
     }
   };
 
+  const handleEmailInputChange = (e) => {
+    if (e.target.value) {
+      setEmailButtonEnabled(false);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    if (e.target.value) {
+      setEmailButtonEnabled(false);
+    }
+  };
+
+  const handlePasswordChangeSubmit = (e) => {
+    e.preventDefault();
+    updateUserPassword(e.target.password.value);
+    e.target.reset();
+    console.log("success");
+  };
+
   const handleEmailChange = async (e) => {
-    console.log(e)
+    e.preventDefault();
+    //get the new email
+    //get the value from the form input called email
+    const newEmail = e.target.email.value;
+    console.log(newEmail);
+
     const docRef = doc(db, "users", user.uid);
-    if (e != userDocument.email) {
-      await updateDoc(docRef, {
-        email: e,
-      }).then(() => {console.log("doc updated");});
-      
-      updateEmail(user, e)
+    if (newEmail != userDocument.email) {
+      updateEmail(user, newEmail)
         .then(async () => {
           console.log("new email is: " + user.email);
           Router.push("/");
+        })
+        .then(async () => {
+          await updateDoc(docRef, {
+            email: newEmail,
+          }).then(() => {
+            console.log("doc updated");
+          });
         })
         .catch((error) => {
           console.log(error);
