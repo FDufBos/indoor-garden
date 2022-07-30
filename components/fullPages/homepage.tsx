@@ -95,12 +95,14 @@ export default function Homepage() {
                         name={plant.nickname}
                         commonName={plant.commonName}
                         timeTillNextWater={
-                          Math.floor(
-                            (Date.now() - plant.timeLastWatered.toDate()) /
-                              (1000 * 60 * 60 * 24)
-                          )
-                          // 5
+                          timeTillNextWater
+                            ? timeTillNextWater
+                            : Math.floor(
+                                (Date.now() - plant.timeLastWatered.toDate()) /
+                                  (1000 * 60 * 60 * 24)
+                              )
                         }
+                        setTimeTillNextWater={setTimeTillNextWater}
                         wateringStreak={
                           //calculate number of days since plant was created
                           Math.floor(
