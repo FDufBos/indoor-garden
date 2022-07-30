@@ -408,7 +408,7 @@ export default function Layout({ children }) {
         <Link href={"/addToCodex"} passHref>
           <Button size="xs">Add to codex</Button>
         </Link>
-        <Button onClick={getthreeUserIDs}>Don't click</Button>
+        <Button onClick={getthreeUserIDs}>Don&apos;t click</Button>
         👀👀
       </footer>
     </div>
