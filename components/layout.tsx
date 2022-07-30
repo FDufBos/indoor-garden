@@ -399,8 +399,10 @@ export default function Layout({ children }) {
       {children}
       <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
-        <Link href={"/addToCodex"} passHref><Button size="xs">Add to codex</Button></Link>
-        <Button onClick={getthreeUserIDs}>hi</Button>
+        <Link href={"/addToCodex"} passHref>
+          <Button size="xs">Add to codex</Button>
+        </Link>
+        <Button onClick={getthreeUserIDs}>Don't click</Button>
         👀👀
       </footer>
     </div>
