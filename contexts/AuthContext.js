@@ -140,20 +140,12 @@ export function UserAuthContextProvider({ children }) {
           setDocumentIDs(data);
         });
       }
-      // else {
-      //   setFirestorePlants([]);
-      // }
     });
 
     return () => {
       unsubscribe();
     };
-    // }, [codex]);
   }, [setFirestorePlants, setDocumentIDs]);
-  // }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs]);
-
-  //or is it:
-  // }, [firestorePlants, documentIDs]);
 
   return (
     <userAuthContext.Provider
