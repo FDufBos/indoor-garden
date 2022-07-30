@@ -282,7 +282,12 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
               </div>
             </ModalBody>
 
-            <ModalFooter className="flex gap-1">
+            <ModalFooter className="flex gap-4">
+              <Link href={"/passwordreset"}>
+                <p className="text-xs hover:underline cursor-pointer underline-offset-1 text-gray-800">
+                  Forgot password?
+                </p>
+              </Link>
               <Button
                 type="submit"
                 colorScheme="green"
