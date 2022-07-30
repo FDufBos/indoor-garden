@@ -257,7 +257,7 @@ export default function ProfilePage({}) {
                 placeholder={user?.email ? user.email : userDocument.email}
                 onChange={handleEmailInputChange}
                 color="#FFF3B7"
-className="placeholder:text-water-100 placeholder:opacity-70"
+                className="placeholder:text-water-100 placeholder:opacity-70"
               />
               <Button
                 disabled={emailButtonEnabled}
