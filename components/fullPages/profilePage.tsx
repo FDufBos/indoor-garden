@@ -269,15 +269,33 @@ className="placeholder:text-water-100 placeholder:opacity-70"
               </Button>
             </div>
           </form>
-              aria-label="Submit"
-              // icon={<ChevronRightIcon />}
-              // onSubmit={e => {e.preventDefault()
-              //   handleEmailChange(e)
-              // }}
-              type="submit"
-            >Submit</Button>
-          </div>
-        </Editable>
+          <form
+            onSubmit={handlePasswordChangeSubmit}
+            className="flex flex-wrap items-center md:gap-4 justify-between"
+          >
+            <FormLabel color="#FCFEF8">Password:</FormLabel>
+            <div className="flex gap-2">
+              <Input
+                required
+                id="password"
+                name="password"
+                type="password"
+                placeholder="•••••••••••••••"
+                onChange={handlePasswordChange}
+                color="#FFF3B7"
+                className="placeholder:text-water-100 placeholder:opacity-70"
+              />
+              <Button
+                disabled={emailButtonEnabled}
+                type="submit"
+                onClick={() => {
+                  console.log("blick");
+                }}
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
         
       </Flex>
     </div>
