@@ -242,6 +242,7 @@ export default function ProfilePage({}) {
         <Heading as="h1" size="lg">
           {userDocument ? userDocument.name : name}
         </Heading>
+        <div className="flex flex-col gap-8 mt-6">
           <form
             onSubmit={handleEmailChange}
             className="flex flex-wrap items-center md:gap-4 justify-between"
@@ -296,7 +297,7 @@ className="placeholder:text-water-100 placeholder:opacity-70"
               </Button>
             </div>
           </form>
-        
+        </div>
       </Flex>
     </div>
   );
