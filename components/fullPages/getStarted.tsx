@@ -2,6 +2,13 @@ import { Divider, Flex, Button, Icon, useToast } from "@chakra-ui/react";
 import { SignInButton, SignUpButton } from "../layout";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/router";
+import {useEffect } from "react";
+import { useUserAuth } from "../../contexts/AuthContext";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../utils/firebaseUtils";
+import { addPlant } from "../../data/firestore";
+
 
 import Head from "next/head";
 
@@ -54,15 +61,38 @@ export default function GetStarted(props) {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
         // The signed-in user info.
-        const user = result.user;
+        const googleUser = result.user;
+        
         // ...
+      }).then(async () => {
+        await setDoc(doc(db, "users", auth.currentUser.uid), {
+          uid: auth.currentUser.uid,
+          authProvider: "Google",
+          email: auth.currentUser.email,
+          name: auth.currentUser.displayName,
+          timeCreated: serverTimestamp(),
+        });
+        setName(name);
+        addPlant(
+          {
+            icon: "🌱",
+            commonName: "Welcome Plant",
+            nickname: "Hi!",
+            timeTillNextWater: 0,
+            wateringStreak: 0,
+            level: 1,
+            timeCreated: serverTimestamp(),
+            timeLastWatered: serverTimestamp(),
+          },
+          user.uid
+        );
       })
       .catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
         // The email of the user's account used.
-        const email = error.customData.email;
+        // const email = error.customData.email;
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
         // ...
