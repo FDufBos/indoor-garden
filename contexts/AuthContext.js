@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   updateEmail,
+  updatePassword
 } from "firebase/auth";
 
 import { fetchIDs, fetchPlants } from "../data/firestore";
