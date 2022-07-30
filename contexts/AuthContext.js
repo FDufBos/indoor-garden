@@ -83,24 +83,23 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
-  async function getthreeUserIDs(){
+  async function getthreeUserIDs() {
     function getRandomInt(max) {
       return Math.floor(Math.random() * max);
     }
     //create reference for the user collection
     const userCollection = collection(db, "users");
-    const uidList = []
+    const uidList = [];
     //get the first 3 users
-    
+
     for (let i = 0; i < 3; i++) {
       const docSnap = await getDocs(userCollection);
-      const docData = docSnap.docs.map((doc)=>doc.data());
-      const x = getRandomInt(docData.length-1)
-      console.log(x)
-      uidList.push(docData[x].uid)
+      const docData = docSnap.docs.map((doc) => doc.data());
+      const x = getRandomInt(docData.length - 1);
+      console.log(x);
+      uidList.push(docData[x].uid);
     }
-    console.log(uidList)
-    
+    console.log(uidList);
   }
 
   const fetchCodex = async () => {
