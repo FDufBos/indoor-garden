@@ -12,6 +12,39 @@ const provider = new GoogleAuthProvider();
 
 export default function GetStarted(props) {
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+  const {
+    user,
+    firestorePlants,
+    documentIDs,
+    setFirestorePlants,
+    setDocumentIDs,
+    logOut,
+    setName,
+    name
+  } = useUserAuth();
+
+  const router = useRouter();
+  const { success } = router.query;
+  const toast = useToast();
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (success == "password-reset-email-sent") {
+      toast({
+        title: "Success",
+        position: 'top',
+        description: "Check your email for a password reset link",
+        status: "success",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+        containerStyle: {
+          width: '95vw',
+          maxWidth: '900px',
+        },
+      });
+    }
+  }, [success]);
 
   const handleGoogleClick = (e) => {
     e.preventDefault();
