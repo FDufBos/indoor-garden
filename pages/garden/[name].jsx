@@ -27,6 +27,7 @@ export default function Plant() {
     if (user) {
       if (!router.isReady) return;
       fetchPlant(router.query.name, user.uid).then((plant) => {
+        console.log(router.query.name)
         setPlant(plant);
         if (codex) {
           codex.forEach((doc) => {
