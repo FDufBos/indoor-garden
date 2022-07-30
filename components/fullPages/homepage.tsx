@@ -62,7 +62,7 @@ export default function Homepage() {
       initial="hidden"
       animate="enter"
       exit="exit"
-      transition={{ type: "intertia"}}
+      transition={{ type: "intertia" }}
     >
       <Layout>
         <div>
