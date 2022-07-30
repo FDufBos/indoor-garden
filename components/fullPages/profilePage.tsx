@@ -42,6 +42,7 @@ export default function ProfilePage({}) {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [emailButtonEnabled, setEmailButtonEnabled] = useState(true);
 
   const handleHomeClick = (e) => {
     e.preventDefault();
