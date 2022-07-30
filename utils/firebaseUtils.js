@@ -1,11 +1,13 @@
-
-
-
 import { initializeApp } from "firebase/app";
-import { getFirestore, initializeFirestore, CACHE_SIZE_UNLIMITED, enableIndexedDbPersistence } from "firebase/firestore";
+import {
+  getFirestore,
+  initializeFirestore,
+  CACHE_SIZE_UNLIMITED,
+  enableIndexedDbPersistence,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -19,6 +21,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider("6LcM5DMhAAAAABMKraBQ_kXP5SaG46dILmzjXCOP"),
+  isTokenAutoRefreshEnabled: true,
+});
+
 const db = getFirestore(app, {
   cacheSize: CACHE_SIZE_UNLIMITED,
 });
@@ -27,10 +34,8 @@ const db = getFirestore(app, {
 //   cacheSize: CACHE_SIZE_UNLIMITED,
 // });
 const auth = getAuth(app);
-const storage = getStorage(app)
+const storage = getStorage(app);
 
+export { db, auth, storage, appCheck };
 
-
-export { db, auth, storage };
-
-export default app
+export default app;
