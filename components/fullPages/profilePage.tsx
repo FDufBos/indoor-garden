@@ -18,26 +18,11 @@ import {
   Input,
   FormLabel,
   SkeletonCircle,
-  Editable,
-  EditablePreview,
-  EditableInput,
-  IconButton,
-  ButtonGroup,
 } from "@chakra-ui/react";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  deleteDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../../utils/firebaseUtils";
 
-import { ChevronRightIcon, SettingsIcon, CheckIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
 import { updateEmail } from "firebase/auth";
 
 import { useUserAuth } from "../../contexts/AuthContext";
