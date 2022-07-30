@@ -125,14 +125,14 @@ export default function Homepage() {
               />
             </div>
 
-            {user ? (
+            {user && user.emailVerified ? (
               <Button onClick={handleNewFormClick} className="mx-6 mb-10">
                 New Plant
               </Button>
             ) : (
-              <div className="mx-6 mb-10">
-                <div>Sign In to Add a Plant</div>
-              </div>
+              <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+                Verify email to add a plant
+              </Button>
             )}
           </main>
         </div>
