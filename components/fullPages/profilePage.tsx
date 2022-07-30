@@ -29,8 +29,15 @@ import { useUserAuth } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 
 export default function ProfilePage({}) {
-  const { user, userDocument, uploadProfilePic, photoURL, setPhotoURL, name } =
-    useUserAuth();
+  const {
+    user,
+    userDocument,
+    uploadProfilePic,
+    photoURL,
+    setPhotoURL,
+    name,
+    updateUserPassword,
+  } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [selectedImage, setSelectedImage] = useState(null);
