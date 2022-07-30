@@ -163,7 +163,7 @@ export default function ProfilePage({}) {
           <ChevronRightIcon boxSize="2rem" focusable={true} color="white" />
         </button>
       </nav>
-      <Flex direction="column" align="center" gap="16px">
+      <Flex direction="column" align="center" gap="16px" marginX="6">
         <Tooltip label="Set Profile Image" placement="top" openDelay={400}>
           <Avatar
             src={photoURL}
