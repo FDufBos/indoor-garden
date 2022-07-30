@@ -86,6 +86,7 @@ export default function Homepage() {
                     href={`/garden/${documentIDs[index]}`}
                     key={index}
                     passHref
+                    scroll={false}
                   >
                     <div className="cursor-pointer">
                       <PlantItem
