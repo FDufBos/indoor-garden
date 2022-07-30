@@ -55,8 +55,8 @@ export function UserAuthContextProvider({ children }) {
     return signOut(auth);
   }
 
-  function sendPasswordResetEmail(email) {
-    return sendPasswordResetEmail(auth, email);
+  function updateUserPassword(password) {
+    return updatePassword(user, password);
   }
 
   async function uploadProfilePic(file, user, setLoading) {
