@@ -12,7 +12,6 @@ import { useDisclosure, Button, useToast } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useUserAuth } from "../../contexts/AuthContext";
-import { auth } from "../../utils/firebaseUtils";
 
 const variants = {
   hidden: { x: "-20px", opacity: 0 },
@@ -23,6 +22,7 @@ const variants = {
 export default function Homepage() {
   // const [firestorePlants, setFirestorePlants] = useState([]);
   // const [documentIDs, setDocumentIDs] = useState([]);
+  const [timeTillNextWater, setTimeTillNextWater] = useState();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
