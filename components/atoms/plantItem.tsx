@@ -1,19 +1,43 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../../utils/firebaseUtils";
+import { useUserAuth } from "../../contexts/AuthContext";
+import { serverTimestamp } from "firebase/firestore";
+import Router, { useRouter } from "next/router";
 
 export default function PlantItem({
   icon,
   name,
   commonName,
   timeTillNextWater,
+  setTimeTillNextWater,
   wateringStreak,
   level,
   timeCreated,
   index,
 }) {
-  const handleLevelClick = (e) => {
+  const { user, documentIDs, firestorePlants } = useUserAuth();
+
+  const router = useRouter();
+
+  const handleLevelClick = async (e) => {
     e.preventDefault();
-    console.log("hello");
+    //if timeTillNext Water is not zero, then updateDoc to serverTimeStamp
+    if (timeTillNextWater !== 0) {
+      const plantRef = doc(db, `users/${user.uid}/garden/`, documentIDs[index]);
+      // console.log(plantRef)
+      await updateDoc(plantRef, {
+        timeLastWatered: serverTimestamp(),
+      });
+      setTimeTillNextWater(firestorePlants[index].timeTillNextWater);
+      //reload page
+      Router.reload();
+      // console.log(timeTillNextWater)
+      console.log("watered");
+    }
+   
   };
+
   return (
     
     <div
