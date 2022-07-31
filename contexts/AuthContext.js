@@ -41,6 +41,8 @@ export function UserAuthContextProvider({ children }) {
   const [photoURL, setPhotoURL] = useState("");
   const [userDocument, setUserDocument] = useState("");
   const [codex, setCodex] = useState(null);
+  const [hiddenAnimation, setHiddenAnimation] = useState("hidden"); 
+
 
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
