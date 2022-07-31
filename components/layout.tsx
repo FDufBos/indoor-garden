@@ -320,9 +320,8 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
   );
 }
 
-export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
+export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner, exitAnimation, setExitAnimation }) {
   const { logOut, photoURL } = useUserAuth();
-
   return (
     <nav
       id="explore"
@@ -330,6 +329,9 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
     >
       <Link href="/profile" passHref>
         <div
+          onClick={() => {
+            setExitAnimation("exitLeft")
+          }}
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
         >
@@ -358,11 +360,12 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
   );
 }
 
-export default function Layout({ children }) {
+export default function Layout({ children, exitAnimation, setExitAnimation}) {
   const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } =
     useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+
 
   useEffect(() => {
     if (photoURL) {
@@ -379,6 +382,8 @@ export default function Layout({ children }) {
           <SignOutNav
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
+            exitAnimation={exitAnimation}
+            setExitAnimation={setExitAnimation}
           />
           <div
             id="title-area"
