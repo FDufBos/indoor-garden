@@ -41,6 +41,7 @@ export function UserAuthContextProvider({ children }) {
   const [photoURL, setPhotoURL] = useState("");
   const [userDocument, setUserDocument] = useState("");
   const [codex, setCodex] = useState(null);
+  const [orderPlantsBy, setOrderPlantsBy] = useState("nickname");
   const [hiddenAnimation, setHiddenAnimation] = useState("hidden"); 
 
 
@@ -184,6 +185,10 @@ export function UserAuthContextProvider({ children }) {
         timeSinceLastWatered,
         updateUserPassword,
         forgotPassword,
+        setOrderPlantsBy,
+        orderPlantsBy,
+        hiddenAnimation,
+        setHiddenAnimation,
       }}
     >
       {children}
