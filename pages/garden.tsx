@@ -13,6 +13,6 @@ export default function Garden() {
 
   return (<div>
 
-    {user ? (<Homepage />):(<GetStarted></GetStarted>) }
+    {user ? (<Homepage />):(<GetStarted/>) }
   </div>);
 }
