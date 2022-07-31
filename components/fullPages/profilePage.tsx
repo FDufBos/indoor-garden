@@ -18,42 +18,47 @@ import {
   Input,
   FormLabel,
   SkeletonCircle,
-  Editable,
-  EditablePreview,
-  EditableInput,
-  IconButton,
-  ButtonGroup,
 } from "@chakra-ui/react";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  deleteDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../../utils/firebaseUtils";
 
-import { ChevronRightIcon, SettingsIcon, CheckIcon, EditIcon, CloseIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
 import { updateEmail } from "firebase/auth";
 
 import { useUserAuth } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 
+//Framer Import
+import { motion } from "framer-motion";
+
+  //Framer Animation Variants
+  const variants = {
+    hidden: { x: "-20px", opacity: 0 },
+    enter: { x: "0px", opacity: 1 },
+    exit: { x: "-100px", opacity: 0 },
+  };
+
 export default function ProfilePage({}) {
-  const { user, userDocument, uploadProfilePic, photoURL, setPhotoURL, name } =
-    useUserAuth();
+  const {
+    user,
+    userDocument,
+    uploadProfilePic,
+    photoURL,
+    setPhotoURL,
+    name,
+    updateUserPassword,
+    setHiddenAnimation,
+  } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [emailButtonEnabled, setEmailButtonEnabled] = useState(true);
 
   const handleHomeClick = (e) => {
     e.preventDefault();
-    Router.push("/");
+    setHiddenAnimation("hiddenLeft");
+    Router.push("/garden");
   };
 
   const handleChange = (e) => {
@@ -62,18 +67,45 @@ export default function ProfilePage({}) {
     }
   };
 
+  const handleEmailInputChange = (e) => {
+    if (e.target.value) {
+      setEmailButtonEnabled(false);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    if (e.target.value) {
+      setEmailButtonEnabled(false);
+    }
+  };
+
+  const handlePasswordChangeSubmit = (e) => {
+    e.preventDefault();
+    updateUserPassword(e.target.password.value);
+    e.target.reset();
+    console.log("success");
+  };
+
   const handleEmailChange = async (e) => {
-    console.log(e)
+    e.preventDefault();
+    //get the new email
+    //get the value from the form input called email
+    const newEmail = e.target.email.value;
+    console.log(newEmail);
+
     const docRef = doc(db, "users", user.uid);
-    if (e != userDocument.email) {
-      await updateDoc(docRef, {
-        email: e,
-      }).then(() => {console.log("doc updated");});
-      
-      updateEmail(user, e)
+    if (newEmail != userDocument.email) {
+      updateEmail(user, newEmail)
         .then(async () => {
           console.log("new email is: " + user.email);
           Router.push("/");
+        })
+        .then(async () => {
+          await updateDoc(docRef, {
+            email: newEmail,
+          }).then(() => {
+            console.log("doc updated");
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -116,7 +148,13 @@ export default function ProfilePage({}) {
   };
 
   return (
-    <div>
+    <motion.div
+    variants={variants}
+    initial="hidden"
+    animate="enter"
+    exit="exit"
+    transition={{ type: "intertia" }}
+    >
       <Head>
         <title>{name} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
@@ -136,7 +174,7 @@ export default function ProfilePage({}) {
           <ChevronRightIcon boxSize="2rem" focusable={true} color="white" />
         </button>
       </nav>
-      <Flex direction="column" align="center" gap="16px">
+      <Flex direction="column" align="center" gap="16px" marginX="6">
         <Tooltip label="Set Profile Image" placement="top" openDelay={400}>
           <Avatar
             src={photoURL}
@@ -215,27 +253,63 @@ export default function ProfilePage({}) {
         <Heading as="h1" size="lg">
           {userDocument ? userDocument.name : name}
         </Heading>
-        <Editable
-          defaultValue={user?.email ? user.email : userDocument.email}
-          
-          onSubmit={handleEmailChange}
-        >
-          <div className="flex items-center gap-4">
-            <FormLabel color="#FCFEF8">Email:</FormLabel> 
-            <Input as={EditablePreview} w={80} color="#FCFEF8" position="relative" />
-            <Input name="email" as={EditableInput} w={80} color="#FFF3B7" />
-            <Button
-              aria-label="Submit"
-              // icon={<ChevronRightIcon />}
-              // onSubmit={e => {e.preventDefault()
-              //   handleEmailChange(e)
-              // }}
-              type="submit"
-            >Submit</Button>
-          </div>
-        </Editable>
-        
+        <div className="flex flex-col gap-8 mt-6">
+          <form
+            onSubmit={handleEmailChange}
+            className="flex flex-wrap items-center md:gap-4 justify-between"
+          >
+            <FormLabel color="#FCFEF8">Email:</FormLabel>
+            <div className="flex gap-2">
+              <Input
+                required
+                id="email"
+                name="email"
+                type="email"
+                placeholder={user?.email ? user.email : userDocument.email}
+                onChange={handleEmailInputChange}
+                color="#FFF3B7"
+                className="placeholder:text-water-100 placeholder:opacity-70"
+              />
+              <Button
+                disabled={emailButtonEnabled}
+                type="submit"
+                onClick={() => {
+                  console.log("blick");
+                }}
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
+          <form
+            onSubmit={handlePasswordChangeSubmit}
+            className="flex flex-wrap items-center md:gap-4 justify-between"
+          >
+            <FormLabel color="#FCFEF8">Password:</FormLabel>
+            <div className="flex gap-2">
+              <Input
+                required
+                id="password"
+                name="password"
+                type="password"
+                placeholder="•••••••••••••••"
+                onChange={handlePasswordChange}
+                color="#FFF3B7"
+                className="placeholder:text-water-100 placeholder:opacity-70"
+              />
+              <Button
+                disabled={emailButtonEnabled}
+                type="submit"
+                onClick={() => {
+                  console.log("blick");
+                }}
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
+        </div>
       </Flex>
-    </div>
+    </motion.div>
   );
 }

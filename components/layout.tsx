@@ -71,7 +71,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
               timeLastWatered: serverTimestamp(),
             },
             user.uid
-          )
+          );
         })
         .then(() => {
           setTimeout(() => {
@@ -282,7 +282,12 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
               </div>
             </ModalBody>
 
-            <ModalFooter className="flex gap-1">
+            <ModalFooter className="flex gap-4">
+              <Link href={"/passwordreset"}>
+                <p className="text-xs hover:underline cursor-pointer underline-offset-1 text-gray-800">
+                  Forgot password?
+                </p>
+              </Link>
               <Button
                 type="submit"
                 colorScheme="green"
@@ -315,9 +320,8 @@ export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
   );
 }
 
-export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
+export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner, exitAnimation, setExitAnimation }) {
   const { logOut, photoURL } = useUserAuth();
-
   return (
     <nav
       id="explore"
@@ -325,6 +329,9 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
     >
       <Link href="/profile" passHref>
         <div
+          onClick={() => {
+            setExitAnimation("exitLeft")
+          }}
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
         >
@@ -353,10 +360,12 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner }) {
   );
 }
 
-export default function Layout({ children }) {
-  const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } = useUserAuth();
+export default function Layout({ children, exitAnimation, setExitAnimation}) {
+  const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } =
+    useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+
 
   useEffect(() => {
     if (photoURL) {
@@ -373,6 +382,8 @@ export default function Layout({ children }) {
           <SignOutNav
             setShowLoadingSpinner={setShowLoadingSpinner}
             showLoadingSpinner={showLoadingSpinner}
+            exitAnimation={exitAnimation}
+            setExitAnimation={setExitAnimation}
           />
           <div
             id="title-area"
@@ -399,8 +410,10 @@ export default function Layout({ children }) {
       {children}
       <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
-        <Link href={"/addToCodex"} passHref><Button size="xs">Add to codex</Button></Link>
-        <Button onClick={getthreeUserIDs}>hi</Button>
+        <Link href={"/addToCodex"} passHref>
+          <Button size="xs">Add to codex</Button>
+        </Link>
+        <Button onClick={getthreeUserIDs}>Don&apos;t click</Button>
         👀👀
       </footer>
     </div>

@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   updateEmail,
+  updatePassword
 } from "firebase/auth";
 
 import { fetchIDs, fetchPlants } from "../data/firestore";
@@ -40,6 +41,9 @@ export function UserAuthContextProvider({ children }) {
   const [photoURL, setPhotoURL] = useState("");
   const [userDocument, setUserDocument] = useState("");
   const [codex, setCodex] = useState(null);
+  const [orderPlantsBy, setOrderPlantsBy] = useState("nickname");
+  const [hiddenAnimation, setHiddenAnimation] = useState("hidden"); 
+
 
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -55,8 +59,8 @@ export function UserAuthContextProvider({ children }) {
     return signOut(auth);
   }
 
-  function sendPasswordResetEmail(email) {
-    return sendPasswordResetEmail(auth, email);
+  function updateUserPassword(password) {
+    return updatePassword(user, password);
   }
 
   async function uploadProfilePic(file, user, setLoading) {
@@ -83,24 +87,23 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
-  async function getthreeUserIDs(){
+  async function getthreeUserIDs() {
     function getRandomInt(max) {
       return Math.floor(Math.random() * max);
     }
     //create reference for the user collection
     const userCollection = collection(db, "users");
-    const uidList = []
+    const uidList = [];
     //get the first 3 users
-    
+
     for (let i = 0; i < 3; i++) {
       const docSnap = await getDocs(userCollection);
-      const docData = docSnap.docs.map((doc)=>doc.data());
-      const x = getRandomInt(docData.length-1)
-      console.log(x)
-      uidList.push(docData[x].uid)
+      const docData = docSnap.docs.map((doc) => doc.data());
+      const x = getRandomInt(docData.length - 1);
+      console.log(x);
+      uidList.push(docData[x].uid);
     }
-    console.log(uidList)
-    
+    console.log(uidList);
   }
 
   const fetchCodex = async () => {
@@ -110,6 +113,16 @@ export function UserAuthContextProvider({ children }) {
     setCodex(codexList);
     // return codexList;
   };
+
+  async function timeSinceLastWatered(plant) {
+    return Math.floor(
+      (Date.now() - plant.timeLastWatered.toDate()) / (1000 * 60 * 60 * 24)
+    );
+  }
+
+  const forgotPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  }
 
   useEffect(() => {
     console.log("useEffect @ AuthContext");
@@ -140,20 +153,12 @@ export function UserAuthContextProvider({ children }) {
           setDocumentIDs(data);
         });
       }
-      // else {
-      //   setFirestorePlants([]);
-      // }
     });
 
     return () => {
       unsubscribe();
     };
-    // }, [codex]);
   }, [setFirestorePlants, setDocumentIDs]);
-  // }, [setFirestorePlants, setDocumentIDs, firestorePlants, documentIDs]);
-
-  //or is it:
-  // }, [firestorePlants, documentIDs]);
 
   return (
     <userAuthContext.Provider
@@ -177,6 +182,13 @@ export function UserAuthContextProvider({ children }) {
         documentIDs,
         setDocumentIDs,
         getthreeUserIDs,
+        timeSinceLastWatered,
+        updateUserPassword,
+        forgotPassword,
+        setOrderPlantsBy,
+        orderPlantsBy,
+        hiddenAnimation,
+        setHiddenAnimation,
       }}
     >
       {children}
