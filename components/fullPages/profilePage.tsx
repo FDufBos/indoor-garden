@@ -28,6 +28,16 @@ import { updateEmail } from "firebase/auth";
 import { useUserAuth } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 
+//Framer Import
+import { motion } from "framer-motion";
+
+  //Framer Animation Variants
+  const variants = {
+    hidden: { x: "-20px", opacity: 0 },
+    enter: { x: "0px", opacity: 1 },
+    exit: { x: "-100px", opacity: 0 },
+  };
+
 export default function ProfilePage({}) {
   const {
     user,
@@ -37,6 +47,7 @@ export default function ProfilePage({}) {
     setPhotoURL,
     name,
     updateUserPassword,
+    setHiddenAnimation,
   } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -46,7 +57,8 @@ export default function ProfilePage({}) {
 
   const handleHomeClick = (e) => {
     e.preventDefault();
-    Router.push("/");
+    setHiddenAnimation("hiddenLeft");
+    Router.push("/garden");
   };
 
   const handleChange = (e) => {
@@ -136,7 +148,13 @@ export default function ProfilePage({}) {
   };
 
   return (
-    <div>
+    <motion.div
+    variants={variants}
+    initial="hidden"
+    animate="enter"
+    exit="exit"
+    transition={{ type: "intertia" }}
+    >
       <Head>
         <title>{name} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
@@ -292,6 +310,6 @@ export default function ProfilePage({}) {
           </form>
         </div>
       </Flex>
-    </div>
+    </motion.div>
   );
 }
