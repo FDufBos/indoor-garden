@@ -3255,6 +3255,11 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
+ios-segmented-control-react@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/ios-segmented-control-react/-/ios-segmented-control-react-0.2.2.tgz#f3d84c659633b89323aa78cb581c8fa0cbb3ed73"
+  integrity sha512-xfcbEPPyqeIF/5M6mT82OU+EznDzZIPh/lrBW+YkrkAqj+YyKubG/rSPh2JUTl68vQQdaXrVqDeOMfpkhYAGoA==
+
 is-arrayish@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
