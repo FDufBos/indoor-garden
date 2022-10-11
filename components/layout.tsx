@@ -59,19 +59,6 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             timeCreated: serverTimestamp(),
           });
           setName(name);
-          addPlant(
-            {
-              icon: "🌱",
-              commonName: "Welcome Plant",
-              nickname: "Hi!",
-              timeTillNextWater: 0,
-              wateringStreak: 0,
-              level: 1,
-              timeCreated: serverTimestamp(),
-              timeLastWatered: serverTimestamp(),
-            },
-            user.uid
-          );
         })
         .then(() => {
           setTimeout(() => {
@@ -376,7 +363,8 @@ export default function Layout({ children, exitAnimation, setExitAnimation}) {
   }, [user]);
 
   return (
-    <div className=" text-white">
+    <div className=" text-white flex min-h-screen flex-col justify-between">
+      <div>
       <header className="flex flex-col gap-4 pt-4 mx-6">
         <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
           <SignOutNav
@@ -408,7 +396,9 @@ export default function Layout({ children, exitAnimation, setExitAnimation}) {
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
       </header>
       {children}
-      <footer className="flex flex-col gap-4 mb-4 justify-center items-center">
+      </div>
+      
+      <footer className="w-full flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
         <Link href={"/addToCodex"} passHref>
           <Button size="xs">Add to codex</Button>
