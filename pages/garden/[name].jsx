@@ -45,17 +45,13 @@ export default function Plant() {
     } else {
       // User is signed out
     }
-    // });
-    // if(codexPlant.sunExposure){
-    //   console.log(codexPlant.sunExposure.join(", "));
-    // }
   }, []);
 
   return (
     <div>
       {plant && codexPlant ? (
         <div>
-          {<div>{documentIDs[2]}</div>}
+          {/* {<div>{documentIDs[2]}</div>} */}
           <PlantPage
             nickname={plant.nickname}
             commonName={plant.commonName}
