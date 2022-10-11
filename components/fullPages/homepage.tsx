@@ -1,32 +1,29 @@
-//IMPORTS
+// IMPORTS
+import { Button, useDisclosure, useToast } from "@chakra-ui/react";
+// Firebase Imports
+import { sendEmailVerification } from "firebase/auth";
+// Framer Import
+import { motion } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
-
-//React Imports
+// React Imports
 import React, { useEffect, useState } from "react";
 
-//Framer Import
-import { motion } from "framer-motion";
-
-//UI Imports
-import Layout from "../layout";
+import { useUserAuth } from "../../contexts/AuthContext";
 import PlantItem from "../atoms/plantItem";
 import NewForm from "../forms/newForm";
-import { useDisclosure, Button, useToast } from "@chakra-ui/react";
+// UI Imports
+import Layout from "../layout";
 
-//Firebase Imports
-import { sendEmailVerification } from "firebase/auth";
-import { useUserAuth } from "../../contexts/AuthContext";
-
-
-export default function Homepage() {
-  //HOOKS
+/**
+ *
+ */
+export const Homepage: React.FC = () => {
+  // HOOKS
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
   const [timeTillNextWater, setTimeTillNextWater] = useState();
-  const [exitAnimation, setExitAnimation] = useState("exit"); 
+  const [exitAnimation, setExitAnimation] = useState("exit");
 
   const {
     user,
@@ -39,26 +36,37 @@ export default function Homepage() {
     setHiddenAnimation,
   } = useUserAuth();
 
-  //Framer Animation Variants
+  // Framer Animation Variants
   const variants = {
     hidden: { x: "-30%", opacity: 0 },
     hiddenLeft: { x: "30%", opacity: 0 },
-    enter: { x: "0px", opacity: 1, transition: { ease: "circOut", duration: 0.3 } },
-    exit: { x: "-20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 }  },
-    exitLeft: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
+    enter: {
+      x: "0px",
+      opacity: 1,
+      transition: { ease: "circOut", duration: 0.3 },
+    },
+    exit: {
+      x: "-20%",
+      opacity: 0,
+      transition: { ease: "easeIn", duration: 0.3 },
+    },
+    exitLeft: {
+      x: "20%",
+      opacity: 0,
+      transition: { ease: "easeIn", duration: 0.3 },
+    },
   };
 
   useEffect(() => {
-    if (hiddenAnimation === "hiddenLeft"){
+    if (hiddenAnimation === "hiddenLeft") {
       setHiddenAnimation("exit");
     }
-    console.log(hiddenAnimation);
-  })
+  });
 
-  //HANDLERS
-  //When user click "New Plant" button and they are not verified
-  //a verification email is sent to them and they are logged out
-  const handleNewFormClick = async (e) => {
+  // HANDLERS
+  // When user click "New Plant" button and they are not verified
+  // a verification email is sent to them and they are logged out
+  const handleNewFormClick = async (e): Promise<void> => {
     if (user.emailVerified === false) {
       await sendEmailVerification(user);
       toast({
@@ -87,7 +95,6 @@ export default function Homepage() {
       initial={hiddenAnimation}
       animate="enter"
       exit={exitAnimation}
-      
     >
       <Layout exitAnimation={exitAnimation} setExitAnimation={setExitAnimation}>
         <div>
@@ -127,16 +134,15 @@ export default function Homepage() {
                         name={plant.nickname}
                         commonName={plant.commonName}
                         timeTillNextWater={
-                          timeTillNextWater
-                            ? timeTillNextWater
-                            : Math.floor(
-                                (Date.now() - plant.timeLastWatered.toDate()) /
-                                  (1000 * 60 * 60 * 24)
-                              )
+                          timeTillNextWater ||
+                          Math.floor(
+                            (Date.now() - plant.timeLastWatered.toDate()) /
+                              (1000 * 60 * 60 * 24)
+                          )
                         }
                         setTimeTillNextWater={setTimeTillNextWater}
                         wateringStreak={
-                          //calculate number of days since plant was created
+                          // calculate number of days since plant was created
                           Math.floor(
                             (Date.now() - plant.timeCreated.toDate()) /
                               (1000 * 60 * 60 * 24)
@@ -168,10 +174,11 @@ export default function Homepage() {
                 Verify email to add a plant
               </Button>
             )}
-            <div className="h-8 w-8 bg-blue-500"></div>
+            <div className="h-8 w-8 bg-blue-500" />
           </main>
         </div>
       </Layout>
     </motion.div>
   );
-}
+};
+export default Homepage;

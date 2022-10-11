@@ -23,12 +23,12 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "pages/garden/[name].jsx",
+    "pages/garden/[name].tsx",
     "data/firestore.ts",
-    "contexts/AuthContext.js",
+    "contexts/AuthContext.ts",
     "contexts/user.js",
     "contexts/user.js",
-    "pages/_app.js"
+    "pages/_app.tsx"
   ],
   "exclude": ["node_modules"]
 }

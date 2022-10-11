@@ -1,58 +1,69 @@
-import { db } from "../utils/firebaseUtils";
-
 import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
   addDoc,
+  collection,
   deleteDoc,
-  setDoc,
-  query,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
   orderBy,
-  limit,
+  query,
+  setDoc,
 } from "firebase/firestore";
 
-//CREATE
+import { db } from "../utils/firebaseUtils";
 
-export const addPlant = async (plant, user) => {
+// CREATE
+
+export const addPlant = async (plant, user): Promise<void> => {
   await addDoc(collection(db, `users/${user}/garden`), plant);
 };
 
-export const addToCodex = async (botanicalName, plant) => {
+export const addToCodex = async (botanicalName, plant): Promise<void> => {
   await setDoc(doc(db, "plants", botanicalName), plant);
 };
 
-//READ
+// READ
 
-export const fetchPlants = async (user) => {
-  const q = query(collection(db, `users/${user}/garden`), orderBy("timeCreated"));
+export const fetchPlants = async (user): Promise<DocumentData[]> => {
+  const q = query(
+    collection(db, `users/${user}/garden`),
+    orderBy("timeCreated")
+  );
   const plantsSanpshot = await getDocs(q);
   const plantsList = plantsSanpshot.docs.map((doc) => doc.data());
   return plantsList;
 };
 
-export const fetchIDs = async (user) => {
-  const q = query(collection(db, `users/${user}/garden`), orderBy("timeCreated"));
+export const fetchIDs = async (user): Promise<string[]> => {
+  const q = query(
+    collection(db, `users/${user}/garden`),
+    orderBy("timeCreated")
+  );
 
   const plantsSanpshot = await getDocs(q);
   const idList = plantsSanpshot.docs.map((doc) => doc.id);
   return idList;
 };
 
-export const fetchPlant = async (nickname, user) => {
+export const fetchPlant = async (
+  nickname,
+  user
+): Promise<DocumentData | undefined> => {
   const plantSnapshot = await getDoc(doc(db, `users/${user}/garden`, nickname));
   if (user) {
     if (plantSnapshot.exists()) {
       return plantSnapshot.data();
-    } else {
-      console.log("Frome firestore.ts: Plant doesn't exist");
     }
+
+    // TODO: Error handling
+    // console.log("Frome firestore.ts: Plant doesn't exist");
   }
+  return undefined;
 };
 
-//READ CODEX
-//fetch codex from plant collection
+// READ CODEX
+// fetch codex from plant collection
 // export const fetchCodex = async () => {
 //   const q = query(collection(db, "plants"), orderBy("commonName"));
 //   const codexSnapshot = await getDocs(q);
@@ -60,7 +71,7 @@ export const fetchPlant = async (nickname, user) => {
 //   return codexList;
 // }
 
-//DELETE PLANT
-export const deletePlant = async (plant, user) => {
+// DELETE PLANT
+export const deletePlant = async (plant, user): Promise<void> => {
   await deleteDoc(doc(db, `users/${user}/garden`, plant));
 };

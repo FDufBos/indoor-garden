@@ -1,3 +1,3 @@
-export default function SkeletonPlantPage(){
-  return (<div></div>)
-}
+export const SkeletonPlantPage: React.FC = () => <div />;
+
+export default SkeletonPlantPage;

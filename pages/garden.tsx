@@ -1,18 +1,12 @@
 import React from "react";
-import Homepage from "../components/fullPages/homepage";
+
 import GetStarted from "../components/fullPages/getStarted";
-import { getAuth } from "firebase/auth";
-import { motion, AnimatePresence } from "framer-motion";
-import {useUserAuth} from "../contexts/AuthContext";
+import Homepage from "../components/fullPages/homepage";
+import { useUserAuth } from "../contexts/AuthContext";
 
-
-export default function Garden() {
-
+export const Garden: React.FC = () => {
   const { user } = useUserAuth();
 
-
-  return (<div>
-
-    {user ? (<Homepage />):(<GetStarted/>) }
-  </div>);
-}
+  return <div>{user ? <Homepage /> : <GetStarted />}</div>;
+};
+export default Garden;

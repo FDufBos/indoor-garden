@@ -1,47 +1,61 @@
-import Image from "next/image";
-import Link from "next/link";
-("../data/firestore");
+/* eslint-disable max-lines */
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Avatar,
   Button,
+  Input,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Input,
-  Avatar,
-  SkeletonCircle,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spacer,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
-import { useState, useEffect } from "react";
-
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { getAuth, sendEmailVerification } from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import Image from "next/image";
+import Link from "next/link";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 import { useUserAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebaseUtils";
-import { addPlant } from "../data/firestore";
 
-//called for sendEmailVerification
+// called for sendEmailVerification
 const auth = getAuth();
 
-export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
+export interface LoadingSpinnerProps {
+  /** Should show the loading spinner */
+  showLoadingSpinner: boolean;
+  /** Set the loading spinner */
+  setShowLoadingSpinner: (boolean) => void;
+}
+
+export interface ExitAnimationProps {
+  /** The exit animation to use */
+  exitAnimation: string;
+  /** Set the exit animation */
+  setExitAnimation: (string) => void;
+}
+
+export const SignUpButton: React.FC<LoadingSpinnerProps> = ({
+  showLoadingSpinner,
+  setShowLoadingSpinner,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const { signUp, name, setName, user } = useUserAuth();
+  const { signUp, name, setName } = useUserAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e): Promise<void> => {
     e.preventDefault();
     setError("");
     setShowLoadingSpinner(true);
@@ -55,7 +69,7 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             uid: auth.currentUser.uid,
             authProvider: "Username and Password",
             email,
-            name: name,
+            name,
             timeCreated: serverTimestamp(),
           });
           setName(name);
@@ -167,7 +181,10 @@ export const SignUpButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   );
 };
 
-export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
+export const SignInButton: React.FC<LoadingSpinnerProps> = ({
+  showLoadingSpinner,
+  setShowLoadingSpinner,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [email, setEmail] = useState("");
@@ -175,7 +192,7 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   const [error, setError] = useState("");
   const { logIn } = useUserAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e): Promise<void> => {
     e.preventDefault();
     setError("");
     setShowLoadingSpinner(true);
@@ -270,7 +287,7 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
             </ModalBody>
 
             <ModalFooter className="flex gap-4">
-              <Link href={"/passwordreset"}>
+              <Link href="/passwordreset" passHref>
                 <p className="text-xs hover:underline cursor-pointer underline-offset-1 text-gray-800">
                   Forgot password?
                 </p>
@@ -290,24 +307,29 @@ export const SignInButton = ({ showLoadingSpinner, setShowLoadingSpinner }) => {
   );
 };
 
-export function LoginNav({ showLoadingSpinner, setShowLoadingSpinner }) {
-  return (
-    <nav id="explore" className="">
-      <div className="flex flex-row md:gap-4 items-center justify-between md:justify-end w-full ">
-        <SignUpButton
-          showLoadingSpinner={showLoadingSpinner}
-          setShowLoadingSpinner={setShowLoadingSpinner}
-        />
-        <SignInButton
-          showLoadingSpinner={showLoadingSpinner}
-          setShowLoadingSpinner={setShowLoadingSpinner}
-        />
-      </div>
-    </nav>
-  );
-}
+export const LoginNav: React.FC<LoadingSpinnerProps> = ({
+  showLoadingSpinner,
+  setShowLoadingSpinner,
+}) => (
+  <nav id="explore" className="">
+    <div className="flex flex-row md:gap-4 items-center justify-between md:justify-end w-full ">
+      <SignUpButton
+        showLoadingSpinner={showLoadingSpinner}
+        setShowLoadingSpinner={setShowLoadingSpinner}
+      />
+      <SignInButton
+        showLoadingSpinner={showLoadingSpinner}
+        setShowLoadingSpinner={setShowLoadingSpinner}
+      />
+    </div>
+  </nav>
+);
 
-export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner, exitAnimation, setExitAnimation }) {
+export const SignOutNav: React.FC<LoadingSpinnerProps & ExitAnimationProps> = ({
+  setShowLoadingSpinner,
+  showLoadingSpinner,
+  setExitAnimation,
+}) => {
   const { logOut, photoURL } = useUserAuth();
   return (
     <nav
@@ -317,12 +339,12 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner, exitAnim
       <Link href="/profile" passHref>
         <div
           onClick={() => {
-            setExitAnimation("exitLeft")
+            setExitAnimation("exitLeft");
           }}
           id="profile-pic"
           className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
         >
-          <Avatar w={10} h={10} src={photoURL}></Avatar>
+          <Avatar w={10} h={10} src={photoURL} />
         </div>
       </Link>
       <div>
@@ -345,14 +367,17 @@ export function SignOutNav({ setShowLoadingSpinner, showLoadingSpinner, exitAnim
       </div>
     </nav>
   );
-}
+};
 
-export default function Layout({ children, exitAnimation, setExitAnimation}) {
+export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
+  children,
+  exitAnimation,
+  setExitAnimation,
+}) => {
   const { user, userDocument, photoURL, setPhotoURL, name, getthreeUserIDs } =
     useUserAuth();
 
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
-
 
   useEffect(() => {
     if (photoURL) {
@@ -365,42 +390,42 @@ export default function Layout({ children, exitAnimation, setExitAnimation}) {
   return (
     <div className=" text-white flex min-h-screen flex-col justify-between">
       <div>
-      <header className="flex flex-col gap-4 pt-4 mx-6">
-        <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
-          <SignOutNav
-            setShowLoadingSpinner={setShowLoadingSpinner}
-            showLoadingSpinner={showLoadingSpinner}
-            exitAnimation={exitAnimation}
-            setExitAnimation={setExitAnimation}
-          />
-          <div
-            id="title-area"
-            className="flex flex-row justify-between items-end w-full"
-          >
-            <div className="flex flex-row items-baseline gap-3">
-              {userDocument ? (
-                <h1>{userDocument.name + "'s Garden"}</h1>
-              ) : (
-                <h1>{name}</h1>
-              )}
-            </div>
-            <Image
-              src="/images/sun.svg"
-              width="35"
-              height="35"
-              className="hidden"
+        <header className="flex flex-col gap-4 pt-4 mx-6">
+          <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
+            <SignOutNav
+              setShowLoadingSpinner={setShowLoadingSpinner}
+              showLoadingSpinner={showLoadingSpinner}
+              exitAnimation={exitAnimation}
+              setExitAnimation={setExitAnimation}
             />
+            <div
+              id="title-area"
+              className="flex flex-row justify-between items-end w-full"
+            >
+              <div className="flex flex-row items-baseline gap-3">
+                {userDocument ? (
+                  <h1>{`${userDocument.name}'s Garden`}</h1>
+                ) : (
+                  <h1>{name}</h1>
+                )}
+              </div>
+              <Image
+                src="/images/sun.svg"
+                width="35"
+                height="35"
+                className="hidden"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4"></div>
-      </header>
-      {children}
+          <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4" />
+        </header>
+        {children}
       </div>
-      
+
       <footer className="w-full flex flex-col gap-4 mb-4 justify-center items-center">
-        <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1"></div>
-        <Link href={"/addToCodex"} passHref>
+        <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1" />
+        <Link href="/addToCodex" passHref>
           <Button size="xs">Add to codex</Button>
         </Link>
         <Button onClick={getthreeUserIDs}>Don&apos;t click</Button>
@@ -408,4 +433,7 @@ export default function Layout({ children, exitAnimation, setExitAnimation}) {
       </footer>
     </div>
   );
-}
+};
+
+export default Layout;
+/* eslint-enable max-lines */

@@ -1,14 +1,7 @@
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  initializeFirestore,
-  CACHE_SIZE_UNLIMITED,
-  enableIndexedDbPersistence,
-} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { CACHE_SIZE_UNLIMITED, getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-// import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"
-import { getPerformance } from "firebase/performance";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -34,6 +27,6 @@ const db = getFirestore(app, {
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-export { db, auth, storage };
+export { auth, db, storage };
 
 export default app;

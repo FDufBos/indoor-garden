@@ -1,11 +1,18 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { updateDoc, doc } from "firebase/firestore";
-import { db } from "../../utils/firebaseUtils";
-import { useUserAuth } from "../../contexts/AuthContext";
-import { serverTimestamp } from "firebase/firestore";
-import Router, { useRouter } from "next/router";
+import { Plant } from "@main/common-types";
+import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import Router from "next/router";
 
-export default function PlantItem({
+import { useUserAuth } from "../../contexts/AuthContext";
+import { db } from "../../utils/firebaseUtils";
+
+export const PlantItem: React.FC<
+  Plant & {
+    /** Set the time until the next water */
+    setTimeTillNextWater: (number) => void;
+    /** The document index */
+    index: string;
+  }
+> = ({
   icon,
   name,
   commonName,
@@ -13,16 +20,13 @@ export default function PlantItem({
   setTimeTillNextWater,
   wateringStreak,
   level,
-  timeCreated,
   index,
-}) {
+}) => {
   const { user, documentIDs, firestorePlants } = useUserAuth();
 
-  const router = useRouter();
-
-  const handleLevelClick = async (e) => {
+  const handleLevelClick = async (e): Promise<void> => {
     e.preventDefault();
-    //if timeTillNext Water is not zero, then updateDoc to serverTimeStamp
+    // if timeTillNext Water is not zero, then updateDoc to serverTimeStamp
     if (timeTillNextWater !== 0) {
       const plantRef = doc(db, `users/${user.uid}/garden/`, documentIDs[index]);
       // console.log(plantRef)
@@ -30,12 +34,9 @@ export default function PlantItem({
         timeLastWatered: serverTimestamp(),
       });
       setTimeTillNextWater(firestorePlants[index].timeTillNextWater);
-      //reload page
+      // reload page
       Router.reload();
-      // console.log(timeTillNextWater)
-      console.log("watered");
     }
-   
   };
 
   return (
@@ -52,6 +53,7 @@ export default function PlantItem({
         <button
           onClick={handleLevelClick}
           id="image-label"
+          // eslint-disable-next-line max-len
           className="flex items-center justify-center bg-water-100 h-6 w-6 rounded-full drop-shadow text-grey-600 font-[690] text-sm relative top-11 -left-6"
         >
           {level}
@@ -67,4 +69,5 @@ export default function PlantItem({
       </div>
     </div>
   );
-}
+};
+export default PlantItem;
