@@ -24,9 +24,9 @@ import { useUserAuth } from "../../contexts/AuthContext";
 // const auth = getAuth()
 
 const variants = {
-  hidden: { x: "20px", opacity: 0 },
-  enter: { x: "0px", opacity: 1 },
-  exit: { x: "100px", opacity: 0, delay: 0.2 },
+  hidden: { x: "30%", opacity: 0 },
+  enter: { x: "0px", opacity: 1, transition: { ease: "circOut", duration: 0.3 } },
+  exit: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
 };
 
 export default function PlantPage({
@@ -40,7 +40,7 @@ export default function PlantPage({
   sunExposure,
   wateringFrequency,
 }) {
-  const { user } = useUserAuth();
+  const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function PlantPage({
       initial="hidden"
       animate="enter"
       exit={"exit"}
-      transition={{ type: "intertia" }}
+
     >
       <Head>
         <title>{nickname} | Indoor Garden</title>
@@ -97,7 +97,10 @@ export default function PlantPage({
                 onClick={() => {
                   onClose();
                   deletePlant(router.query.name, user.uid);
+                  setFirestorePlants(firestorePlants.filter((plant) => plant.nickname !== nickname));
+                  console.log(firestorePlants);
                   Router.push("/");
+
                 }}
                 colorScheme="red"
               >

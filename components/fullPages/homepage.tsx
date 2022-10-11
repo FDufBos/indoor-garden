@@ -41,17 +41,18 @@ export default function Homepage() {
 
   //Framer Animation Variants
   const variants = {
-    hidden: { x: "-20px", opacity: 0 },
-    hiddenLeft: { x: "20px", opacity: 0 },
-    enter: { x: "0px", opacity: 1 },
-    exit: { x: "-100px", opacity: 0 },
-    exitLeft: { x: "100px", opacity: 0 },
+    hidden: { x: "-30%", opacity: 0 },
+    hiddenLeft: { x: "30%", opacity: 0 },
+    enter: { x: "0px", opacity: 1, transition: { ease: "circOut", duration: 0.3 } },
+    exit: { x: "-20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 }  },
+    exitLeft: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
   };
 
   useEffect(() => {
     if (hiddenAnimation === "hiddenLeft"){
       setHiddenAnimation("exit");
     }
+    console.log(hiddenAnimation);
   })
 
   //HANDLERS
@@ -86,7 +87,7 @@ export default function Homepage() {
       initial={hiddenAnimation}
       animate="enter"
       exit={exitAnimation}
-      transition={{ type: "intertia" }}
+      
     >
       <Layout exitAnimation={exitAnimation} setExitAnimation={setExitAnimation}>
         <div>
@@ -101,7 +102,7 @@ export default function Homepage() {
             <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
           </Head>
 
-          <main className="min-h-screen">
+          <main className="h-full">
             {/* <Button
               onClick={async (e) => {
                 e.preventDefault();
@@ -167,6 +168,7 @@ export default function Homepage() {
                 Verify email to add a plant
               </Button>
             )}
+            <div className="h-8 w-8 bg-blue-500"></div>
           </main>
         </div>
       </Layout>
