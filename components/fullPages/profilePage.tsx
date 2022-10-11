@@ -20,7 +20,7 @@ import {
   SkeletonCircle,
 } from "@chakra-ui/react";
 import { doc, updateDoc } from "firebase/firestore";
-import { auth, db, storage } from "../../utils/firebaseUtils";
+import { db } from "../../utils/firebaseUtils";
 
 import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
 import { updateEmail } from "firebase/auth";
@@ -31,12 +31,14 @@ import { useState, useEffect } from "react";
 //Framer Import
 import { motion } from "framer-motion";
 
-  //Framer Animation Variants
-  const variants = {
-    hidden: { x: "-20px", opacity: 0 },
-    enter: { x: "0px", opacity: 1 },
-    exit: { x: "-100px", opacity: 0 },
-  };
+//Framer Animation Variants
+const variants = {
+  hidden: { x: "-30%", opacity: 0 },
+  enter: {x: "0px",opacity: 1,transition: { ease: "circOut", duration: 0.3 },},
+  exit: {x: "-20%",opacity: 0,transition: { ease: "easeIn", duration: 0.3 },},
+};
+
+import Settings from "../../components/fullPages/settings";
 
 export default function ProfilePage({}) {
   const {
@@ -54,6 +56,7 @@ export default function ProfilePage({}) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [emailButtonEnabled, setEmailButtonEnabled] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleHomeClick = (e) => {
     e.preventDefault();
@@ -113,6 +116,11 @@ export default function ProfilePage({}) {
     }
   };
 
+  const handleSettingsOpen = (e) => {
+    e.preventDefault();
+    setSettingsOpen(true);
+  };
+
   useEffect(() => {
     if (photoURL) {
       setPhotoURL(photoURL);
@@ -121,7 +129,6 @@ export default function ProfilePage({}) {
     } else {
       setPhotoURL(null);
     }
-    
   }, [user]);
 
   const handlePhotoURLSubmit = async (e) => {
@@ -149,14 +156,13 @@ export default function ProfilePage({}) {
 
   return (
     <motion.div
-    variants={variants}
-    initial="hidden"
-    animate="enter"
-    exit="exit"
-    transition={{ type: "intertia" }}
+      variants={variants}
+      initial="hidden"
+      animate="enter"
+      exit="exit"
     >
       <Head>
-        <title>{name} | Indoor Garden</title>
+        <title> {userDocument.name} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
         <link rel="icon" href="/favicon.ico" />
 
@@ -165,9 +171,11 @@ export default function ProfilePage({}) {
         <link rel="apple-touch-icon" href="/images/app_icons/icon.png" />
         <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
       </Head>
-
+      {settingsOpen ? (
+        <Settings setSettingsOpen={setSettingsOpen}></Settings>
+      ) : null}
       <nav className="flex justify-between mx-6 py-6">
-        <button>
+        <button onClick={handleSettingsOpen}>
           <SettingsIcon boxSize="1.2rem" focusable={true} color="white" />
         </button>
         <button onClick={handleHomeClick}>
@@ -206,7 +214,7 @@ export default function ProfilePage({}) {
                       width={"250px"}
                       height={"250px"}
                       src={URL.createObjectURL(selectedImage)}
-                      className=" rounded-full shadow-md w-28 h-28"
+                      className="rounded-full shadow-md w-28 h-28"
                     />
                     <br />
                   </div>
