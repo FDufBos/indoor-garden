@@ -149,11 +149,6 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  if (!userDocument) {
-    // TODO: Eventually this should be replace by pre-populating the data using getServerSideProps
-    return <div>Loading</div>;
-  }
-
   return (
     <motion.div
       variants={variants}
@@ -162,7 +157,7 @@ export const ProfilePage: React.FC = () => {
       exit="exit"
     >
       <Head>
-        <title> {userDocument?.name} | Indoor Garden</title>
+        <title> {userDocument.name} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
         <link rel="icon" href="/favicon.ico" />
 
