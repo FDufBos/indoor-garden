@@ -20,9 +20,7 @@ const app = initializeApp(firebaseConfig);
 //   isTokenAutoRefreshEnabled: true,
 // });
 
-const db = getFirestore(app, {
-  cacheSize: CACHE_SIZE_UNLIMITED,
-});
+const db = getFirestore(app);
 
 const auth = getAuth(app);
 const storage = getStorage(app);
