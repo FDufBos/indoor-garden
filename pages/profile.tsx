@@ -1,19 +1,10 @@
-import Router, { useRouter } from "next/router";
-import { useUserAuth } from "../contexts/AuthContext";
+import React from "react";
 
 import ProfilePage from "../components/fullPages/profilePage";
 
-export default function User() {
-  //create state to store plant query param
-  const router = useRouter();
-  // const {userProfile} = router.query;
-  const { user, userDocument } = useUserAuth();
-
-
-
-  return (
-    <div>
-      <ProfilePage></ProfilePage>
-    </div>
-  );
-}
+export const User: React.FC = () => (
+  <div>
+    <ProfilePage />
+  </div>
+);
+export default User;

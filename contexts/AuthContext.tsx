@@ -1,112 +1,116 @@
-import { createContext, useEffect, useState, useContext } from "react";
+import { Plant } from "@main/common-types";
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
   updateProfile,
-  updateEmail,
-  updatePassword
+  User,
+  UserCredential,
 } from "firebase/auth";
-
-import { fetchIDs, fetchPlants } from "../data/firestore";
-
 import {
   collection,
-  getDocs,
-  getDoc,
   doc,
-  addDoc,
-  deleteDoc,
-  setDoc,
-  query,
+  DocumentData,
+  getDoc,
+  getDocs,
   orderBy,
+  query,
 } from "firebase/firestore";
-
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Router from "next/router";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import { fetchIDs, fetchPlants } from "../data/firestore";
 import { auth, db, storage } from "../utils/firebaseUtils";
 
-const userAuthContext = createContext();
+const UserAuthContext = createContext(undefined);
 
-export function UserAuthContextProvider({ children }) {
+export const UserAuthContextProvider: React.FC<PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const [firestorePlants, setFirestorePlants] = useState([]);
   const [documentIDs, setDocumentIDs] = useState([]);
 
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState<User>();
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  const [userDocument, setUserDocument] = useState("");
+  const [userDocument, setUserDocument] = useState<DocumentData>();
   const [codex, setCodex] = useState(null);
   const [orderPlantsBy, setOrderPlantsBy] = useState("nickname");
-  const [hiddenAnimation, setHiddenAnimation] = useState("hidden"); 
+  const [hiddenAnimation, setHiddenAnimation] = useState("hidden");
 
+  const signUp = (email, password): Promise<UserCredential> =>
+    createUserWithEmailAndPassword(auth, email, password);
 
-  function signUp(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
-  }
-  function logIn(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
-  function logOut() {
+  const logIn = (email, password): Promise<UserCredential> =>
+    signInWithEmailAndPassword(auth, email, password);
+
+  const logOut = (): Promise<void> => {
     setPhotoURL("");
-    setUserDocument("");
-    setUser("");
+    setUserDocument(undefined);
+    setUser(undefined);
     Router.push("/");
     return signOut(auth);
-  }
+  };
 
-  function updateUserPassword(password) {
-    return updatePassword(user, password);
-  }
+  const updateUserPassword = (password): Promise<void> =>
+    updatePassword(user, password);
 
-  async function uploadProfilePic(file, user, setLoading) {
-    const fileRef = ref(storage, "profilepics/" + user.uid);
+  const uploadProfilePic = async (file, user, setLoading): Promise<void> => {
+    const fileRef = ref(storage, `profilepics/${user.uid}`);
     setLoading(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const snapshot = await uploadBytes(fileRef, file);
     const photoURL = await getDownloadURL(fileRef);
-    //save photoURL to local storage
+    // save photoURL to local storage
     localStorage.setItem("photoURL", photoURL);
     updateProfile(user, { photoURL });
     setLoading(false);
-  }
+  };
 
-  async function getUserDocument(user) {
+  /**
+   *
+   */
+  const getUserDocument = async (user: User): Promise<void> => {
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
     const docData = docSnap.data();
 
     if (docSnap.exists()) {
-      console.log("docSnap Exists!");
       setUserDocument(docData);
     } else {
-      console.log("No such document!");
+      throw Error("No such document!");
     }
-  }
+  };
 
-  async function getthreeUserIDs() {
-    function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
-    }
-    //create reference for the user collection
+  const getthreeUserIDs = async (): Promise<void> => {
+    const getRandomInt = (max: number): number =>
+      Math.floor(Math.random() * max);
+    // create reference for the user collection
     const userCollection = collection(db, "users");
     const uidList = [];
-    //get the first 3 users
 
-    for (let i = 0; i < 3; i++) {
-      const docSnap = await getDocs(userCollection);
-      const docData = docSnap.docs.map((doc) => doc.data());
-      const x = getRandomInt(docData.length - 1);
-      console.log(x);
-      uidList.push(docData[x].uid);
-    }
-    console.log(uidList);
-  }
+    // get the first 3 users
+    await Promise.resolve(
+      Array(3).map(async () => {
+        const docSnap = await getDocs(userCollection);
+        const docData = docSnap.docs.map((doc) => doc.data());
+        const x = getRandomInt(docData.length - 1);
+        uidList.push(docData[x].uid);
+      })
+    );
+  };
 
-  const fetchCodex = async () => {
+  const fetchCodex = async (): Promise<void> => {
     const q = query(collection(db, "plants"), orderBy("commonName"));
     const codexSnapshot = await getDocs(q);
     const codexList = codexSnapshot.docs.map((doc) => doc.data());
@@ -114,23 +118,22 @@ export function UserAuthContextProvider({ children }) {
     // return codexList;
   };
 
-  async function timeSinceLastWatered(plant) {
-    return Math.floor(
-      (Date.now() - plant.timeLastWatered.toDate()) / (1000 * 60 * 60 * 24)
-    );
-  }
+  // TODO: timeSinceLastWatered is a value? or a function?
+  const timeSinceLastWatered = (plant: Plant): number => {
+    const now = new Date().valueOf();
+    const lastWatered = new Date(plant.timeLastWatered).valueOf();
+    return Math.floor(Math.abs(now - lastWatered) / (1000 * 60 * 60 * 24));
+  };
 
-  const forgotPassword = (email) => {
-    return sendPasswordResetEmail(auth, email);
-  }
+  const forgotPassword = (email): Promise<void> =>
+    sendPasswordResetEmail(auth, email);
 
   useEffect(() => {
-    console.log("useEffect @ AuthContext");
     fetchCodex();
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       // console.log(currentUser);
-      //function to set user document
+      // function to set user document
       if (currentUser) {
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
@@ -141,8 +144,6 @@ export function UserAuthContextProvider({ children }) {
         if (docSnap.exists()) {
           // console.log("docSnap Exists!");
           setUserDocument(docData);
-        } else {
-          console.log("No such document!");
         }
 
         fetchPlants(currentUser.uid).then((data) => {
@@ -161,7 +162,7 @@ export function UserAuthContextProvider({ children }) {
   }, [setFirestorePlants, setDocumentIDs]);
 
   return (
-    <userAuthContext.Provider
+    <UserAuthContext.Provider
       value={{
         user,
         userDocument,
@@ -192,10 +193,9 @@ export function UserAuthContextProvider({ children }) {
       }}
     >
       {children}
-    </userAuthContext.Provider>
+    </UserAuthContext.Provider>
   );
-}
+};
 
-export function useUserAuth() {
-  return useContext(userAuthContext);
-}
+// TODO: Need to setup types for this context
+export const useUserAuth = (): any => useContext(UserAuthContext);

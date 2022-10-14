@@ -1,46 +1,51 @@
-import Head from "next/head";
-import Router from "next/router";
-import Image from "next/image";
+import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
   Avatar,
-  Heading,
-  Flex,
-  useDisclosure,
-  Tooltip,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
   Button,
-  Input,
+  Flex,
   FormLabel,
+  Heading,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SkeletonCircle,
+  Tooltip,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../utils/firebaseUtils";
-
-import { ChevronRightIcon, SettingsIcon } from "@chakra-ui/icons";
 import { updateEmail } from "firebase/auth";
+import { doc, updateDoc } from "firebase/firestore";
+// Framer Import
+import { motion } from "framer-motion";
+import Head from "next/head";
+import Image from "next/image";
+import Router from "next/router";
+import { useEffect, useState } from "react";
 
 import { useUserAuth } from "../../contexts/AuthContext";
-import { useState, useEffect } from "react";
+import { db } from "../../utils/firebaseUtils";
+import Settings from "./settings";
 
-//Framer Import
-import { motion } from "framer-motion";
-
-//Framer Animation Variants
+// Framer Animation Variants
 const variants = {
   hidden: { x: "-30%", opacity: 0 },
-  enter: {x: "0px",opacity: 1,transition: { ease: "circOut", duration: 0.3 },},
-  exit: {x: "-20%",opacity: 0,transition: { ease: "easeIn", duration: 0.3 },},
+  enter: {
+    x: "0px",
+    opacity: 1,
+    transition: { ease: "circOut", duration: 0.3 },
+  },
+  exit: {
+    x: "-20%",
+    opacity: 0,
+    transition: { ease: "easeIn", duration: 0.3 },
+  },
 };
 
-import Settings from "../../components/fullPages/settings";
-
-export default function ProfilePage({}) {
+export const ProfilePage: React.FC = () => {
   const {
     user,
     userDocument,
@@ -58,65 +63,60 @@ export default function ProfilePage({}) {
   const [emailButtonEnabled, setEmailButtonEnabled] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const handleHomeClick = (e) => {
+  const handleHomeClick = (e): void => {
     e.preventDefault();
     setHiddenAnimation("hiddenLeft");
     Router.push("/garden");
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e): void => {
     if (e.target.files[0]) {
       setSelectedImage(e.target.files[0]);
     }
   };
 
-  const handleEmailInputChange = (e) => {
+  const handleEmailInputChange = (e): void => {
     if (e.target.value) {
       setEmailButtonEnabled(false);
     }
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e): void => {
     if (e.target.value) {
       setEmailButtonEnabled(false);
     }
   };
 
-  const handlePasswordChangeSubmit = (e) => {
+  const handlePasswordChangeSubmit = (e): void => {
     e.preventDefault();
     updateUserPassword(e.target.password.value);
     e.target.reset();
-    console.log("success");
   };
 
-  const handleEmailChange = async (e) => {
+  const handleEmailChange = async (e): Promise<void> => {
     e.preventDefault();
-    //get the new email
-    //get the value from the form input called email
+    // get the new email
+    // get the value from the form input called email
     const newEmail = e.target.email.value;
-    console.log(newEmail);
 
     const docRef = doc(db, "users", user.uid);
-    if (newEmail != userDocument.email) {
-      updateEmail(user, newEmail)
+    if (newEmail !== userDocument.email) {
+      await updateEmail(user, newEmail)
         .then(async () => {
-          console.log("new email is: " + user.email);
-          Router.push("/");
+          await Router.push("/");
         })
         .then(async () => {
           await updateDoc(docRef, {
             email: newEmail,
-          }).then(() => {
-            console.log("doc updated");
           });
         })
         .catch((error) => {
-          console.log(error);
+          throw Error(error);
         });
     }
   };
 
-  const handleSettingsOpen = (e) => {
+  const handleSettingsOpen = (e): void => {
     e.preventDefault();
     setSettingsOpen(true);
   };
@@ -131,12 +131,10 @@ export default function ProfilePage({}) {
     }
   }, [user]);
 
-  const handlePhotoURLSubmit = async (e) => {
+  const handlePhotoURLSubmit = async (e): Promise<void> => {
     e.preventDefault();
-    console.log(selectedImage);
-    console.log(user);
     try {
-      uploadProfilePic(selectedImage, user, setLoading)
+      await uploadProfilePic(selectedImage, user, setLoading)
         .then(() => {
           onClose();
         })
@@ -146,11 +144,8 @@ export default function ProfilePage({}) {
         .then(() => {
           setSelectedImage(null);
         });
-    } catch {
-      (err) => {
-        setLoading(false);
-        console.log(err);
-      };
+    } catch (err) {
+      setLoading(false);
     }
   };
 
@@ -172,14 +167,16 @@ export default function ProfilePage({}) {
         <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
       </Head>
       {settingsOpen ? (
-        <Settings setSettingsOpen={setSettingsOpen}></Settings>
+        <Settings
+          setSettingsOpen={(value: boolean) => setSettingsOpen(value)}
+        />
       ) : null}
       <nav className="flex justify-between mx-6 py-6">
         <button onClick={handleSettingsOpen}>
-          <SettingsIcon boxSize="1.2rem" focusable={true} color="white" />
+          <SettingsIcon boxSize="1.2rem" focusable color="white" />
         </button>
         <button onClick={handleHomeClick}>
-          <ChevronRightIcon boxSize="2rem" focusable={true} color="white" />
+          <ChevronRightIcon boxSize="2rem" focusable color="white" />
         </button>
       </nav>
       <Flex direction="column" align="center" gap="16px" marginX="6">
@@ -190,7 +187,7 @@ export default function ProfilePage({}) {
             onClick={onOpen}
             cursor="pointer"
             size="lg"
-          ></Avatar>
+          />
         </Tooltip>
         <Modal
           isOpen={isOpen}
@@ -211,8 +208,8 @@ export default function ProfilePage({}) {
                   <div className="flex flex-col justify-center items-center mb-8">
                     <Image
                       alt="Not found"
-                      width={"250px"}
-                      height={"250px"}
+                      width="250px"
+                      height="250px"
                       src={URL.createObjectURL(selectedImage)}
                       className="rounded-full shadow-md w-28 h-28"
                     />
@@ -224,7 +221,7 @@ export default function ProfilePage({}) {
                   cursor="pointer"
                   bg="#FFF3B7"
                   border="5px dotted #FAD042"
-                  textAlign={"center"}
+                  textAlign="center"
                   className="hover:scale-[99%] transition-all"
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => {
@@ -239,7 +236,7 @@ export default function ProfilePage({}) {
                     name="profile-pic"
                     onChange={handleChange}
                     accept="image/*"
-                  ></Input>
+                  />
                   Browse
                   <br /> or <br />
                   drag and drop a file
@@ -278,13 +275,7 @@ export default function ProfilePage({}) {
                 color="#FFF3B7"
                 className="placeholder:text-water-100 placeholder:opacity-70"
               />
-              <Button
-                disabled={emailButtonEnabled}
-                type="submit"
-                onClick={() => {
-                  console.log("blick");
-                }}
-              >
+              <Button disabled={emailButtonEnabled} type="submit">
                 Submit
               </Button>
             </div>
@@ -305,13 +296,7 @@ export default function ProfilePage({}) {
                 color="#FFF3B7"
                 className="placeholder:text-water-100 placeholder:opacity-70"
               />
-              <Button
-                disabled={emailButtonEnabled}
-                type="submit"
-                onClick={() => {
-                  console.log("blick");
-                }}
-              >
+              <Button disabled={emailButtonEnabled} type="submit">
                 Submit
               </Button>
             </div>
@@ -320,4 +305,5 @@ export default function ProfilePage({}) {
       </Flex>
     </motion.div>
   );
-}
+};
+export default ProfilePage;

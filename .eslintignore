@@ -1,0 +1,5 @@
+*.config.js
+
+
+# Disable checking for (currently) unused functions folder
+functions/*

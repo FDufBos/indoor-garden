@@ -1,10 +1,9 @@
-import { extendTheme, ComponentStyleConfig } from "@chakra-ui/react";
-import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
-
+import { extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
   fonts: {
     // heading: `'Open Sans', sans-serif`,
+    // eslint-disable-next-line max-len
     body: `Flexa, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
   },
   styles: {
@@ -16,8 +15,8 @@ const theme = extendTheme({
     },
   },
   components: {
-    //styles for the modal component
-    //styles for the button component
+    // styles for the modal component
+    // styles for the button component
     Tooltip: {
       baseStyle: {
         bg: "#FCFEF8",
@@ -26,7 +25,7 @@ const theme = extendTheme({
       },
     },
     Button: {
-      baseStyle:{
+      baseStyle: {
         bg: "FCFEF8",
         borderRadius: "999px",
         color: "#606F73",
@@ -34,14 +33,11 @@ const theme = extendTheme({
           // bg: "blue",
           // color: "white",
         },
-      }
+      },
     },
-    Editable: {}
+    Editable: {},
   },
-  Input:{
-    
-  }
+  Input: {},
 });
-
 
 export default theme;

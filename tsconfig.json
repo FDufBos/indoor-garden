@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -17,14 +13,22 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@main/*": ["*"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/garden/[name].jsx", "data/firestore.ts", "contexts/AuthContext.js", "contexts/user.js", "contexts/user.js", "pages/_app.js"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "**/*.tsx",
+    "pages/garden/[name].tsx",
+    "data/firestore.ts",
+    "contexts/AuthContext.ts",
+    "contexts/user.js",
+    "contexts/user.js",
+    "pages/_app.tsx"
+  ],
+  "exclude": ["node_modules"]
 }

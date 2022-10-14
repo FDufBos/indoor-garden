@@ -1,33 +1,28 @@
 import { useRouter } from "next/router";
-import { fetchPlant } from "../../data/firestore";
-import { useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-// import { doc, data } from "firebase/firestore";
-
-const auth = getAuth();
-import { useUserAuth } from "../../contexts/AuthContext";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import PlantPage from "../../components/fullPages/plantPage";
 import SkeletonPlantPage from "../../components/loading/skeletonPlantPage";
+import { useUserAuth } from "../../contexts/AuthContext";
+import { fetchPlant } from "../../data/firestore";
 
-export default function Plant() {
-  //create state to store plant query param
-  const [plant, setPlant] = useState("");
+export const Plant: React.FC = () => {
+  // create state to store plant query param
+  // TODO: Create Plant Type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [plant, setPlant] = useState<any>();
   // const [codex, setCodex] = useState("");
   const router = useRouter();
-  const { user, codex, setCodex, documentIDs } = useUserAuth();
-  const [codexPlant, setCodexPlant] = useState("");
+  const { user, codex } = useUserAuth();
+  // TODO: Create Plant Type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [codexPlant, setCodexPlant] = useState<any>("");
 
-  //useEffect to get plant query param
+  // useEffect to get plant query param
   useEffect(() => {
-    console.log("useEffect ran on [name]");
-    // onAuthStateChanged(auth, async (user) => {
     if (user) {
       if (!router.isReady) return;
       fetchPlant(router.query.name, user.uid).then((plant) => {
-        console.log(router.query.name)
         setPlant(plant);
         if (codex) {
           codex.forEach((doc) => {
@@ -65,8 +60,9 @@ export default function Plant() {
           />
         </div>
       ) : (
-        <SkeletonPlantPage></SkeletonPlantPage>
+        <SkeletonPlantPage />
       )}
     </div>
   );
-}
+};
+export default Plant;

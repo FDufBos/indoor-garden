@@ -1,6 +1,8 @@
-import { Global } from '@emotion/react'
+/* eslint-disable max-len */
+import { Global } from "@emotion/react";
+import React from "react";
 
-const Fonts = () => (
+const Fonts: React.FC = () => (
   <Global
     styles={`
       /* latin */
@@ -23,6 +25,7 @@ const Fonts = () => (
       }
       `}
   />
-)
+);
 
-export default Fonts
+export default Fonts;
+/* eslint-enable max-len */

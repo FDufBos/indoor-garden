@@ -1,32 +1,32 @@
-import { useUserAuth } from "../contexts/AuthContext";
-import { Button, Input, FormLabel } from "@chakra-ui/react";
-import React, { useState, useRef } from "react";
+import { Button, FormLabel, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import React, { useRef, useState } from "react";
 
-export default function PasswordReset() {
+import { useUserAuth } from "../contexts/AuthContext";
+
+export const PasswordReset: React.FC = () => {
   const router = useRouter();
   const emailRef = useRef(null);
   const [emailButtonEnabled, setEmailButtonEnabled] = useState(true);
   const { forgotPassword } = useUserAuth();
 
-  const handleEmailInputChange = (e) => {
+  const handleEmailInputChange = (e): void => {
     if (e.target.value) {
       setEmailButtonEnabled(false);
     }
   };
 
-  const forgotPasswordHandler = async (e) => {
+  const forgotPasswordHandler = async (e): Promise<void> => {
     e.preventDefault();
     setEmailButtonEnabled(true);
     const email = emailRef.current.value;
     if (email) {
       try {
-        forgotPassword(email).then(() => {
-          console.log("Password reset email sent");
+        await forgotPassword(email).then(() => {
           router.push("/?success=password-reset-email-sent");
-        })
+        });
       } catch (e) {
-        console.log(e);
+        throw Error(e);
       }
     }
   };
@@ -34,10 +34,7 @@ export default function PasswordReset() {
   return (
     <div className="relative bottom-24 m-6 flex flex-col items-center justify-center h-screen gap-12">
       <h1>Password Reset</h1>
-      <form
-        onSubmit={forgotPasswordHandler}
-        className=""
-      >
+      <form onSubmit={forgotPasswordHandler} className="">
         <FormLabel color="#FCFEF8">Email:</FormLabel>
         <div className="flex gap-2">
           <Input
@@ -58,4 +55,5 @@ export default function PasswordReset() {
       </form>
     </div>
   );
-}
+};
+export default PasswordReset;

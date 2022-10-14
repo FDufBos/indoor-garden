@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
 import Router from "next/router";
+import React, { useEffect } from "react";
 
 import GetStarted from "../components/fullPages/getStarted";
 import { useUserAuth } from "../contexts/AuthContext";
 
-export default function Home() {
+export const Home: React.FC = () => {
   const { user } = useUserAuth();
   useEffect(() => {
     if (user) {
       Router.push("/garden");
     }
   }, [user]);
-  return (
-  <GetStarted />);
-}
+  return <GetStarted />;
+};
+export default Home;

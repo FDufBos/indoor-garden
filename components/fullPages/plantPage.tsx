@@ -1,59 +1,55 @@
-import React from "react";
+import { ChevronLeftIcon, CloseIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { Plant } from "@main/common-types";
+import { motion } from "framer-motion";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
-import { deletePlant } from "../../data/firestore";
-import { motion } from "framer-motion";
-
-import { ChevronLeftIcon, HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import {
-  Divider,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  Button,
-  ModalCloseButton,
-  Tooltip,
-} from "@chakra-ui/react";
+import React from "react";
 
 import { useUserAuth } from "../../contexts/AuthContext";
+import { deletePlant } from "../../data/firestore";
 
 // const auth = getAuth()
 
 const variants = {
   hidden: { x: "30%", opacity: 0 },
-  enter: { x: "0px", opacity: 1, transition: { ease: "circOut", duration: 0.3 } },
+  enter: {
+    x: "0px",
+    opacity: 1,
+    transition: { ease: "circOut", duration: 0.3 },
+  },
   exit: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
 };
 
-export default function PlantPage({
+export const PlantPage: React.FC<Partial<Plant>> = ({
   nickname,
   commonName,
   icon,
   level,
   timeTillNextWater,
   wateringStreak,
-  botanicalName,
   sunExposure,
   wateringFrequency,
-}) {
+}) => {
   const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
 
-  const handleHomeClick = (e) => {
+  const handleHomeClick = (e): void => {
     e.preventDefault();
     Router.push("/garden");
-  };
-
-  const handleMoreClick = (e) => {
-    e.preventDefault();
-    deletePlant(router.query.name, user);
-    Router.push("/");
   };
 
   return (
@@ -61,8 +57,7 @@ export default function PlantPage({
       variants={variants}
       initial="hidden"
       animate="enter"
-      exit={"exit"}
-
+      exit="exit"
     >
       <Head>
         <title>{nickname} | Indoor Garden</title>
@@ -77,11 +72,11 @@ export default function PlantPage({
 
       <nav className="flex justify-between mx-6 py-6">
         <button onClick={handleHomeClick}>
-          <ChevronLeftIcon boxSize="2rem" focusable={true} color="white" />
+          <ChevronLeftIcon boxSize="2rem" focusable color="white" />
         </button>
         <button onClick={onOpen}>
           <Tooltip label="Delete" openDelay={400} rounded="full">
-            <CloseIcon boxSize="1rem" focusable={true} color="white" />
+            <CloseIcon boxSize="1rem" focusable color="white" />
           </Tooltip>
         </button>
 
@@ -97,10 +92,12 @@ export default function PlantPage({
                 onClick={() => {
                   onClose();
                   deletePlant(router.query.name, user.uid);
-                  setFirestorePlants(firestorePlants.filter((plant) => plant.nickname !== nickname));
-                  console.log(firestorePlants);
+                  setFirestorePlants(
+                    firestorePlants.filter(
+                      (plant) => plant.nickname !== nickname
+                    )
+                  );
                   Router.push("/");
-
                 }}
                 colorScheme="red"
               >
@@ -124,6 +121,7 @@ export default function PlantPage({
           </div>
           <div
             id="image-label"
+            // eslint-disable-next-line max-len
             className="absolute bottom-0 right-0 flex items-center justify-center bg-water-100 h-8 w-8 rounded-full drop-shadow text-grey-600 font-[690]"
           >
             {level}
@@ -166,10 +164,10 @@ export default function PlantPage({
           id="recent-plant-pics"
           className="mt-2 h-24 flex gap-4 justify-between"
         >
-          <div className="w-full rounded-md bg-slate-400"></div>
-          <div className="w-full rounded-md bg-slate-400"></div>
-          <div className="w-full rounded-md bg-slate-400"></div>
-          <div className="w-full rounded-md bg-slate-400"></div>
+          <div className="w-full rounded-md bg-slate-400" />
+          <div className="w-full rounded-md bg-slate-400" />
+          <div className="w-full rounded-md bg-slate-400" />
+          <div className="w-full rounded-md bg-slate-400" />
         </div>
       </section>
       <section
@@ -181,4 +179,5 @@ export default function PlantPage({
       </section>
     </motion.div>
   );
-}
+};
+export default PlantPage;

@@ -1,44 +1,38 @@
-//Next imports
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// Next imports
+// UI  Imports
+import { Button, Flex, useToast } from "@chakra-ui/react";
+// Firebase imports
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import Head from "next/head";
 import { useRouter } from "next/router";
-
-//Firebase imports
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { useUserAuth } from "../../contexts/AuthContext";
-import { db } from "../../utils/firebaseUtils";
-import { addPlant } from "../../data/firestore";
-
-//UI  Imports
-import { Flex, Button, useToast } from "@chakra-ui/react";
+// React import
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+
+import { useUserAuth } from "../../contexts/AuthContext";
+import { addPlant } from "../../data/firestore";
+import { db } from "../../utils/firebaseUtils";
 import { SignInButton, SignUpButton } from "../layout";
 
-//React import
-import { useEffect, useState } from "react";
-
-
-
-//Setup constants
+// Setup constants
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
 
-
-//Default export
-export default function GetStarted() {
-
-  //Hooks
+export const GetStarted: React.FC = () => {
+  // Hooks
   const router = useRouter();
   const { success } = router.query;
   const toast = useToast();
   const { user, setName, name } = useUserAuth();
   const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
 
-  //EFFECTS
-    //If URL "success" paramater is equal to "password-reset-email-sent"
-    //show success toast message
+  // EFFECTS
+  // If URL "success" paramater is equal to "password-reset-email-sent"
+  // show success toast message
   useEffect(() => {
-    if (success == "password-reset-email-sent") {
+    if (success === "password-reset-email-sent") {
       toast({
         title: "Success",
         position: "top",
@@ -55,13 +49,14 @@ export default function GetStarted() {
     }
   }, [success]);
 
-  //HANDLERS
-    //When user clicks "Sign in with Google" button
-    //log in with Google flow
-  const handleGoogleClick = (e) => {
+  // HANDLERS
+  // When user clicks "Sign in with Google" button
+  // log in with Google flow
+  const handleGoogleClick = (e): void => {
     e.preventDefault();
     signInWithPopup(auth, provider)
       .then((result) => {
+        // TODO: This error handler currently does nothing
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
@@ -94,6 +89,7 @@ export default function GetStarted() {
         );
       })
       .catch((error) => {
+        // TODO: This error handler currently does nothing
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -128,7 +124,7 @@ export default function GetStarted() {
           <SignUpButton
             showLoadingSpinner={showLoadingSpinner}
             setShowLoadingSpinner={setShowLoadingSpinner}
-          ></SignUpButton>
+          />
           <Button
             onClick={handleGoogleClick}
             leftIcon={<FcGoogle />}
@@ -140,9 +136,11 @@ export default function GetStarted() {
           <SignInButton
             showLoadingSpinner={showLoadingSpinner}
             setShowLoadingSpinner={setShowLoadingSpinner}
-          ></SignInButton>
+          />
         </Flex>
       </div>
     </div>
   );
-}
+};
+export default GetStarted;
+/* eslint-enable @typescript-eslint/no-unused-vars */
