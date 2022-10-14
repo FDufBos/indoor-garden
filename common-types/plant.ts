@@ -7,6 +7,8 @@ export interface Plant {
   commonName: string;
   /** The icon */
   icon: string;
+  /** The Date the plant was created */
+  timeCreated: Date;
   /** The level of the plant */
   level: number;
   /** The time till next water */
