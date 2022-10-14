@@ -150,6 +150,11 @@ export const Homepage: React.FC = () => {
                         }
                         level={plant.level}
                         timeCreated={plant.timeCreated}
+                        nickname=""
+                        timeLastWatered=""
+                        botanicalName=""
+                        sunExposure=""
+                        wateringFrequency=""
                       />
                     </div>
                   </Link>
