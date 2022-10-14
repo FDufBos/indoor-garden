@@ -6,7 +6,7 @@ import { useUserAuth } from "../../contexts/AuthContext";
 import { db } from "../../utils/firebaseUtils";
 
 export const PlantItem: React.FC<
-  Plant & {
+  Partial<Plant> & {
     /** Set the time until the next water */
     setTimeTillNextWater: (number) => void;
     /** The document index */
