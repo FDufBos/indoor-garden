@@ -133,24 +133,20 @@ export const Homepage: React.FC = () => {
                         icon={plant.icon}
                         name={plant.nickname}
                         commonName={plant.commonName}
-                        timeTillNextWater={
-                          timeTillNextWater ||
+                        timeTillNextWater={timeTillNextWater ||
                           Math.floor(
                             (Date.now() - plant.timeLastWatered.toDate()) /
-                              (1000 * 60 * 60 * 24)
-                          )
-                        }
+                            (1000 * 60 * 60 * 24)
+                          )}
                         setTimeTillNextWater={setTimeTillNextWater}
                         wateringStreak={
                           // calculate number of days since plant was created
                           Math.floor(
                             (Date.now() - plant.timeCreated.toDate()) /
-                              (1000 * 60 * 60 * 24)
-                          )
-                        }
+                            (1000 * 60 * 60 * 24)
+                          )}
                         level={plant.level}
-                        timeCreated={plant.timeCreated}
-                      />
+                        timeCreated={plant.timeCreated} nickname={""} timeLastWatered={""} botanicalName={""} sunExposure={""} wateringFrequency={""}                      />
                     </div>
                   </Link>
                 ))}
