@@ -11,8 +11,9 @@ import {
   ModalOverlay,
   Select,
 } from "@chakra-ui/react";
-import { useFirestoreMutation } from "@main/data-models";
-import { addDoc, serverTimestamp } from "firebase/firestore";
+import { GardenItem } from "@main/common-types";
+import { useFirestoreAddMutation } from "@main/data-models";
+import { serverTimestamp, Timestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 
@@ -32,9 +33,8 @@ export const NewForm: React.FC<NewFormProps> = ({ isOpen, onClose }) => {
 
   const { user, codex } = useUserAuth();
 
-  const { mutate, isLoading, error } = useFirestoreMutation(
-    `users/${user.uid}/garden`,
-    addDoc
+  const { mutate, isLoading, error } = useFirestoreAddMutation<GardenItem>(
+    `users/${user.uid}/garden`
   );
 
   const handleEmojiClick = (e): NodeJS.Timeout => {
@@ -75,8 +75,8 @@ export const NewForm: React.FC<NewFormProps> = ({ isOpen, onClose }) => {
               const capitalizeFirstLetter = (string: string): string =>
                 string.charAt(0).toUpperCase() + string.slice(1);
 
-              const timestamp = serverTimestamp();
-              // console.log(timestamp);
+              // cast as a timestamp, even though it's a FieldValue because it's in a mutation
+              const timestamp = serverTimestamp() as Timestamp;
 
               mutate({
                 icon: e.currentTarget.elements.icon.value,
