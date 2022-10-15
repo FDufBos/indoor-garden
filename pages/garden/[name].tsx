@@ -56,7 +56,7 @@ export const Plant: React.FC = () => {
             wateringStreak={plant.wateringStreak}
             botanicalName={codexPlant.botanicalName}
             sunExposure={codexPlant.sunExposure}
-            wateringFrequency={codexPlant.baseDaysBetweenWatering}
+            baseDaysBetweenWatering={codexPlant.baseDaysBetweenWatering}
           />
         </div>
       ) : (

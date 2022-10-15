@@ -1,7 +1,10 @@
 // IMPORTS
 import { Button, useDisclosure, useToast } from "@chakra-ui/react";
+import { GardenItem } from "@main/common-types";
+import { useFirestoreQuery } from "@main/data-models";
 // Firebase Imports
 import { sendEmailVerification } from "firebase/auth";
+import { orderBy } from "firebase/firestore";
 // Framer Import
 import { motion } from "framer-motion";
 import Head from "next/head";
@@ -25,16 +28,13 @@ export const Homepage: React.FC = () => {
   const [timeTillNextWater, setTimeTillNextWater] = useState();
   const [exitAnimation, setExitAnimation] = useState("exit");
 
-  const {
-    user,
-    firestorePlants,
-    documentIDs,
-    setFirestorePlants,
-    setDocumentIDs,
-    logOut,
-    hiddenAnimation,
-    setHiddenAnimation,
-  } = useUserAuth();
+  const { user, documentIDs, logOut, hiddenAnimation, setHiddenAnimation } =
+    useUserAuth();
+
+  const { data, isLoading, error } = useFirestoreQuery<GardenItem>(
+    `users/${user.uid}/garden`,
+    orderBy("timeCreated")
+  );
 
   // Framer Animation Variants
   const variants = {
@@ -89,6 +89,14 @@ export const Homepage: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error</div>;
+  }
+
   return (
     <motion.div
       variants={variants}
@@ -118,8 +126,8 @@ export const Homepage: React.FC = () => {
               Order Plants
             </Button> */}
             <section className=" mx-6">
-              {firestorePlants &&
-                firestorePlants.map((plant, index) => (
+              {data &&
+                data.map((plant, index) => (
                   <Link
                     href={`/garden/${documentIDs[index]}`}
                     key={index}
@@ -128,15 +136,13 @@ export const Homepage: React.FC = () => {
                   >
                     <div className="cursor-pointer">
                       <PlantItem
-                        index={index}
+                        index={`${index}`}
                         key={index}
-                        icon={plant.icon}
-                        name={plant.nickname}
-                        commonName={plant.commonName}
                         timeTillNextWater={
                           timeTillNextWater ||
                           Math.floor(
-                            (Date.now() - plant.timeLastWatered.toDate()) /
+                            (Date.now().valueOf() -
+                              plant.timeLastWatered.toDate().valueOf()) /
                               (1000 * 60 * 60 * 24)
                           )
                         }
@@ -144,17 +150,14 @@ export const Homepage: React.FC = () => {
                         wateringStreak={
                           // calculate number of days since plant was created
                           Math.floor(
-                            (Date.now() - plant.timeCreated.toDate()) /
+                            (Date.now().valueOf() -
+                              plant.timeCreated.toDate().valueOf()) /
                               (1000 * 60 * 60 * 24)
                           )
                         }
                         level={plant.level}
                         timeCreated={plant.timeCreated}
-                        nickname=""
-                        timeLastWatered=""
-                        botanicalName=""
-                        sunExposure=""
-                        wateringFrequency=""
+                        {...plant}
                       />
                     </div>
                   </Link>
@@ -162,12 +165,7 @@ export const Homepage: React.FC = () => {
             </section>
 
             <div>
-              <NewForm
-                isOpen={isOpen}
-                onClose={onClose}
-                setFirestorePlants={setFirestorePlants}
-                setDocumentIDs={setDocumentIDs}
-              />
+              <NewForm isOpen={isOpen} onClose={onClose} />
             </div>
 
             {user && user.emailVerified ? (

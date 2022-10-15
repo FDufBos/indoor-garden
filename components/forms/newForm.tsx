@@ -11,38 +11,31 @@ import {
   ModalOverlay,
   Select,
 } from "@chakra-ui/react";
-import { getAuth } from "firebase/auth";
-import { DocumentData, serverTimestamp } from "firebase/firestore";
+import { useFirestoreMutation } from "@main/data-models";
+import { addDoc, serverTimestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 
 import { useUserAuth } from "../../contexts/AuthContext";
-import { addPlant, fetchIDs, fetchPlants } from "../../data/firestore";
 import { getRandomEmoji } from "../../data/randomEmoji";
-
-const auth = getAuth();
 
 export interface NewFormProps {
   /** If the form is open */
   isOpen: boolean;
   /** On form close */
   onClose: () => void;
-  /** Set plants in firestore */
-  setFirestorePlants: (data: DocumentData) => void;
-  /** Set document ids */
-  setDocumentIDs: (data: DocumentData) => void;
 }
 
-export const NewForm: React.FC<NewFormProps> = ({
-  isOpen,
-  onClose,
-  setFirestorePlants,
-  setDocumentIDs,
-}) => {
+export const NewForm: React.FC<NewFormProps> = ({ isOpen, onClose }) => {
   // state for emoji
   const [emoji, setEmoji] = useState("🌱");
 
-  const { codex } = useUserAuth();
+  const { user, codex } = useUserAuth();
+
+  const { mutate, isLoading, error } = useFirestoreMutation(
+    `users/${user.uid}/garden`,
+    addDoc
+  );
 
   const handleEmojiClick = (e): NodeJS.Timeout => {
     e.preventDefault();
@@ -61,51 +54,13 @@ export const NewForm: React.FC<NewFormProps> = ({
     setEmoji(e.target.value);
   };
 
-  const handleSubmit = async (e: any): Promise<void> => {
-    e.preventDefault();
-    const user = auth.currentUser;
-    const { uid } = user;
-    // Capitalize first letters
-    const capitalizeFirstLetter = (string: string): string =>
-      string.charAt(0).toUpperCase() + string.slice(1);
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
 
-    // get values from the form and save them in variables
-    const commonName = capitalizeFirstLetter(
-      e.currentTarget.elements.commonName.value
-    );
-    const nickname = capitalizeFirstLetter(
-      e.currentTarget.elements.nickname.value
-    );
-    const icon = e.currentTarget.elements.icon.value;
-
-    const timestamp = serverTimestamp();
-    // console.log(timestamp);
-
-    await addPlant(
-      {
-        icon,
-        commonName,
-        nickname,
-        timeTillNextWater: 0,
-        wateringStreak: 0,
-        level: 1,
-        timeCreated: timestamp,
-        timeLastWatered: timestamp,
-      },
-      uid
-    ).then(() => {
-      // console.log("plant added");
-      // update firestorePlants state with new plant
-      fetchPlants(uid).then((data) => {
-        setFirestorePlants(data);
-      });
-      // update documentIDs to reflex new plant
-      fetchIDs(uid).then((data) => {
-        setDocumentIDs(data);
-      });
-    });
-    onClose();
-  };
+  if (error) {
+    return <div>{JSON.stringify(error)}</div>;
+  }
 
   return (
     <div>
@@ -113,7 +68,33 @@ export const NewForm: React.FC<NewFormProps> = ({
         <ModalOverlay backdropFilter="blur(20px)" bg="blackAlpha.100" />
         <ModalContent bg="#e7f9ec" borderRadius="xl" p={4}>
           <ModalCloseButton />
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={(e: any) => {
+              e.preventDefault();
+              // Capitalize first letters
+              const capitalizeFirstLetter = (string: string): string =>
+                string.charAt(0).toUpperCase() + string.slice(1);
+
+              const timestamp = serverTimestamp();
+              // console.log(timestamp);
+
+              mutate({
+                icon: e.currentTarget.elements.icon.value,
+                commonName: capitalizeFirstLetter(
+                  e.currentTarget.elements.commonName.value
+                ),
+                nickname: capitalizeFirstLetter(
+                  e.currentTarget.elements.nickname.value
+                ),
+                timeTillNextWater: 0,
+                wateringStreak: 0,
+                level: 1,
+                timeCreated: timestamp,
+                timeLastWatered: timestamp,
+              });
+              onClose();
+            }}
+          >
             <ModalBody display="flex" flexDirection="column" gap="16px">
               <FormControl className="flex flex-col justify-center items-center gap-1">
                 <div className="flex flex-row gap-4" onClick={handleEmojiClick}>
