@@ -8,6 +8,7 @@ import {
   QueryConstraint,
   UpdateData,
   updateDoc,
+  deleteDoc
 } from "firebase/firestore";
 import {
   useMutation,
@@ -72,3 +73,22 @@ export const useFirestoreUpdateMutation = <T>(
     }
   );
 };
+
+
+export const useFirestoreDeleteMutation = <T>(
+  collectionSlug: string,
+  documentRef: DocumentReference<T>
+): UseMutationResult<void, Error, UpdateData<T>> => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, UpdateData<T>>(
+    (data) => deleteDoc(documentRef),
+    {
+      onSuccess: () => {
+        // Invalidate any queries using this slug, so that they'll reload
+        queryClient.invalidateQueries(collectionSlug);
+      },
+    }
+  );
+}
+
