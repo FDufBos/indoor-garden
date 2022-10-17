@@ -1,4 +1,4 @@
-import { Plant } from "@main/common-types";
+import { GardenItem } from "@main/common-types";
 import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import Router from "next/router";
 
@@ -6,7 +6,7 @@ import { useUserAuth } from "../../contexts/AuthContext";
 import { db } from "../../utils/firebaseUtils";
 
 export const PlantItem: React.FC<
-  Partial<Plant> & {
+  Partial<GardenItem> & {
     /** Set the time until the next water */
     setTimeTillNextWater: (number) => void;
     /** The document index */
@@ -14,7 +14,7 @@ export const PlantItem: React.FC<
   }
 > = ({
   icon,
-  name,
+  nickname,
   commonName,
   timeTillNextWater,
   setTimeTillNextWater,
@@ -59,7 +59,7 @@ export const PlantItem: React.FC<
           {level}
         </button>
         <div className="flex flex-col h-full">
-          <h3 className="text-xl font-[580]">{name}</h3>
+          <h3 className="text-xl font-[580]">{nickname}</h3>
           <h4 className="text-xs text-water-100">{commonName}</h4>
           <div className="flex gap-2">
             <div>💧 {timeTillNextWater}</div>

@@ -11,7 +11,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Plant } from "@main/common-types";
+import { GardenItem, Plant } from "@main/common-types";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
@@ -32,7 +32,7 @@ const variants = {
   exit: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
 };
 
-export const PlantPage: React.FC<Partial<Plant>> = ({
+export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
   nickname,
   commonName,
   icon,
@@ -40,7 +40,7 @@ export const PlantPage: React.FC<Partial<Plant>> = ({
   timeTillNextWater,
   wateringStreak,
   sunExposure,
-  wateringFrequency,
+  baseDaysBetweenWatering,
 }) => {
   const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -147,7 +147,7 @@ export const PlantPage: React.FC<Partial<Plant>> = ({
             {sunExposure}
           </div>
           <div className="bg-sky-100 text-sky-600 rounded-md w-full py-[1px] text-md">
-            Water every {wateringFrequency} days
+            Water every {baseDaysBetweenWatering} days
           </div>
         </div>
       </header>
