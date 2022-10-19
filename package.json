@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "dev": "concurrently -n emulators,dev-server \"yarn emulators\" \"yarn dev-no-emulators\"",
-    "emulators": "firebase emulators:start --only auth,firestore,storage --import .emulator-data"
+    "emulators": "firebase emulators:start --only auth,firestore,storage,functions,hosting --import .emulator-data"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.3",
@@ -37,6 +37,7 @@
     "@typescript-eslint/parser": "^5.14.0",
     "autoprefixer": "^10.4.4",
     "concurrently": "^7.4.0",
+    "esbuild": "^0.15.12",
     "eslint": "8.13.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
