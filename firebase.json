@@ -11,7 +11,11 @@
   },
   "hosting": {
     "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
   },
   "emulators": {
     "hosting": {
@@ -19,9 +23,6 @@
     },
     "auth": {
       "port": 9099
-    },
-    "functions": {
-      "port": 5001
     },
     "firestore": {
       "port": 8080

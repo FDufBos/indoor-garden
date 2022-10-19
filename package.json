@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "dev": "concurrently -n emulators,dev-server \"yarn emulators\" \"yarn dev-no-emulators\"",
-    "emulators": "firebase emulators:start --import .emulator-data"
+    "emulators": "firebase emulators:start --only auth,firestore,storage --import .emulator-data"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.3",
