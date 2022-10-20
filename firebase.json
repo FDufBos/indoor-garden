@@ -11,15 +11,11 @@
   },
   "hosting": {
     "source": ".",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   },
   "emulators": {
     "hosting": {
-      "port": "5555"
+      "port": 5555
     },
     "auth": {
       "port": 9099

@@ -24,3 +24,4 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_INDOOR_GARDEN_B4585 }}"
           projectId: indoor-garden-b4585
+          firebaseToolsVersion: "11.15.0"
