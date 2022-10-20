@@ -17,11 +17,14 @@ jobs:
       - run: npm install -g "yarn@1.22.5"
       - run: yarn install --immutable
 
+      #Manual run
+      - run: /opt/hostedtoolcache/node/16.18.0/x64/bin/npx firebase-tools@11.15.0 hosting:channel:deploy pr21-harrismcc_firestore- --expires 7d --project indoor-garden-b4585 --debug
+
       # Build
-      - run: yarn build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_INDOOR_GARDEN_B4585 }}"
-          projectId: indoor-garden-b4585
-          firebaseToolsVersion: "11.15.0"
+      # - run: yarn build
+      # - uses: FirebaseExtended/action-hosting-deploy@v0
+      #   with:
+      #     repoToken: "${{ secrets.GITHUB_TOKEN }}"
+      #     firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_INDOOR_GARDEN_B4585 }}"
+      #     projectId: indoor-garden-b4585
+      #     firebaseToolsVersion: "11.15.0"
