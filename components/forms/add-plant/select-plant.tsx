@@ -2,6 +2,7 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { Plant } from "@main/common-types";
 import { useFirestoreQuery } from "@main/data-models";
 import { orderBy } from "firebase/firestore";
+import Link from "next/link";
 import React from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { TbChevronRight } from "react-icons/tb";
@@ -50,12 +51,17 @@ export const SelectPlant: React.FC<SelectPlantProps> = () => {
           <div className="flex gap-[16px] ml-[12px] overflow-x-scroll pb-[12px] pr-[16px]">
             {data &&
               data.slice(0, 9).map((plant, index) => (
-                <div key={index} className="flex flex-col items-center gap-[8px]">
-                  <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                    {plant.emoji}
+                <Link key={index} href={plant.id ? `/codex/${plant.id}`  : `/codex/ ${plant.botanicalName}`} passHref>
+                  <div className="flex flex-col items-center gap-[8px]">
+                    <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center cursor-pointer">
+                      {plant.emoji}
+                    </div>
+
+                    <p className="font-medium text-[14px] text-center cursor-pointer">
+                      {plant.commonName[0]}
+                    </p>
                   </div>
-                  <p className="font-medium text-[14px] text-center">{plant.commonName[0]}</p>
-                </div>
+                </Link>
               ))}
           </div>
         </div>
