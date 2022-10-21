@@ -7,6 +7,8 @@ export interface Plant {
   botanicalName: string;
   /** commonName */
   commonName: string[];
+  /** Emoji */
+  emoji: string;
   /** family */
   family: string;
   /** flowerColor */
