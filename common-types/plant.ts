@@ -15,6 +15,8 @@ export interface Plant {
   flowerColor: string;
   /** hardinessZones */
   hardinessZones: string;
+  /** id  */
+  id: string;
   /** matureSize */
   matureSize: string;
   /** nativeAreas */
