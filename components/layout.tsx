@@ -409,12 +409,13 @@ export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
                   <h1>{name}</h1>
                 )}
               </div>
-              <Image
+              <Link href="/codex" passHref ><Image
                 src="/images/sun.svg"
                 width="35"
                 height="35"
-                className="hidden"
-              />
+                className="hidden cursor-pointer"
+                alt="sun"
+              /></Link>
             </div>
           </div>
 
