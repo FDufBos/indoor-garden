@@ -3,13 +3,20 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "Alpina";
-  src: url("../assets/fonts/GT-Alpina-Standard-Bold.woff2");
+  font-family: 'Alpina';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/GT-Alpina-Standard-Bold.woff2') format('woff2') ,
 }
-
+/* latin */
 @font-face {
-  font-family: "Flexa";
-  src: url("../assets/fonts/GT-Flexa-GX.woff2");
+  font-family: 'Flexa';
+  font-style: normal;
+  font-weight: 50 950;
+  font-stretch: 75% 125%;
+  font-display: swap;
+  src: url('../assets/fonts/GT-Flexa-GX.woff2') format("woff2-variations");
 }
 
 @layer utilities {
