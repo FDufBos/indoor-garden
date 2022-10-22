@@ -25,6 +25,12 @@ export const SelectPlant: React.FC<SelectPlantProps> = () => {
     <div>
       <div className="bg-monstera-100 w-full min-h-screen overflow-x-clip">
         <div className="flex justify-center w-full py-8 px-6 ">
+          <Link href="/garden" passHref>
+          <ChevronLeftIcon
+            color="green.700"
+            className="text-4xl cursor-pointer top-1 right-2 relative "
+          />
+          </Link>
           <InputGroup>
             <Input
               placeholder="Search for a plant..."
