@@ -55,7 +55,7 @@ export const SelectPlant: React.FC<SelectPlantProps> = () => {
               Flowers
             </h3>
           </div>
-          <div className="flex gap-[16px] ml-[12px] overflow-x-scroll pb-[12px] pr-[16px]">
+          <div className="flex gap-[16px] ml-[12px] overflow-x-scroll pb-[12px] pr-[16px] no-scrollbar">
             {data &&
               data.slice(0, 9).map((plant, index) => (
                 <Link
