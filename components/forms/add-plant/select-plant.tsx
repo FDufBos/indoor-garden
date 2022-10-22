@@ -1,3 +1,4 @@
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { Plant } from "@main/common-types";
 import { useFirestoreQuery } from "@main/data-models";
