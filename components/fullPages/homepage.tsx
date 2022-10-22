@@ -1,5 +1,5 @@
 // IMPORTS
-import { Button, useDisclosure, useToast } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import { GardenItem } from "@main/common-types";
 import { useFirestoreQuery } from "@main/data-models";
 // Firebase Imports
@@ -9,14 +9,15 @@ import { orderBy } from "firebase/firestore";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from 'next/router'
 // React Imports
 import React, { useEffect, useState } from "react";
 
 import { useUserAuth } from "../../contexts/AuthContext";
 import PlantItem from "../atoms/plantItem";
-import NewForm from "../forms/newForm";
 // UI Imports
 import Layout from "../layout";
+
 
 /**
  *
@@ -24,9 +25,9 @@ import Layout from "../layout";
 export const Homepage: React.FC = () => {
   // HOOKS
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [timeTillNextWater, setTimeTillNextWater] = useState();
   const [exitAnimation, setExitAnimation] = useState("exit");
+  const router = useRouter();
 
   const { user, documentIDs, logOut, hiddenAnimation, setHiddenAnimation } =
     useUserAuth();
@@ -85,7 +86,7 @@ export const Homepage: React.FC = () => {
       logOut();
     } else {
       e.preventDefault();
-      onOpen();
+      router.push("/codex");
     }
   };
 
@@ -163,10 +164,6 @@ export const Homepage: React.FC = () => {
                   </Link>
                 ))}
             </section>
-
-            <div>
-              <NewForm isOpen={isOpen} onClose={onClose} />
-            </div>
 
             {user && user.emailVerified ? (
               <Button onClick={handleNewFormClick} className="mx-6 mb-10">
