@@ -13,14 +13,14 @@ export const CodexPage: React.FC<Plant> = ({
     <nav className="flex justify-between py-[18px] mx-[24px] items-center">
       <Link href="/codex" passHref>
         <ChevronLeftIcon
-          color="slate.700"
+          color="green.700"
           className="text-4xl cursor-pointer"
         />
       </Link>
-      <h1 className="font-[Flexa] font-[400] text-[20px] -letter-spacing-[1%] text-center text-slate-700">
+      <h1 className="font-[Flexa] font-[500] text-[20px] -letter-spacing-[1%] text-center text-monstera-700">
         {commonName[0]}
       </h1>
-      <div className="relative h-[36px] w-[36px] bg-slate-700 rounded-full">
+      <div className="relative h-[36px] w-[36px] bg-monstera-700 rounded-full">
         <div className="absolute h-[24px] w-[24px] border-[2px] border-white rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20px]">
             +
