@@ -36,7 +36,7 @@ const AddPlantName: React.FC<AddPlantNameProps> = ({ onNextButtonClick }) => {
 
   return (
     <div className="flex flex-col items-center mx-[24px]">
-      <section className="pt-[121px] pb-[80px] flex flex-col items-center gap-[32px]">
+      <section className="md:pt-[121px] pt-[60px] pb-[80px] flex flex-col items-center gap-[16px] md:gap-[32px]">
         {/* Display the emoji corresponding to the plant */}
         <div className="">
           {data &&

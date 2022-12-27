@@ -49,7 +49,7 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
 
   return (
     <div className="flex flex-col items-center mx-[24px]">
-      <section className="pt-[121px] pb-[80px] flex flex-col items-center gap-[32px]">
+      <section className="md:pt-[121px] pt-[60px] pb-[80px] flex flex-col items-center gap-[16px] md:gap-[32px]">
         <div className="flex items-center justify-between w-full">
           <motion.div animate={{ x: distance * 1 }} className="text-[64px]">
             🪟
@@ -74,7 +74,7 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
               </h2>
             ))}
       </section>
-      <section className="w-full md:w-1/4">
+      <section className="w-[92%] md:w-1/2">
         <Slider
           aria-label="sunlight-slider"
           onChange={(val) => {
@@ -91,7 +91,7 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
               <Box
                 className={`${
                   distance >= 0 && distance <= 12
-                    ? "text-[#E08A09] text-[16px] transiton-all font-bold"
+                    ? "text-amber-900 text-[16px] transiton-all font-bold"
                     : ""
                 }`}
               >
@@ -102,7 +102,7 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
               <Box
                 className={`${
                   distance >= 13 && distance <= 37
-                    ? "text-[#E08A09] text-[16px] font-bold"
+                    ? "text-amber-800 text-[16px] font-bold"
                     : ""
                 }`}
               >
@@ -113,7 +113,7 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
               <Box
                 className={`${
                   distance >= 38 && distance <= 62
-                    ? "text-[#E08A09] text-[16px] font-bold"
+                    ? "text-amber-600 text-[16px] font-bold"
                     : ""
                 }`}
               >
@@ -124,18 +124,18 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
               <Box
                 className={`${
                   distance >= 63 && distance <= 87
-                    ? "text-[#E08A09] text-[16px] font-bold"
+                    ? "text-amber-500 text-[16px] font-bold"
                     : ""
                 }`}
               >
                 Indirect
               </Box>
             </SliderMark>
-            <SliderMark value={95} className="">
+            <SliderMark value={95} className="-translate-x-[25%] md:translate-x-[10%]">
               <Box
                 className={`${
                   distance >= 88 && distance <= 100
-                    ? "text-[#E08A09] text-[16px] font-bold"
+                    ? "text-amber-400 text-[16px] font-bold"
                     : ""
                 }`}
               >

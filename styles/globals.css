@@ -58,5 +58,11 @@ input {
 }
 
 .bottom-safe{
-  bottom: calc(2.5rem + env(safe-area-inset-bottom));
+  bottom: calc(4rem + env(safe-area-inset-bottom));
+}
+
+@media screen and (max-height: 635px) {
+  .bottom-safe{
+    bottom: calc(1.3rem + env(safe-area-inset-bottom));
+  }
 }
