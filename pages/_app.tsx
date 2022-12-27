@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import { UserAuthContextProvider } from "../contexts/AuthContext";
-import Fonts from "../styles/Fonts";
 import theme from "../styles/theme";
 
 // Create a query client for React Query
@@ -20,7 +19,6 @@ export const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
     <QueryClientProvider client={queryClient}>
       <UserAuthContextProvider>
         <ChakraProvider theme={theme}>
-          <Fonts />
 
           <AnimatePresence exitBeforeEnter initial={false}>
             {/* <MotionConfig reducedMotion="never"> */}
