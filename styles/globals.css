@@ -2,21 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* latin */
 @font-face {
   font-family: 'Alpina';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 100 1000;
+  font-stretch: 500%;
   font-display: swap;
-  src: url('../assets/fonts/GT-Alpina-Standard-Bold.woff2') format('woff2') ,
+  src: url('../assets/fonts/GT-Alpina-GX.woff2') format("woff2 supports variations"),
+        url('../assets/fonts/GT-Alpina-GX.woff2') format("woff2-variations");
 }
 /* latin */
 @font-face {
   font-family: 'Flexa';
   font-style: normal;
-  font-weight: 50 950;
+  font-weight: 100 1000;
   font-stretch: 75% 125%;
   font-display: swap;
-  src: url('../assets/fonts/GT-Flexa-GX.woff2') format("woff2-variations");
+  src: url('../assets/fonts/GT-Flexa-GX.woff2') format("woff2 supports variations"),
+      url('../assets/fonts/GT-Flexa-GX.woff2') format("woff2-variations");
 }
 
 @layer utilities {
@@ -32,12 +36,12 @@
 }
 
 html{
-  @apply bg-monstera-400 font-flexa;
+  @apply font-flexa;
   
 }
 
 body{
-  @apply bg-monstera-400 font-flexa;
+  @apply font-flexa;
 }
 
 h1{
