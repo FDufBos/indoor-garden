@@ -52,3 +52,7 @@ input {
   -webkit-appearance: none;
   outline: none;
 }
+
+.bottom-safe{
+  bottom: calc(2.5rem + env(safe-area-inset-bottom));
+}
