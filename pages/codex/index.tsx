@@ -1,4 +1,4 @@
-import SelectPlant from "@main/components/forms/add-plant/select-plant";
+import SelectPlant from "@main/components/fullPages/select-plant";
 
 export const CodexPage: React.FC = () => (
   <div>
