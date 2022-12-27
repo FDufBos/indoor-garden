@@ -50,7 +50,7 @@ const AddSunlightAmount: React.FC<AddSunlightAmountProps> = ({
   return (
     <div className="flex flex-col items-center mx-[24px]">
       <section className="md:pt-[121px] pt-[60px] pb-[80px] flex flex-col items-center gap-[16px] md:gap-[32px]">
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full md:w-[70%]">
           <motion.div animate={{ x: distance * 1 }} className="text-[64px]">
             🪟
           </motion.div>
