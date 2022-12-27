@@ -1,5 +1,5 @@
 // IMPORTS
-import { Button, useToast } from "@chakra-ui/react";
+import { Button, Spinner, useToast } from "@chakra-ui/react";
 import { GardenItem } from "@main/common-types";
 import { useFirestoreQuery } from "@main/data-models";
 // Firebase Imports
@@ -9,7 +9,7 @@ import { orderBy } from "firebase/firestore";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 // React Imports
 import React, { useEffect, useState } from "react";
 
@@ -17,7 +17,6 @@ import { useUserAuth } from "../../contexts/AuthContext";
 import PlantItem from "../atoms/plantItem";
 // UI Imports
 import Layout from "../layout";
-
 
 /**
  *
@@ -28,7 +27,6 @@ export const Homepage: React.FC = () => {
   const [timeTillNextWater, setTimeTillNextWater] = useState();
   const [exitAnimation, setExitAnimation] = useState("exit");
   const router = useRouter();
-
   const { user, documentIDs, logOut, hiddenAnimation, setHiddenAnimation } =
     useUserAuth();
 
@@ -91,7 +89,11 @@ export const Homepage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="fixed flex justify-center items-center w-screen h-screen">
+        <Spinner color="#ffffff" className="relative bottom-[96px] " />
+      </div>
+    );
   }
 
   if (error) {
@@ -174,7 +176,6 @@ export const Homepage: React.FC = () => {
                 Verify email to add a plant
               </Button>
             )}
-            <div className="h-8 w-8 bg-blue-500" />
           </main>
         </div>
       </Layout>
