@@ -2,14 +2,13 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  deleteDoc,
   DocumentReference,
   getDocs,
   query,
   QueryConstraint,
   UpdateData,
-  updateDoc,
-  deleteDoc
-} from "firebase/firestore";
+  updateDoc} from "firebase/firestore";
 import {
   useMutation,
   UseMutationResult,
@@ -82,7 +81,7 @@ export const useFirestoreDeleteMutation = <T>(
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, UpdateData<T>>(
-    (data) => deleteDoc(documentRef),
+    () => deleteDoc(documentRef),
     {
       onSuccess: () => {
         // Invalidate any queries using this slug, so that they'll reload
