@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import Router from "next/router";
 
-import { addToCodex } from "../data/firestore";
+import { addToCodex } from "../../data/firestore";
 
 export const AddToCodexForm: React.FC = () => {
   const handleSubmit = async (e): Promise<void> => {
