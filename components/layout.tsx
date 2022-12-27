@@ -385,7 +385,7 @@ export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
     } else if (user?.photoURL) {
       setPhotoURL(user.photoURL);
     }
-  }, [user]);
+  }, [photoURL, setPhotoURL, user]);
 
   return (
     <div className=" text-white flex min-h-screen flex-col justify-between">

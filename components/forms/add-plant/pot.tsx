@@ -42,17 +42,9 @@ const potTypes = {
   },
 };
 
-/**
- * Props for the AddPotType component
- */
-interface AddPotTypeProps {
-  /**
-   * Event handler for the "Submit" button's onClick event
-   */
-  onSubmitClick: () => void;
-}
 
-const AddPotType: React.FC<AddPotTypeProps> = () => {
+
+const AddPotType: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const { data, isLoading, error } = useFirestoreQuery<Plant>(`plants/`);
@@ -70,7 +62,7 @@ const AddPotType: React.FC<AddPotTypeProps> = () => {
     );
   }
 
-  const getCommonName = () => {
+  const getCommonName = (): Plant | undefined => {
     if (data) {
       const plant = data.filter((plant) => plant.id === id);
       return plant[0];

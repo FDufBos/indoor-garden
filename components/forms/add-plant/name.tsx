@@ -116,7 +116,7 @@ const AddPlantName: React.FC<AddPlantNameProps> = ({ onNextButtonClick }) => {
                   }
                 : {}
             }
-            onClick={formData.nickname ? onNextButtonClick : () => {}}
+            onClick={formData.nickname ? onNextButtonClick : () => null}
           >
             Next
           </Box>

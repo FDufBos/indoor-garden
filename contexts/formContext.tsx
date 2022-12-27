@@ -3,7 +3,6 @@ import { createContext, useState } from "react";
 const FormContext = createContext({});
 
 export const FormProvider = ({ children }): React.ReactElement => {
-
   const [formData, setFormData] = useState({
     nickname: "",
     sunlight: "",
@@ -40,8 +39,7 @@ export const FormProvider = ({ children }): React.ReactElement => {
       ...prevData,
       [name]: value,
     }));
-    // console.log(JSON.stringify(formData));
-  };
+    };
 
   return (
     <FormContext.Provider
