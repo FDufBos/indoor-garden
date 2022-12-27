@@ -426,9 +426,6 @@ export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
 
       <footer className="w-full flex flex-col gap-4 mb-4 justify-center items-center">
         <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1" />
-        <Link href="/addToCodex" passHref>
-          <Button size="xs">Add to codex</Button>
-        </Link>
         <Button onClick={getthreeUserIDs}>Don&apos;t click</Button>
         👀👀
       </footer>
