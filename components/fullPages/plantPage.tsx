@@ -63,11 +63,8 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
         <title>{nickname} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
         <link rel="icon" href="/favicon.ico" />
-
+        < meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#5C8B57" />
-        <link rel="apple-touch-icon" href="/images/app_icons/icon.png" />
-        <meta name="apple-mobile-web-app-status-bar" content="#5C8B57" />
       </Head>
 
       <nav className="flex justify-between mx-6 py-6">
