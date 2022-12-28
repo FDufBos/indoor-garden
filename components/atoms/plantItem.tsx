@@ -1,14 +1,7 @@
 import { GardenItem } from "@main/common-types";
-import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import Router from "next/router";
-
-import { useUserAuth } from "../../contexts/AuthContext";
-import { db } from "../../utils/firebaseUtils";
 
 export const PlantItem: React.FC<
   Partial<GardenItem> & {
-    /** Set the time until the next water */
-    setTimeTillNextWater: (number) => void;
     /** The document index */
     index: string;
   }
@@ -17,26 +10,14 @@ export const PlantItem: React.FC<
   nickname,
   commonName,
   timeTillNextWater,
-  setTimeTillNextWater,
   wateringStreak,
   level,
-  index,
 }) => {
-  const { user, documentIDs, firestorePlants } = useUserAuth();
 
+
+  // eslint-disable-next-line require-await
   const handleLevelClick = async (e): Promise<void> => {
     e.preventDefault();
-    // if timeTillNext Water is not zero, then updateDoc to serverTimeStamp
-    if (timeTillNextWater !== 0) {
-      const plantRef = doc(db, `users/${user.uid}/garden/`, documentIDs[index]);
-      // console.log(plantRef)
-      await updateDoc(plantRef, {
-        timeLastWatered: serverTimestamp(),
-      });
-      setTimeTillNextWater(firestorePlants[index].timeTillNextWater);
-      // reload page
-      Router.reload();
-    }
   };
 
   return (
