@@ -1,6 +1,8 @@
 // IMPORTS
 import { Button, Spinner, useToast } from "@chakra-ui/react";
-import { GardenItem } from "@main/common-types";
+import { GardenItem, Plant } from "@main/common-types";
+import PlantItem from "@main/components/atoms/plantItem";
+import { useUserAuth } from "@main/contexts/AuthContext";
 import { useFirestoreQuery } from "@main/data-models";
 // Firebase Imports
 import { sendEmailVerification } from "firebase/auth";
@@ -13,8 +15,6 @@ import { useRouter } from "next/router";
 // React Imports
 import React, { useEffect, useState } from "react";
 
-import { useUserAuth } from "../../contexts/AuthContext";
-import PlantItem from "../atoms/plantItem";
 // UI Imports
 import Layout from "../layout";
 
@@ -24,9 +24,9 @@ import Layout from "../layout";
 export const Homepage: React.FC = () => {
   // HOOKS
   const toast = useToast();
-  const [timeTillNextWater, setTimeTillNextWater] = useState();
   const [exitAnimation, setExitAnimation] = useState("exit");
   const router = useRouter();
+
   const { user, documentIDs, logOut, hiddenAnimation, setHiddenAnimation } =
     useUserAuth();
 
@@ -34,6 +34,18 @@ export const Homepage: React.FC = () => {
     `users/${user.uid}/garden`,
     orderBy("timeCreated")
   );
+
+  // Query the /plants collection
+  const {
+    data: codexData,
+    isLoading: codexLoading,
+    error: codexError,
+  } = useFirestoreQuery<Plant>("plants");
+
+  // return the base days between watering from the codex for each plant
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const getBaseDaysBetweenWatering = (plant: Plant) =>
+    plant.baseDaysBetweenWatering;
 
   // Framer Animation Variants
   const variants = {
@@ -88,7 +100,7 @@ export const Homepage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || codexLoading) {
     return (
       <div className="fixed flex justify-center items-center w-screen h-screen">
         <Spinner color="#ffffff" className="relative bottom-[96px] " />
@@ -96,9 +108,11 @@ export const Homepage: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error || codexError) {
     return <div>Error</div>;
   }
+
+  // const calculateTimeTillNextWater = (timeLastWatered: Date) => {};
 
   return (
     <motion.div
@@ -121,13 +135,6 @@ export const Homepage: React.FC = () => {
           </Head>
 
           <main className="h-full">
-            {/* <Button
-              onClick={async (e) => {
-                e.preventDefault();
-              }}
-            >
-              Order Plants
-            </Button> */}
             <section className=" mx-6">
               {data &&
                 data.map((plant, index) => (
@@ -141,15 +148,28 @@ export const Homepage: React.FC = () => {
                       <PlantItem
                         index={`${index}`}
                         key={index}
+                        timeLastWatered={plant.timeLastWatered}
+                        level={plant.level}
+                        timeCreated={plant.timeCreated}
                         timeTillNextWater={
-                          timeTillNextWater ||
+                          // calculate number of days till next watering
                           Math.floor(
-                            (Date.now().valueOf() -
-                              plant.timeLastWatered.toDate().valueOf()) /
+                            (plant.timeCreated.toDate().valueOf() +
+                              getBaseDaysBetweenWatering(
+                                codexData.find(
+                                  (codexPlant) =>
+                                    codexPlant.commonName[0] ===
+                                    plant.commonName
+                                )
+                              ) *
+                                1000 *
+                                60 *
+                                60 *
+                                24 -
+                              Date.now().valueOf()) /
                               (1000 * 60 * 60 * 24)
                           )
                         }
-                        setTimeTillNextWater={setTimeTillNextWater}
                         wateringStreak={
                           // calculate number of days since plant was created
                           Math.floor(
@@ -158,8 +178,6 @@ export const Homepage: React.FC = () => {
                               (1000 * 60 * 60 * 24)
                           )
                         }
-                        level={plant.level}
-                        timeCreated={plant.timeCreated}
                         {...plant}
                       />
                     </div>
