@@ -419,7 +419,7 @@ export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
             </div>
           </div>
 
-          <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-2 mb-4" />
+          <div className="line w-full h-[1px] bg-white opacity-75 -translate-y- mb-4" />
         </header>
         {children}
       </div>
