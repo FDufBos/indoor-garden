@@ -1,4 +1,5 @@
 // IMPORTS
+import { ArrowDownIcon } from "@chakra-ui/icons";
 import { Button, Spinner, useToast } from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
 import PlantItem from "@main/components/atoms/plantItem";
@@ -6,7 +7,7 @@ import { useUserAuth } from "@main/contexts/AuthContext";
 import { useFirestoreQuery } from "@main/data-models";
 // Firebase Imports
 import { sendEmailVerification } from "firebase/auth";
-import { orderBy } from "firebase/firestore";
+import { orderBy, serverTimestamp } from "firebase/firestore";
 // Framer Import
 import { motion } from "framer-motion";
 import Head from "next/head";
@@ -14,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // React Imports
 import React, { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
 
 // UI Imports
 import Layout from "../layout";
@@ -26,13 +28,16 @@ export const Homepage: React.FC = () => {
   const toast = useToast();
   const [exitAnimation, setExitAnimation] = useState("exit");
   const router = useRouter();
+  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("desc");
+  // const [orderField, setOrderField] = useState<"timeCreated" | "nickname">("timeCreated");
+  const [rotationAngle, setRotationAngle] = useState(0);
 
   const { user, documentIDs, logOut, hiddenAnimation, setHiddenAnimation } =
     useUserAuth();
 
   const { data, isLoading, error } = useFirestoreQuery<GardenItem>(
     `users/${user.uid}/garden`,
-    orderBy("timeCreated")
+    orderBy("timeCreated", `${orderDirection}`)
   );
 
   // Query the /plants collection
@@ -100,6 +105,20 @@ export const Homepage: React.FC = () => {
     }
   };
 
+  const handleLevelClick = (e): void => {};
+
+  const queryClient = useQueryClient();
+
+  const handleOrderDirectionButtonClick = (): void => {
+    setOrderDirection((prevOrderDirection) => (prevOrderDirection === "asc" ? "desc" : "asc"));
+    setRotationAngle((prevRotationAngle) => (prevRotationAngle === 180 ? 0 : 180));
+  
+    // Invalidate the cache for the query and trigger it to refetch the data with the updated order
+    
+    queryClient.invalidateQueries(`users/${user.uid}/garden`);
+  };
+
+
   if (isLoading || codexLoading) {
     return (
       <div className="fixed flex justify-center items-center w-screen h-screen">
@@ -112,7 +131,7 @@ export const Homepage: React.FC = () => {
     return <div>Error</div>;
   }
 
-  // const calculateTimeTillNextWater = (timeLastWatered: Date) => {};
+
 
   return (
     <motion.div
@@ -135,6 +154,13 @@ export const Homepage: React.FC = () => {
           </Head>
 
           <main className="h-full">
+            <section className="mx-6">
+              <button className="pt-6 pb-4 rounded-full" onClick={handleOrderDirectionButtonClick}>
+                <span className="text-[14] border text-sm  rounded-full border-red-400  px-3 py-[8px]">
+                  <span className="">Water Date</span> <ArrowDownIcon transform={`rotate(${rotationAngle}deg)`} />
+                </span>
+              </button>
+            </section>
             <section className=" mx-6">
               {data &&
                 data.map((plant, index) => (
@@ -147,6 +173,7 @@ export const Homepage: React.FC = () => {
                     <div className="cursor-pointer">
                       <PlantItem
                         index={`${index}`}
+                        documentID={documentIDs[index]}
                         key={index}
                         timeLastWatered={plant.timeLastWatered}
                         level={plant.level}
@@ -179,6 +206,7 @@ export const Homepage: React.FC = () => {
                           )
                         }
                         {...plant}
+                        onClick={() => handleLevelClick()}
                       />
                     </div>
                   </Link>
