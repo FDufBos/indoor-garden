@@ -1,4 +1,3 @@
-import { Plant } from "@main/common-types";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
