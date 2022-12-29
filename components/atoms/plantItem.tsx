@@ -4,6 +4,11 @@ export const PlantItem: React.FC<
   Partial<GardenItem> & {
     /** The document index */
     index: string;
+    /** The Id of the plant this card points to */
+    documentID: string;
+    /** clickhandler */
+    onClick : () => void;
+    
   }
 > = ({
   icon,
@@ -12,13 +17,11 @@ export const PlantItem: React.FC<
   timeTillNextWater,
   wateringStreak,
   level,
+  onClick
+// eslint-disable-next-line arrow-body-style
 }) => {
 
 
-  // eslint-disable-next-line require-await
-  const handleLevelClick = async (e): Promise<void> => {
-    e.preventDefault();
-  };
 
   return (
     <div className="flex justify-between items-center mb-6">
@@ -32,7 +35,7 @@ export const PlantItem: React.FC<
           </div>
         </div>
         <button
-          onClick={handleLevelClick}
+          onClick={onClick}
           id="image-label"
           // eslint-disable-next-line max-len
           className="flex items-center justify-center bg-water-100 h-6 w-6 rounded-full drop-shadow text-grey-600 font-[690] text-sm relative top-11 -left-6"
