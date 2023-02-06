@@ -28,7 +28,7 @@ export const Homepage: React.FC = () => {
   const toast = useToast();
   const [exitAnimation, setExitAnimation] = useState("exit");
   const router = useRouter();
-  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("desc");
+  const [orderDirection, setOrderDirection] = useState<"asc" | "desc">("asc");
   // const [orderField, setOrderField] = useState<"timeCreated" | "nickname">("timeCreated");
   const [rotationAngle, setRotationAngle] = useState(0);
 
@@ -161,7 +161,7 @@ export const Homepage: React.FC = () => {
                 </span>
               </button>
             </section>
-            <section className=" mx-6">
+            <section className="mx-6">
               {data &&
                 data.map((plant, index) => (
                   <Link
@@ -174,7 +174,7 @@ export const Homepage: React.FC = () => {
                       <PlantItem
                         index={`${index}`}
                         documentID={documentIDs[index]}
-                        key={index}
+                        key={documentIDs[index]}
                         timeLastWatered={plant.timeLastWatered}
                         level={plant.level}
                         timeCreated={plant.timeCreated}
@@ -206,7 +206,7 @@ export const Homepage: React.FC = () => {
                           )
                         }
                         {...plant}
-                        onClick={() => handleLevelClick()}
+                        
                       />
                     </div>
                   </Link>
@@ -214,11 +214,11 @@ export const Homepage: React.FC = () => {
             </section>
 
             {user && user.emailVerified ? (
-              <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+              <Button onClick={handleNewFormClick} className="mx-6 mb-10 md:invisible">
                 New Plant
               </Button>
             ) : (
-              <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+              <Button onClick={handleNewFormClick} className="mx-6 mb-10 md:invisible">
                 Verify email to add a plant
               </Button>
             )}
