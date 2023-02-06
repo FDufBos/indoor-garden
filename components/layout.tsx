@@ -307,6 +307,95 @@ export const SignInButton: React.FC<LoadingSpinnerProps> = ({
   );
 };
 
+export const DesktopSidebarNav: React.FC<LoadingSpinnerProps & ExitAnimationProps> = ({
+  setShowLoadingSpinner,
+  showLoadingSpinner,
+  setExitAnimation,
+}) => {
+  const { user, logOut, photoURL } = useUserAuth();
+  const toast = useToast();
+  const router = useRouter();
+
+  const handleNewFormClick = async (e): Promise<void> => {
+    if (user.emailVerified === false) {
+      await sendEmailVerification(user);
+      toast({
+        title: "Please verify your email",
+        position: "top",
+        description: "Check your email for a verification link",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+        containerStyle: {
+          width: "95vw",
+          maxWidth: "900px",
+        },
+      });
+      logOut();
+    } else {
+      e.preventDefault();
+      router.push("/codex");
+    }
+  };
+
+  return (
+    <nav
+      className="
+    flex flex-col gap-4 items-center pt-[16px] 
+    w-[200px] lg:w-[250px] border-r-[1px] border-water-100 
+    min-h-full ml-6 transition-all duration-300 ease px-2"
+    >
+      <Link href="/profile" passHref>
+        <div className="w-full flex justify-between">
+          <div
+            onClick={() => {
+              setExitAnimation("exitLeft");
+            }}
+            id="profile-pic"
+            className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
+          >
+            <Avatar w={10} h={10} src={photoURL} />
+          </div>
+          <Button
+          id="exchange-button"
+          className="drop-shadow-sm"
+          borderRadius="999px"
+          color=" #FCFEF8"
+          bg = "none"
+          
+          isLoading={showLoadingSpinner}
+          _hover={{
+            border: "1px solid #FCFEF8",
+            bg : "none"
+          }}
+          
+          onClick={() => {
+            setShowLoadingSpinner(true);
+            setTimeout(() => {
+              logOut();
+              setShowLoadingSpinner(false);
+            }, 400);
+          }}
+        >
+          🚪
+          <ArrowForwardIcon w={4} h={4} />
+        </Button>
+        </div>
+      </Link>
+      {user && user.emailVerified ? (
+        <Button onClick={handleNewFormClick}  className="w-full">
+          New Plant
+        </Button>
+      ) : (
+        <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+          Verify email to add a plant
+        </Button>
+      )}
+    </nav>
+  );
+};
+
 export const LoginNav: React.FC<LoadingSpinnerProps> = ({
   showLoadingSpinner,
   setShowLoadingSpinner,
