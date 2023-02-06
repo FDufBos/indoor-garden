@@ -16,14 +16,16 @@ import {
   ModalOverlay,
   Spacer,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import { useUserAuth } from "@main/contexts/AuthContext";
 import { getAuth, sendEmailVerification } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useState } from "react";
 
-import { useUserAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebaseUtils";
 
 // called for sendEmailVerification
@@ -307,6 +309,95 @@ export const SignInButton: React.FC<LoadingSpinnerProps> = ({
   );
 };
 
+export const DesktopSidebarNav: React.FC<LoadingSpinnerProps & ExitAnimationProps> = ({
+  setShowLoadingSpinner,
+  showLoadingSpinner,
+  setExitAnimation,
+}) => {
+  const { user, logOut, photoURL } = useUserAuth();
+  const toast = useToast();
+  const router = useRouter();
+
+  const handleNewFormClick = async (e): Promise<void> => {
+    if (user.emailVerified === false) {
+      await sendEmailVerification(user);
+      toast({
+        title: "Please verify your email",
+        position: "top",
+        description: "Check your email for a verification link",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+        variant: "subtle",
+        containerStyle: {
+          width: "95vw",
+          maxWidth: "900px",
+        },
+      });
+      logOut();
+    } else {
+      e.preventDefault();
+      router.push("/codex");
+    }
+  };
+
+  return (
+    <nav
+      className="
+    flex flex-col gap-4 items-center pt-[16px] 
+    w-[200px] lg:w-[250px] border-r-[1px] border-water-100 
+    min-h-full ml-6 transition-all duration-300 ease px-2"
+    >
+      <Link href="/profile" passHref>
+        <div className="w-full flex justify-between">
+          <div
+            onClick={() => {
+              setExitAnimation("exitLeft");
+            }}
+            id="profile-pic"
+            className="bg-monstera-200 drop-shadow-sm w-[40px] h-[40px] flex justify-center items-center rounded-full cursor-pointer"
+          >
+            <Avatar w={10} h={10} src={photoURL} />
+          </div>
+          <Button
+          id="exchange-button"
+          className="drop-shadow-sm"
+          borderRadius="999px"
+          color=" #FCFEF8"
+          bg = "none"
+          
+          isLoading={showLoadingSpinner}
+          _hover={{
+            border: "1px solid #FCFEF8",
+            bg : "none"
+          }}
+          
+          onClick={() => {
+            setShowLoadingSpinner(true);
+            setTimeout(() => {
+              logOut();
+              setShowLoadingSpinner(false);
+            }, 400);
+          }}
+        >
+          🚪
+          <ArrowForwardIcon w={4} h={4} />
+        </Button>
+        </div>
+      </Link>
+      {user && user.emailVerified ? (
+        <Button onClick={handleNewFormClick}  className="w-full">
+          New Plant
+        </Button>
+      ) : (
+        <Button onClick={handleNewFormClick} className="mx-6 mb-10">
+          Verify email to add a plant
+        </Button>
+      )}
+    </nav>
+  );
+};
+
 export const LoginNav: React.FC<LoadingSpinnerProps> = ({
   showLoadingSpinner,
   setShowLoadingSpinner,
@@ -352,7 +443,6 @@ export const SignOutNav: React.FC<LoadingSpinnerProps & ExitAnimationProps> = ({
           id="exchange-button"
           className="drop-shadow-sm"
           borderRadius="999px"
-          leftIcon={<p>🚪</p>}
           isLoading={showLoadingSpinner}
           onClick={() => {
             setShowLoadingSpinner(true);
@@ -362,8 +452,9 @@ export const SignOutNav: React.FC<LoadingSpinnerProps & ExitAnimationProps> = ({
             }, 400);
           }}
         >
-          Log Out
+          Log Out <ArrowForwardIcon w={4} h={4} />
         </Button>
+        
       </div>
     </nav>
   );
@@ -388,10 +479,10 @@ export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
   }, [photoURL, setPhotoURL, user]);
 
   return (
-    <div className=" text-white flex min-h-screen flex-col justify-between">
+    <div className="text-white min-h-screen ">
       <div>
-        <header className="flex flex-col gap-4 pt-4 mx-6">
-          <div className="flex flex-col-reverse md:flex-col gap-4 pb-4 md:pb-0">
+        <header className="pt-4 md:pt-0 mx-6 transition-all ease duration-300">
+          <div className="flex flex-col-reverse gap-4 pb-4 md:hidden">
             <SignOutNav
               setShowLoadingSpinner={setShowLoadingSpinner}
               showLoadingSpinner={showLoadingSpinner}
@@ -409,23 +500,34 @@ export const Layout: React.FC<PropsWithChildren<ExitAnimationProps>> = ({
                   <h1>{name}</h1>
                 )}
               </div>
-              <Link href="/codex" passHref ><Image
-                src="/images/sun.svg"
-                width="35"
-                height="35"
-                className="hidden cursor-pointer"
-                alt="sun"
-              /></Link>
+              <Link href="/codex" passHref>
+                <Image
+                  src="/images/sun.svg"
+                  width="35"
+                  height="35"
+                  className="hidden cursor-pointer"
+                  alt="sun"
+                />
+              </Link>
             </div>
           </div>
 
-          <div className="line w-full h-[1px] bg-white opacity-75 -translate-y- mb-4" />
         </header>
-        {children}
+        <div className="md:flex">
+          <div className="hidden md:block">
+            <DesktopSidebarNav 
+              setShowLoadingSpinner={setShowLoadingSpinner}
+              showLoadingSpinner={showLoadingSpinner}
+              setExitAnimation={setExitAnimation} 
+              exitAnimation={exitAnimation}            
+              />
+          </div>
+          {children}
+        </div>
       </div>
 
       <footer className="w-full flex flex-col gap-4 mb-4 justify-center items-center">
-        <div className="line w-full h-[1px] bg-white opacity-75 -translate-y-1" />
+        <div className="line w-full h-[1px] bg-white opacity-75" />
         <Button onClick={getthreeUserIDs}>Don&apos;t click</Button>
         👀👀
       </footer>
