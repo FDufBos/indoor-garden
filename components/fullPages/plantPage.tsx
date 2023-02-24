@@ -159,6 +159,7 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
             {/* <h3>{botanicalName}</h3> */}
           </div>
           <div className="flex flex-col items-center text-water-100 gap-0">
+            {/* TODO: the timeTillNextWater and wateringStreak numbers are not showing up */}
             <div>💧 Water in {timeTillNextWater} days</div>
             <div>🔥 Streak is {wateringStreak} days long</div>
           </div>
