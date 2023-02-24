@@ -4,10 +4,13 @@ import { Button, Spinner, useToast } from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
 import PlantItem from "@main/components/atoms/plantItem";
 import { useUserAuth } from "@main/contexts/AuthContext";
-import { useFirestoreQuery } from "@main/data-models";
+import {
+  useFirestoreQuery,
+  useFirestoreUpdateMutation,
+} from "@main/data-models";
 // Firebase Imports
 import { sendEmailVerification } from "firebase/auth";
-import { orderBy, serverTimestamp } from "firebase/firestore";
+import { doc, orderBy, serverTimestamp, updateDoc } from "firebase/firestore";
 // Framer Import
 import { motion } from "framer-motion";
 import Head from "next/head";
@@ -23,7 +26,7 @@ import Layout from "../layout";
 /**
  *
  */
-export const Homepage: React.FC = () => {
+export const Homepage: React.FC = ({  }) => {
   // HOOKS
   const toast = useToast();
   const [exitAnimation, setExitAnimation] = useState("exit");
@@ -46,11 +49,11 @@ export const Homepage: React.FC = () => {
     isLoading: codexLoading,
     error: codexError,
   } = useFirestoreQuery<Plant>("plants");
-
   // return the base days between watering from the codex for each plant
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const getBaseDaysBetweenWatering = (plant: Plant) =>
     plant.baseDaysBetweenWatering;
+    
 
   // Framer Animation Variants
   const variants = {
@@ -77,12 +80,13 @@ export const Homepage: React.FC = () => {
     if (hiddenAnimation === "hiddenLeft") {
       setHiddenAnimation("exit");
     }
-  });
+  } );
 
   // HANDLERS
   // When user click "New Plant" button and they are not verified
   // a verification email is sent to them and they are logged out
   const handleNewFormClick = async (e): Promise<void> => {
+    // TODO: something weird is happening here, getting Firebase: Error (auth/too-many-requests). when I click the button without being verified
     if (user.emailVerified === false) {
       await sendEmailVerification(user);
       toast({
@@ -105,19 +109,45 @@ export const Homepage: React.FC = () => {
     }
   };
 
-  const handleLevelClick = (e): void => {};
 
-  const queryClient = useQueryClient();
+
+
+
+
+const { mutate } = useFirestoreUpdateMutation(
+  `users/${user.uid}/garden`, 
+  // how do I pass the id of the plant that was clicked? I'm confused about how the mutate function works
+  documentRef
+  );
+// handleWateredClick should set the timeLastWatered of the corresponding plant to serverTimestamp 
+const handleWateredClick = (
+  // I'd assume this is where I have to pass the id of the plant that was clicked
+) => {
+  // where the mutation happens, but unsure what it should look like?
+  mutate
+}
+
+
+
+
+
+
+// this also seems useless...
+const queryClient = useQueryClient();
 
   const handleOrderDirectionButtonClick = (): void => {
-    setOrderDirection((prevOrderDirection) => (prevOrderDirection === "asc" ? "desc" : "asc"));
-    setRotationAngle((prevRotationAngle) => (prevRotationAngle === 180 ? 0 : 180));
-  
+    // TODO: This isn't working
+    setOrderDirection((prevOrderDirection) =>
+      prevOrderDirection === "asc" ? "desc" : "asc"
+    );
+    setRotationAngle((prevRotationAngle) =>
+      prevRotationAngle === 180 ? 0 : 180
+    );
+
     // Invalidate the cache for the query and trigger it to refetch the data with the updated order
-    
+
     queryClient.invalidateQueries(`users/${user.uid}/garden`);
   };
-
 
   if (isLoading || codexLoading) {
     return (
@@ -128,13 +158,12 @@ export const Homepage: React.FC = () => {
   }
 
   if (error || codexError) {
-    return <div>Error</div>;
+    return <div>Error, try reloading</div>;
   }
-
-
 
   return (
     <motion.div
+      // TODO: fix low fps-looking animation
       variants={variants}
       initial={hiddenAnimation}
       animate="enter"
@@ -155,9 +184,13 @@ export const Homepage: React.FC = () => {
 
           <main className="h-full">
             <section className="mx-6">
-              <button className="pt-6 pb-4 rounded-full" onClick={handleOrderDirectionButtonClick}>
+              <button
+                className="pt-6 pb-4 rounded-full"
+                onClick={handleOrderDirectionButtonClick}
+              >
                 <span className="text-[14] border text-sm  rounded-full border-red-400  px-3 py-[8px]">
-                  <span className="">Water Date</span> <ArrowDownIcon transform={`rotate(${rotationAngle}deg)`} />
+                  <span className="">Water Date</span>{" "}
+                  <ArrowDownIcon transform={`rotate(${rotationAngle}deg)`} />
                 </span>
               </button>
             </section>
@@ -172,53 +205,54 @@ export const Homepage: React.FC = () => {
                   >
                     <div className="cursor-pointer">
                       <PlantItem
-                        index={`${index}`}
-                        documentID={documentIDs[index]}
+                        handleWateredClick={handleWateredClick}
                         key={documentIDs[index]}
                         timeLastWatered={plant.timeLastWatered}
                         level={plant.level}
                         timeCreated={plant.timeCreated}
                         timeTillNextWater={
                           // calculate number of days till next watering
+                          // there is no way this is the best way to do this
                           Math.floor(
-                            (plant.timeCreated.toDate().valueOf() +
+                            (plant.timeLastWatered.toDate().valueOf() +
                               getBaseDaysBetweenWatering(
                                 codexData.find(
-                                  (codexPlant) =>
-                                    codexPlant.commonName[0] ===
+                                  (codexPlant) => codexPlant.commonName[0] ===
                                     plant.commonName
                                 )
                               ) *
-                                1000 *
-                                60 *
-                                60 *
-                                24 -
+                              1000 *
+                              60 *
+                              60 *
+                              24 -
                               Date.now().valueOf()) /
-                              (1000 * 60 * 60 * 24)
-                          )
-                        }
+                            (1000 * 60 * 60 * 24)
+                          )}
                         wateringStreak={
                           // calculate number of days since plant was created
                           Math.floor(
                             (Date.now().valueOf() -
                               plant.timeCreated.toDate().valueOf()) /
-                              (1000 * 60 * 60 * 24)
-                          )
-                        }
-                        {...plant}
-                        
-                      />
+                            (1000 * 60 * 60 * 24)
+                          )}
+                        {...plant} />
                     </div>
                   </Link>
                 ))}
             </section>
 
             {user && user.emailVerified ? (
-              <Button onClick={handleNewFormClick} className="mx-6 mb-10 md:invisible">
+              <Button
+                onClick={handleNewFormClick}
+                className="mx-6 mb-10 md:invisible"
+              >
                 New Plant
               </Button>
             ) : (
-              <Button onClick={handleNewFormClick} className="mx-6 mb-10 md:invisible">
+              <Button
+                onClick={handleNewFormClick}
+                className="mx-6 mb-10 md:invisible"
+              >
                 Verify email to add a plant
               </Button>
             )}
