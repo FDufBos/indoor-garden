@@ -2,13 +2,8 @@ import { GardenItem } from "@main/common-types";
 
 export const PlantItem: React.FC<
   Partial<GardenItem> & {
-    /** The document index */
-    index: string;
-    /** The Id of the plant this card points to */
-    documentID: string;
-    /** clickhandler */
-    onClick : () => void;
-    
+    /** Handler for when the watered button is clicked */
+    handleWateredClick: () => void;
   }
 > = ({
   icon,
@@ -17,12 +12,9 @@ export const PlantItem: React.FC<
   timeTillNextWater,
   wateringStreak,
   level,
-  onClick
-// eslint-disable-next-line arrow-body-style
+  handleWateredClick,
+  // eslint-disable-next-line arrow-body-style
 }) => {
-
-
-
   return (
     <div className="flex justify-between items-center mb-6">
       <div className="flex">
@@ -35,7 +27,6 @@ export const PlantItem: React.FC<
           </div>
         </div>
         <button
-          onClick={onClick}
           id="image-label"
           // eslint-disable-next-line max-len
           className="flex items-center justify-center bg-water-100 h-6 w-6 rounded-full drop-shadow text-grey-600 font-[690] text-sm relative top-11 -left-6"
@@ -51,6 +42,17 @@ export const PlantItem: React.FC<
           </div>
         </div>
       </div>
+      <button
+        // eslint-disable-next-line max-len
+        className="flex items-center justify-center bg-water-100 h-6 w-6 rounded-full drop-shadow text-grey-600 font-[690] text-sm relative top-11 -left-6"
+        onClick={(e) => {
+          e.preventDefault();
+          handleWateredClick();
+        }}
+      >
+        {/* When this button is clicked set timeLastWatered to serverTimestamp */}
+        💧
+      </button>
     </div>
   );
 };
