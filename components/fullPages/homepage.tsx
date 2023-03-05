@@ -6,8 +6,8 @@ import PlantItem from "@main/components/atoms/plantItem";
 import { useUserAuth } from "@main/contexts/AuthContext";
 import {
   useFirestoreQuery,
-  useFirestoreUpdateMutation,
 } from "@main/data-models";
+import { db } from "@main/utils/firebaseUtils";
 // Firebase Imports
 import { sendEmailVerification } from "firebase/auth";
 import { doc, orderBy, serverTimestamp, updateDoc } from "firebase/firestore";
@@ -113,19 +113,15 @@ export const Homepage: React.FC = ({  }) => {
 
 
 
-
-const { mutate } = useFirestoreUpdateMutation(
-  `users/${user.uid}/garden`, 
-  // how do I pass the id of the plant that was clicked? I'm confused about how the mutate function works
-  documentRef
-  );
-// handleWateredClick should set the timeLastWatered of the corresponding plant to serverTimestamp 
-const handleWateredClick = (
-  // I'd assume this is where I have to pass the id of the plant that was clicked
-) => {
-  // where the mutation happens, but unsure what it should look like?
-  mutate
+const handleWateredClick = async (plantID) => {
+  const plantRef = doc(db, `users/${user.uid}/garden`, `${plantID}`)
+  await updateDoc (plantRef, {
+    timeLastWatered: serverTimestamp(),
+  });
+  // refetch the data
+  queryClient.invalidateQueries(`users/${user.uid}/garden`);
 }
+
 
 
 
@@ -199,17 +195,18 @@ const queryClient = useQueryClient();
                 data.map((plant, index) => (
                   <Link
                     href={`/garden/${documentIDs[index]}`}
-                    key={index}
+                    key={documentIDs[index]}
                     passHref
                     scroll={false}
                   >
                     <div className="cursor-pointer">
                       <PlantItem
-                        handleWateredClick={handleWateredClick}
+                        
                         key={documentIDs[index]}
                         timeLastWatered={plant.timeLastWatered}
                         level={plant.level}
                         timeCreated={plant.timeCreated}
+                        handleWateredClick={() => handleWateredClick(documentIDs[index])}
                         timeTillNextWater={
                           // calculate number of days till next watering
                           // there is no way this is the best way to do this
