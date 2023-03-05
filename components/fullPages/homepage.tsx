@@ -113,7 +113,7 @@ export const Homepage: React.FC = ({  }) => {
 
 
 
-const handleWateredClick = async (plantID) => {
+const handleWateredClick = async (plantID : string) : Promise<void> => {
   const plantRef = doc(db, `users/${user.uid}/garden`, `${plantID}`)
   await updateDoc (plantRef, {
     timeLastWatered: serverTimestamp(),
