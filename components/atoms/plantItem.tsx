@@ -15,6 +15,8 @@ export const PlantItem: React.FC<
   handleWateredClick,
   // eslint-disable-next-line arrow-body-style
 }) => {
+  
+
   return (
     <div className="flex justify-between items-center mb-6">
       <div className="flex">
