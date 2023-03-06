@@ -38,7 +38,7 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
   icon,
   level,
   timeTillNextWater,
-  wateringStreak,
+  // wateringStreak,
   sunExposure,
   baseDaysBetweenWatering,
   soilType,
@@ -161,7 +161,7 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
           <div className="flex flex-col items-center text-water-100 gap-0">
             {/* TODO: the timeTillNextWater and wateringStreak numbers are not showing up */}
             <div>💧 Water in {timeTillNextWater} days</div>
-            <div>🔥 Streak is {wateringStreak} days long</div>
+            {/* <div>🔥 Streak is {wateringStreak} days long</div> */}
           </div>
           <div
             id="plant-properties"
