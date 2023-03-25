@@ -36,3 +36,7 @@ yarn-error.log*
 
 *debug.log
 
+functions/dataexport/all_namespaces/all_kinds/all_namespaces_all_kinds.export_metadata
+functions/dataexport/all_namespaces/all_kinds/output-0
+functions/dataexport/all_namespaces/all_kinds/output-1
+functions/dataexport/dataexport.overall_export_metadata
