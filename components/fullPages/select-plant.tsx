@@ -103,58 +103,71 @@ export const SelectPlant: React.FC<SelectPlantProps> = () => {
               ))}
           </div>
         </div>
+
         <div className=" h-[160px] ml-[12px] rounded-l-xl mb-[32px]">
           <div className="p-[16px]">
             <h3 className="font-alpina font-[900] text-2xl text-monstera-800">
-              Indoor Starters
+              Plants with the 🪴 emoji
             </h3>
           </div>
           <div className="flex gap-[16px] ml-[12px]">
-            <div className="flex flex-col items-center gap-[8px]">
-              <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                🌵
-              </div>
-              <p className="font-medium text-[14px]">Cactus</p>
-            </div>
-            <div className="flex flex-col items-center gap-[8px]">
-              <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                🌵
-              </div>
-              <p className="font-medium text-[14px]">Cactus</p>
-            </div>
-            <div className="flex flex-col items-center gap-[8px]">
-              <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                🌵
-              </div>
-              <p className="font-medium text-[14px]">Cactus</p>
-            </div>
+            {data &&
+              data
+                .filter((plant) => plant.emoji === "🪴")
+                .map((plant, index) => (
+                  <Link
+                    key={index}
+                    href={
+                      plant.id
+                        ? `/codex/${plant.id}`
+                        : `/codex/ ${plant.botanicalName}`
+                    }
+                    passHref
+                  >
+                    <div className="flex flex-col items-center gap-[8px] w-20">
+                      <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center cursor-pointer">
+                        {plant.emoji}
+                      </div>
+                      <p className="font-medium text-[14px] text-center cursor-pointer leading-4">
+                        {plant.commonName[0]}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
           </div>
         </div>
         <div className=" h-[160px] ml-[12px] rounded-l-xl mb-[32px]">
           <div className="p-[16px]">
             <h3 className="font-alpina font-[900] text-2xl text-monstera-800">
-              Popular
+              Araceae family
             </h3>
           </div>
           <div className="flex gap-[16px] ml-[12px]">
-            <div className="flex flex-col items-center gap-[8px]">
-              <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                🌷
-              </div>
-              <p className="font-medium text-[14px]">Tulips</p>
-            </div>
-            <div className="flex flex-col items-center gap-[8px]">
-              <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                🌷
-              </div>
-              <p className="font-medium text-[14px]">Tulips</p>
-            </div>
-            <div className="flex flex-col items-center gap-[8px]">
-              <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center">
-                🌷
-              </div>
-              <p className="font-medium text-[14px]">Tulips</p>
-            </div>
+            {data &&
+              data
+                .filter(
+                  (plant) => plant.family === "Araceae" || plant.emoji === "🌵"
+                )
+                .map((plant, index) => (
+                  <Link
+                    key={index}
+                    href={
+                      plant.id
+                        ? `/codex/${plant.id}`
+                        : `/codex/ ${plant.botanicalName}`
+                    }
+                    passHref
+                  >
+                    <div className="flex flex-col items-center gap-[8px] w-20">
+                      <div className="h-[75px] w-[75px] bg-[#FCFEF8] rounded-full text-[36px] flex items-center justify-center cursor-pointer">
+                        {plant.emoji}
+                      </div>
+                      <p className="font-medium text-[14px] text-center cursor-pointer leading-4">
+                        {plant.commonName[0]}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
           </div>
         </div>
         <div className="flex ml-[16px] p-[16px]">
