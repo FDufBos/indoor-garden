@@ -17,4 +17,6 @@ export interface GardenItem {
   timeTillNextWater: number;
   /** Watering streak length */
   wateringStreak: number;
+  /** Images URLs (optional) */
+  images?: string[];
 }
