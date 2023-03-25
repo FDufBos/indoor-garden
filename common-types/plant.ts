@@ -1,18 +1,22 @@
 export interface Plant {
   /** baseDaysBetweenWatering */
-  baseDaysBetweenWatering: 8;
+  baseDaysBetweenWatering: number;
   /** bloomTime */
   bloomTime: string;
   /** botanicalName */
   botanicalName: string;
   /** commonName */
   commonName: string[];
+  /** Emoji */
+  emoji: string;
   /** family */
   family: string;
   /** flowerColor */
   flowerColor: string;
   /** hardinessZones */
   hardinessZones: string;
+  /** id  */
+  id: string;
   /** matureSize */
   matureSize: string;
   /** nativeAreas */

@@ -9,16 +9,12 @@ import { fetchPlant } from "../../data/firestore";
 export const Plant: React.FC = () => {
   // create state to store plant query param
   // TODO: Create Plant Type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const [plant, setPlant] = useState<any>();
-  // const [codex, setCodex] = useState("");
   const router = useRouter();
   const { user, codex } = useUserAuth();
-  // TODO: Create Plant Type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [codexPlant, setCodexPlant] = useState<any>("");
 
-  // useEffect to get plant query param
   useEffect(() => {
     if (user) {
       if (!router.isReady) return;
@@ -28,11 +24,8 @@ export const Plant: React.FC = () => {
           codex.forEach((doc) => {
             const codexCommonName = doc.commonName[0];
             const plantCommonName = plant.commonName;
-            // console.log(codexCommonName);
-            // console.log(plantCommonName);
             if (codexCommonName === plantCommonName) {
               setCodexPlant(doc);
-              // console.log(doc)
             }
           });
         }
@@ -40,13 +33,12 @@ export const Plant: React.FC = () => {
     } else {
       // User is signed out
     }
-  }, []);
+  }, [codex, router.isReady, router.query.name, user]);
 
   return (
     <div>
       {plant && codexPlant ? (
         <div>
-          {/* {<div>{documentIDs[2]}</div>} */}
           <PlantPage
             nickname={plant.nickname}
             commonName={plant.commonName}
@@ -57,6 +49,8 @@ export const Plant: React.FC = () => {
             botanicalName={codexPlant.botanicalName}
             sunExposure={codexPlant.sunExposure}
             baseDaysBetweenWatering={codexPlant.baseDaysBetweenWatering}
+            soilType={codexPlant.soilType}
+            bloomTime={codexPlant.bloomTime}
           />
         </div>
       ) : (

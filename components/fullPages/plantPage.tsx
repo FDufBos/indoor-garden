@@ -38,9 +38,11 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
   icon,
   level,
   timeTillNextWater,
-  wateringStreak,
+  // wateringStreak,
   sunExposure,
   baseDaysBetweenWatering,
+  soilType,
+  bloomTime,
 }) => {
   const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -51,6 +53,30 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
     e.preventDefault();
     Router.push("/garden");
   };
+
+
+  const codexItems = [{
+    title: "Name",
+    value: commonName,
+  },
+  {
+    title: "Sun Exposure",
+    value: sunExposure,
+  },
+  {
+    title: "Days between watering",
+    value: baseDaysBetweenWatering,
+  },
+  {
+    title: "Soil Type",
+    value: soilType,
+  },
+  {
+    title: "Bloom Time",
+    value: bloomTime,
+  },
+]
+
 
   return (
     <motion.div
@@ -104,76 +130,90 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
           </ModalContent>
         </Modal>
       </nav>
-
-      <header
-        id="plant-info"
-        className="relative bottom-4 flex mx-6 flex-col gap-3 justify-between items-center mb-6"
-      >
-        <div
-          id="image-circle"
-          className="bg-white relative w-20 h-20 rounded-full drop-shadow flex flex-col justify-center items-center"
+      <div className="md:w-1/2">
+        <header
+          id="plant-info"
+          className="relative bottom-4 flex mx-6 flex-col gap-3 justify-between items-center mb-6"
         >
-          <div id="plant-image" className="text-5xl text-center">
-            {icon}
+          <div
+            id="image-circle"
+            className="bg-white relative w-20 h-20 rounded-full drop-shadow flex flex-col justify-center items-center"
+          >
+            <div id="plant-image" className="text-5xl text-center">
+              {icon}
+            </div>
+            <div
+              id="image-label"
+              // eslint-disable-next-line max-len
+              className="absolute bottom-0 right-0 flex items-center justify-center bg-water-100 h-8 w-8 rounded-full drop-shadow text-grey-600 font-[690]"
+            >
+              {level}
+            </div>
+          </div>
+          <div id="titles" className="flex flex-col items-center">
+            <h1 className="font-flexa">{nickname}</h1>
+            <h2 className="text-white">{commonName}</h2>
+            {/* <h3>{botanicalName}</h3> */}
+          </div>
+          <div className="flex flex-col items-center text-water-100 gap-0">
+            {/* TODO: the timeTillNextWater and wateringStreak numbers are not showing up */}
+            <div>💧 Water in {timeTillNextWater} days</div>
+            {/* <div>🔥 Streak is {wateringStreak} days long</div> */}
           </div>
           <div
-            id="image-label"
-            // eslint-disable-next-line max-len
-            className="absolute bottom-0 right-0 flex items-center justify-center bg-water-100 h-8 w-8 rounded-full drop-shadow text-grey-600 font-[690]"
+            id="plant-properties"
+            className="flex justify-center text-sm gap-2 w-full mt-2 text-center h-[100%]"
           >
-            {level}
+            <div className="flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-md w-full py-[8px] text-md leading-[110%]">
+              Living Room
+            </div>
+            <div className="flex items-center justify-center bg-sun-100 text-amber-600 rounded-md w-full py-[8px] text-md leading-[110%]">
+              {sunExposure}
+            </div>
+            <div className="flex items-center justify-center bg-sky-100 text-sky-600 rounded-md w-full py-[8px] text-md leading-[110%]">
+              Water every {baseDaysBetweenWatering} days
+            </div>
           </div>
-        </div>
-        <div id="titles" className="flex flex-col items-center">
-          <h1 className="font-flexa">{nickname}</h1>
-          <h2 className="text-white">{commonName}</h2>
-          {/* <h3>{botanicalName}</h3> */}
-        </div>
-        <div className="flex flex-col items-center text-water-100 gap-0">
-          <div>💧 Water in {timeTillNextWater} days</div>
-          <div>🔥 Streak is {wateringStreak} days long</div>
-        </div>
-        <div
-          id="plant-properties"
-          className="flex text-sm gap-2 w-full mt-2 text-center"
+        </header>
+        <section id="memory-lane" className="flex flex-col gap-1 mx-6">
+          <div
+            id="above-the-divider"
+            className="flex justify-between items-baseline"
+          >
+            <h1>Memory Lane</h1>
+            <h2 className="text-water-100 font-alpina">View More</h2>
+          </div>
+          <hr />
+          <div
+            id="recent-plant-pics"
+            className="mt-2 h-24 flex gap-2 justify-between"
+          >
+            <div className="w-full rounded bg-slate-400" />
+            <div className="w-full rounded bg-slate-400" />
+            <div className="w-full rounded bg-slate-400" />
+            <div className="w-full rounded bg-slate-400" />
+          </div>
+        </section>
+        <section
+          id="codex"
+          className="bg-white h-96 min-h-screen  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none md:absolute md:top-8 md:left-1/2 md:w-[48%]"
         >
-          <div className=" bg-indigo-100 text-indigo-600 rounded-md w-full py-[1px] text-md">
-            Living Room
-          </div>
-          <div className="bg-sun-100 text-amber-600 rounded-md w-full py-[1px] text-md">
-            {sunExposure}
-          </div>
-          <div className="bg-sky-100 text-sky-600 rounded-md w-full py-[1px] text-md">
-            Water every {baseDaysBetweenWatering} days
-          </div>
-        </div>
-      </header>
-      <section id="memory-lane" className="flex flex-col gap-1 mx-6">
-        <div
-          id="above-the-divider"
-          className="flex justify-between items-baseline"
-        >
-          <h1>Memory Lane</h1>
-          <h2 className="text-water-100 font-alpina">View More</h2>
-        </div>
-        <hr />
-        <div
-          id="recent-plant-pics"
-          className="mt-2 h-24 flex gap-4 justify-between"
-        >
-          <div className="w-full rounded-md bg-slate-400" />
-          <div className="w-full rounded-md bg-slate-400" />
-          <div className="w-full rounded-md bg-slate-400" />
-          <div className="w-full rounded-md bg-slate-400" />
-        </div>
-      </section>
-      <section
-        id="codex"
-        className="bg-white h-96  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none"
-      >
-        <h1 className="text-monstera-400">Codex</h1>
-        <hr className="bg-monstera-400 h-[3px] " />
-      </section>
+          <h1 className="text-monstera-400 text-lg font-bold">Codex</h1>
+          <hr className="bg-monstera-400 h-[1px] " />
+          
+          {
+            codexItems && codexItems.map((item, index) => (
+              <div key={index} className="flex flex-col gap-2 mt-4">
+                <div className="flex justify-between">
+                  <h2 className="text-monstera-400 font shrink-0">{item.title}</h2>
+                  <div className="relative bottom-[6px] mx-2 w-full border-t-2 border-monstera-300 border-dotted shrink self-end"/>
+                  <h2 className="text-monstera-400 font-semibold shrink-0">{item.value}</h2>
+                </div>
+              </div>
+            ))
+          }
+        </section>
+      </div>
     </motion.div>
   );
 };

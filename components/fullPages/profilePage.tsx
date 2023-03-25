@@ -129,7 +129,7 @@ export const ProfilePage: React.FC = () => {
     } else {
       setPhotoURL(null);
     }
-  }, [user]);
+  }, [photoURL, setPhotoURL, user]);
 
   const handlePhotoURLSubmit = async (e): Promise<void> => {
     e.preventDefault();
