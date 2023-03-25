@@ -8,9 +8,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Progress,
   Tooltip,
-  useDisclosure,
-} from "@chakra-ui/react";
+  useDisclosure} from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
 import { arrayUnion, doc, getFirestore, setDoc } from "firebase/firestore";
 import {
@@ -22,7 +22,7 @@ import {
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useQueryClient } from "react-query";
 
@@ -45,8 +45,7 @@ const storage = getStorage();
 const db = getFirestore();
 
 const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
-  // const [imageUrls, setImageUrls] = useState<string[]>([]);
-
+  const [progress, setProgress] = useState(0);
   const queryClient = useQueryClient();
 
   const handleImageUpload = async (
@@ -60,14 +59,16 @@ const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
     const storageRef = ref(storage, imagePath);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-    await uploadTask.on(
+    uploadTask.on(
       "state_changed",
-      // (snapshot) => {
-      //   // You can display the upload progress here, e.g., using snapshot.bytesTransferred and snapshot.totalBytes
-      // },
-      // (error) => {
-      //   // Handle upload errors here
-      // },
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+      },
+      (error) => {
+        // Handle upload errors here
+      },
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         // Save the image URL to Firestore
@@ -81,6 +82,7 @@ const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
       }
     );
   };
+
   const onDrop = useCallback(
     (acceptedFiles) => {
       acceptedFiles.forEach((file) => {
@@ -93,25 +95,47 @@ const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div
-      {...getRootProps()}
-      style={{ border: "1px dashed gray", padding: "16px" }}
-    >
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the image files here...</p>
-      ) : (
-        <p className="text-center">Drag and drop an image file here, or click to select a file</p>
-      )}
+    <div style={{ position: "relative" }}>
+      <div
+        {...getRootProps()}
+        style={{ border: "1px dashed gray", padding: "16px" }}
+      >
+        <input {...getInputProps()} />
+        {isDragActive ? (
+          <p>Drop the image files here...</p>
+        ) : (
+          <p className="text-center">
+            Drag and drop an image file here, or click to select a file
+          </p>
+        )}
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "4px",
+          backgroundColor: "#ddd",
+        }}
+      >
+        <Progress
+          className="h-full bg-blue-600"
+          value = {progress}
+        />
+      </div>
     </div>
   );
 };
 
-export const PlantPage: React.FC<Partial<GardenItem & Plant>& { 
-/** plantId : ID of plant from router */
-plantId, 
-/** user ID */
-user: string;  }> = ({
+export const PlantPage: React.FC<
+  Partial<GardenItem & Plant> & {
+    /** plantId : ID of plant from router */
+    plantId;
+    /** user ID */
+    user: string;
+  }
+> = ({
   nickname,
   commonName,
   icon,
@@ -129,7 +153,6 @@ user: string;  }> = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
-
 
   const handleHomeClick = (e): void => {
     e.preventDefault();
