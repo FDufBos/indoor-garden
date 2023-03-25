@@ -28,10 +28,13 @@ module.exports = {
           400: "#B7DCFF",
         },
         monstera: {
+          100: "#ECEFE5",
           200: "#D7FFB7",
           300: "#8DB572",
           400: "#5C8B57",
+          700: "#32695F",
           800: "#3F5214",
+          
         },
       },
       keyframes: {

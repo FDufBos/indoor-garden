@@ -1,5 +1,5 @@
 *.config.js
-
+.emulator-data
 
 # Disable checking for (currently) unused functions folder
 functions/*

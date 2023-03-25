@@ -1,4 +1,3 @@
-import { Plant } from "@main/common-types";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -118,13 +117,6 @@ export const UserAuthContextProvider: React.FC<PropsWithChildren<{}>> = ({
     // return codexList;
   };
 
-  // TODO: timeSinceLastWatered is a value? or a function?
-  const timeSinceLastWatered = (plant: Plant): number => {
-    const now = new Date().valueOf();
-    const lastWatered = new Date(plant.timeLastWatered).valueOf();
-    return Math.floor(Math.abs(now - lastWatered) / (1000 * 60 * 60 * 24));
-  };
-
   const forgotPassword = (email): Promise<void> =>
     sendPasswordResetEmail(auth, email);
 
@@ -183,7 +175,6 @@ export const UserAuthContextProvider: React.FC<PropsWithChildren<{}>> = ({
         documentIDs,
         setDocumentIDs,
         getthreeUserIDs,
-        timeSinceLastWatered,
         updateUserPassword,
         forgotPassword,
         setOrderPlantsBy,

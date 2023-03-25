@@ -1,26 +1,34 @@
 export interface Plant {
-  /** The name */
-  name: string;
-  /** The nickname */
-  nickname: string;
-  /** The common name */
-  commonName: string;
-  /** The icon */
-  icon: string;
-  /** The Date the plant was created */
-  timeCreated: Date;
-  /** The level of the plant */
-  level: number;
-  /** The time till next water */
-  timeTillNextWater: number;
-  /** The time last watered */
-  timeLastWatered: string;
-  /** The watering streak */
-  wateringStreak: number;
-  /** The botanical name */
+  /** baseDaysBetweenWatering */
+  baseDaysBetweenWatering: number;
+  /** bloomTime */
+  bloomTime: string;
+  /** botanicalName */
   botanicalName: string;
-  /** The amount of required sun exposure  */
-  sunExposure: string;
-  /** The watering frequency */
-  wateringFrequency: string;
+  /** commonName */
+  commonName: string[];
+  /** Emoji */
+  emoji: string;
+  /** family */
+  family: string;
+  /** flowerColor */
+  flowerColor: string;
+  /** hardinessZones */
+  hardinessZones: string;
+  /** id  */
+  id: string;
+  /** matureSize */
+  matureSize: string;
+  /** nativeAreas */
+  nativeAreas: string[];
+  /** plantType */
+  plantType: string[];
+  /** soilPh */
+  soilPh: string;
+  /** soilType */
+  soilType: string;
+  /** sunExposure */
+  sunExposure: string[];
+  /** toxicity */
+  toxicity: string;
 }

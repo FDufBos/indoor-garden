@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn && next dev",
+    "dev-no-emulators": "yarn && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev": "concurrently -n emulators,dev-server \"yarn emulators\" \"yarn dev-no-emulators\"",
+    "emulators": "firebase emulators:start --only auth,firestore,storage,functions,hosting --import .emulator-data"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.3",
@@ -14,16 +16,20 @@
     "@chakra-ui/theme-tools": "^2.0.2",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+
     "@headlessui/react": "^1.5.0",
+    "cors": "^2.8.5",
+
     "firebase": "^9.8.0",
     "framer-motion": "^6.5.1",
     "ios-segmented-control-react": "^0.2.2",
-    "matter-js": "^0.18.0",
     "next": "12.1.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-firebase-hooks": "^5.0.3",
+    "react-hook-form": "^7.41.1",
     "react-icons": "^4.4.0",
+    "react-query": "^3.39.2",
     "sharp": "^0.30.7"
   },
   "devDependencies": {
@@ -32,6 +38,8 @@
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
     "autoprefixer": "^10.4.4",
+    "concurrently": "^7.4.0",
+    "esbuild": "^0.15.12",
     "eslint": "8.13.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",

@@ -47,7 +47,7 @@ export const GetStarted: React.FC = () => {
         },
       });
     }
-  }, [success]);
+  }, [success, toast]);
 
   // HANDLERS
   // When user clicks "Sign in with Google" button
