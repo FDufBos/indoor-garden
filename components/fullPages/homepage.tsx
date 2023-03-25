@@ -111,6 +111,7 @@ export const Homepage: React.FC = ({  }) => {
 
 
 
+const queryClient = useQueryClient();
 
 
 const handleWateredClick = async (plantID : string) : Promise<void> => {
@@ -128,8 +129,6 @@ const handleWateredClick = async (plantID : string) : Promise<void> => {
 
 
 
-// this also seems useless...
-const queryClient = useQueryClient();
 
   const handleOrderDirectionButtonClick = (): void => {
     // TODO: This isn't working
