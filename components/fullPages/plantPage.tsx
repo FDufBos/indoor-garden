@@ -48,18 +48,18 @@ const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
   const [progress, setProgress] = useState(0);
   const queryClient = useQueryClient();
 
-  const handleImageUpload = async (
+  const handleImageUpload =  (
     userId: string,
     plantId: string,
     imageFile: File
-  ): Promise<void> => {
+  ): void  => {
     const uniqueImageName = `${Date.now()}-${imageFile.name}`;
     const imagePath = `users/${userId}/plants/${plantId}/${uniqueImageName}`;
 
     const storageRef = ref(storage, imagePath);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-     await uploadTask.on(
+    uploadTask.on(
       "state_changed",
       (snapshot) => {
         const progress =
