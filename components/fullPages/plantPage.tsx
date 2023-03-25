@@ -12,7 +12,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
-import { useFirestoreAddMutation } from "@main/data-models";
 import { arrayUnion, doc, getFirestore, setDoc } from "firebase/firestore";
 import {
   getDownloadURL,
@@ -23,9 +22,9 @@ import {
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Router, { useRouter } from "next/router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useMutation, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 
 import { useUserAuth } from "../../contexts/AuthContext";
 import { deletePlant } from "../../data/firestore";
@@ -45,8 +44,8 @@ const variants = {
 const storage = getStorage();
 const db = getFirestore();
 
-const PlantImageDropzone = ({ userId, plantId }) => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
+  // const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
 
@@ -61,14 +60,14 @@ const PlantImageDropzone = ({ userId, plantId }) => {
     const storageRef = ref(storage, imagePath);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-    uploadTask.on(
+    await uploadTask.on(
       "state_changed",
-      (snapshot) => {
-        // You can display the upload progress here, e.g., using snapshot.bytesTransferred and snapshot.totalBytes
-      },
-      (error) => {
-        // Handle upload errors here
-      },
+      // (snapshot) => {
+      //   // You can display the upload progress here, e.g., using snapshot.bytesTransferred and snapshot.totalBytes
+      // },
+      // (error) => {
+      //   // Handle upload errors here
+      // },
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         // Save the image URL to Firestore
@@ -108,7 +107,11 @@ const PlantImageDropzone = ({ userId, plantId }) => {
   );
 };
 
-export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
+export const PlantPage: React.FC<Partial<GardenItem & Plant>& { 
+/** plantId : ID of plant from router */
+plantId, 
+/** user ID */
+user: string;  }> = ({
   nickname,
   commonName,
   icon,
@@ -127,7 +130,6 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
 
   const router = useRouter();
 
-  console.log(images);
 
   const handleHomeClick = (e): void => {
     e.preventDefault();
@@ -285,12 +287,12 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
               {images &&
                 images.map(
                   (link, index) => `
-          .bg-image-${index} {
-            background-image: url(${link});
-            background-size: cover;
-            background-position: center;
-          }
-        `
+                    .bg-image-${index} {
+                      background-image: url(${link});
+                      background-size: cover;
+                      background-position: center;
+                    }
+                  `
                 )}
             </style>
           </div>
