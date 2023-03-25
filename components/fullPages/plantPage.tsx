@@ -59,16 +59,16 @@ const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
     const storageRef = ref(storage, imagePath);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-    uploadTask.on(
+     await uploadTask.on(
       "state_changed",
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setProgress(progress);
       },
-      (error) => {
-        // Handle upload errors here
-      },
+      // (error) => {
+        
+      // },
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         // Save the image URL to Firestore
