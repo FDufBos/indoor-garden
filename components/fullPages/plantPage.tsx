@@ -14,7 +14,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
-import { arrayUnion, doc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getFirestore,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import {
   getDownloadURL,
   getStorage,
@@ -56,7 +62,6 @@ const PlantImageDropzone = ({
   const [uploadComplete, setUploadComplete] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
-
   const handleImageUpload = (
     userId: string,
     plantId: string,
@@ -86,11 +91,17 @@ const PlantImageDropzone = ({
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         const plantRef = doc(db, `users/${userId}/garden`, plantId);
-        await setDoc(
-          plantRef,
-          { images: arrayUnion(downloadURL) },
-          { merge: true }
-        );
+        // await setDoc(
+        //   plantRef,
+        //   { images: arrayUnion(downloadURL) },
+        //   { merge: true }
+        // );
+        await updateDoc(plantRef, {
+          images: arrayUnion({
+            url: downloadURL,
+            timestamp: Timestamp.now(),
+          }),
+        });
         setUploadComplete(true);
         setUploading(false);
         onUploadSuccess(downloadURL); // Call the callback function with the new image URL
@@ -326,23 +337,26 @@ export const PlantPage: React.FC<
           <div id="recent-plant-pics" className="mt-1">
             <div className="flex flex-wrap gap-x-[1%] gap-y-[4px]">
               {uploadedImages &&
-                uploadedImages.slice(0).reverse().map((link, index) => (
-                  <div
-                    key={index}
-                    className="w-[19.2%] relative"
-                    style={{ paddingBottom: "19.2%" }} // To keep a 1:1 aspect ratio
-                  >
-                    <Image
-                      loading="lazy"
-                      src={link}
-                      alt={`Image ${index}`}
-                      layout="fill"
-                      objectFit="cover"
-                      objectPosition="center"
-                      style={{ background: "white" }}
-                    />
-                  </div>
-                ))}
+                uploadedImages
+                  .slice(0)
+                  .reverse()
+                  .map((link, index) => (
+                    <div
+                      key={index}
+                      className="w-[19.2%] relative"
+                      style={{ paddingBottom: "19.2%" }} // To keep a 1:1 aspect ratio
+                    >
+                      <Image
+                        loading="lazy"
+                        src={link}
+                        alt={`Image ${index}`}
+                        layout="fill"
+                        objectFit="cover"
+                        objectPosition="center"
+                        style={{ background: "white" }}
+                      />
+                    </div>
+                  ))}
             </div>
           </div>
         </section>
