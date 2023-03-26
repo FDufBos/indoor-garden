@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -14,6 +15,13 @@ export const Plant: React.FC = () => {
   const router = useRouter();
   const { user, codex } = useUserAuth();
   const [codexPlant, setCodexPlant] = useState<any>("");
+
+  interface Image {
+    /** URL of image */
+    url: string;
+    /** Firebase timestamp of when image was uploaded */
+    uploadedAt: Timestamp;
+  }
 
   useEffect(() => {
     if (user) {
@@ -53,7 +61,7 @@ export const Plant: React.FC = () => {
             bloomTime={codexPlant.bloomTime}
             plantId = {router.query.name}
             user = {user.id}
-            images = {plant.images}
+            images={plant.images && plant.images.map((image: Image) => image.url)}
           />
         </div>
       ) : (
