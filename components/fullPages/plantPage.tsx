@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair
+/* eslint-disable max-lines */
 import { ChevronLeftIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -21,10 +23,10 @@ import {
 } from "firebase/storage";
 import { motion } from "framer-motion";
 import Head from "next/head";
+import Image from "next/image";
 import Router, { useRouter } from "next/router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useQueryClient } from "react-query";
 
 import { useUserAuth } from "../../contexts/AuthContext";
 import { deletePlant } from "../../data/firestore";
@@ -44,15 +46,22 @@ const variants = {
 const storage = getStorage();
 const db = getFirestore();
 
-const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
-  // const [imageUrls, setImageUrls] = useState<string[]>([]);
+const PlantImageDropzone = ({
+  userId,
+  plantId,
+  setUploadedImages,
+}): JSX.Element => {
+  const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [uploadComplete, setUploadComplete] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
-  const queryClient = useQueryClient();
 
-  const handleImageUpload =  (
+  const handleImageUpload = (
     userId: string,
     plantId: string,
-    imageFile: File
+    imageFile: File,
+    onUploadSuccess: (downloadURL: string) => void
   ): void => {
     const uniqueImageName = `${Date.now()}-${imageFile.name}`;
     const imagePath = `users/${userId}/plants/${plantId}/${uniqueImageName}`;
@@ -60,58 +69,96 @@ const PlantImageDropzone = ({ userId, plantId }): JSX.Element => {
     const storageRef = ref(storage, imagePath);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
+    setUploading(true);
+
     uploadTask.on(
       "state_changed",
-      // (snapshot) => {
-      //   // You can display the upload progress here, e.g., using snapshot.bytesTransferred and snapshot.totalBytes
-      // },
-      // (error) => {
-      //   // Handle upload errors here
-      // },
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+      },
+      (error) => {
+        // eslint-disable-next-line no-console
+        console.error(error);
+        setUploading(false);
+      },
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        // Save the image URL to Firestore
         const plantRef = doc(db, `users/${userId}/garden`, plantId);
         await setDoc(
           plantRef,
           { images: arrayUnion(downloadURL) },
           { merge: true }
         );
-        queryClient.invalidateQueries(`users/${userId}/garden`);
+        setUploadComplete(true);
+        setUploading(false);
+        onUploadSuccess(downloadURL); // Call the callback function with the new image URL
       }
     );
   };
+
   const onDrop = useCallback(
     (acceptedFiles) => {
       acceptedFiles.forEach((file) => {
-        handleImageUpload(userId, plantId, file);
+        handleImageUpload(userId, plantId, file, (downloadURL) => {
+          setUploadedImages((prevImages) => [...prevImages, downloadURL]);
+        });
       });
     },
     [userId, plantId]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    onDragOver: () => {
+      setDragOver(true);
+    },
+    onDragLeave: () => {
+      setDragOver(false);
+    },
+  });
 
   return (
     <div
       {...getRootProps()}
-      style={{ border: "1px dashed gray", padding: "16px" }}
+      className={`w-full cursor-pointer p-3 ${
+        dragOver ? "bg-white bg-opacity-50" : ""
+      }`}
     >
       <input {...getInputProps()} />
       {isDragActive ? (
         <p>Drop the image files here...</p>
       ) : (
-        <p className="text-center">Drag and drop an image file here, or click to select a file</p>
+        <p className="text-center">
+          Drag and drop an image file here, or click to select a file
+        </p>
       )}
+      {uploading ? (
+        <div className="border-1 border-white rounded">
+          <div
+            className="bg-water-100 h-3 rounded"
+            style={{ width: `${progress}%`, transition: "width 1s" }}
+          />
+        </div>
+      ) : null}
+      {uploadComplete ? (
+        <div className="text-monstera-800 font-semibold text-lg rounded p-2 m-2 flex items-center justify-center">
+          <p className="">Upload complete!</p>
+        </div>
+      ) : null}
     </div>
   );
 };
 
-export const PlantPage: React.FC<Partial<GardenItem & Plant>& { 
-/** plantId : ID of plant from router */
-plantId, 
-/** user ID */
-user: string;  }> = ({
+export const PlantPage: React.FC<
+  Partial<GardenItem & Plant> & {
+    /** plantId : ID of plant from router */
+    plantId;
+    /** user ID */
+    user: string;
+  }
+> = ({
   nickname,
   commonName,
   icon,
@@ -127,9 +174,9 @@ user: string;  }> = ({
 }) => {
   const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [uploadedImages, setUploadedImages] = useState(() => images || []);
 
   const router = useRouter();
-
 
   const handleHomeClick = (e): void => {
     e.preventDefault();
@@ -270,31 +317,33 @@ user: string;  }> = ({
             border-dashed rounded-sm flex justify-center items-center text-white
              bg-slate-50 bg-opacity-25"
           >
-            <PlantImageDropzone userId={user.uid} plantId={plantId} />
+            <PlantImageDropzone
+              userId={user.uid}
+              plantId={plantId}
+              setUploadedImages={setUploadedImages}
+            />
           </div>
           <div id="recent-plant-pics" className="mt-1">
-            <div className="flex flex-wrap gap-[4px]">
-              {images &&
-                images.map((link, index) => (
+            <div className="flex flex-wrap gap-x-[1%] gap-y-[4px]">
+              {uploadedImages &&
+                uploadedImages.slice(0).reverse().map((link, index) => (
                   <div
                     key={index}
-                    className={`bg-image-${index}`}
-                    style={{ width: "24%", paddingBottom: "25%" }}
-                  />
+                    className="w-[19.2%] relative"
+                    style={{ paddingBottom: "19.2%" }} // To keep a 1:1 aspect ratio
+                  >
+                    <Image
+                      loading="lazy"
+                      src={link}
+                      alt={`Image ${index}`}
+                      layout="fill"
+                      objectFit="cover"
+                      objectPosition="center"
+                      style={{ background: "white" }}
+                    />
+                  </div>
                 ))}
             </div>
-            <style>
-              {images &&
-                images.map(
-                  (link, index) => `
-                    .bg-image-${index} {
-                      background-image: url(${link});
-                      background-size: cover;
-                      background-position: center;
-                    }
-                  `
-                )}
-            </style>
           </div>
         </section>
         <section
