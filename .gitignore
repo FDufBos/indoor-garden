@@ -37,4 +37,4 @@ yarn-error.log*
 *debug.log
 
 functions/
-.emulator-data/
+.emulator-data
