@@ -29,7 +29,7 @@ import {
 } from "firebase/storage";
 import { motion } from "framer-motion";
 import Head from "next/head";
-import Image from "next/image";
+// import Image from "next/image";
 import Router, { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -162,6 +162,30 @@ const PlantImageDropzone = ({
   );
 };
 
+const ImageModal = ({ imageUrl, onClose }): JSX.Element => (
+  <motion.div
+    className="fixed z-50 top-0 left-0 w-full h-screen bg-black overflow-hidden"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
+    <div className="absolute top-0 right-0 p-4 z-10">
+      <CloseIcon boxSize="1rem" focusable color="gray.200" onClick={onClose} />
+    </div>
+    <motion.div
+      className="w-full h-full absolute top-0 left-0"
+      style={{
+        background: "black",
+        backgroundImage: `url(${imageUrl})`,
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+      onClick={onClose}
+    />
+  </motion.div>
+);
+
 export const PlantPage: React.FC<
   Partial<GardenItem & Plant> & {
     /** plantId : ID of plant from router */
@@ -186,6 +210,12 @@ export const PlantPage: React.FC<
   const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [uploadedImages, setUploadedImages] = useState(() => images || []);
+  // const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+
+  const handleImageClick = (index: number): void => {
+    setSelectedImageIndex(index);
+  };
 
   const router = useRouter();
 
@@ -336,7 +366,7 @@ export const PlantPage: React.FC<
           </div>
           <div id="recent-plant-pics" className="mt-1">
             <div className="flex flex-wrap gap-x-[1%] gap-y-[4px]">
-              {uploadedImages &&
+              {/* {uploadedImages &&
                 uploadedImages
                   .slice(0)
                   .reverse()
@@ -345,6 +375,7 @@ export const PlantPage: React.FC<
                       key={index}
                       className="w-[19.2%] relative"
                       style={{ paddingBottom: "19.2%" }} // To keep a 1:1 aspect ratio
+                      onClick={() => setSelectedImage(link)}
                     >
                       <Image
                         loading="lazy"
@@ -354,12 +385,63 @@ export const PlantPage: React.FC<
                         objectFit="cover"
                         objectPosition="center"
                         style={{ background: "white" }}
+                        className="cursor-pointer"
                       />
+                      <Modal
+                        isOpen={selectedImage !== null}
+                        onClose={() => setSelectedImage(null)}
+                      >
+                        <ModalOverlay />
+                        <ModalContent>
+                          <ModalCloseButton />
+                          <ModalBody w="100%" h="100%">
+                            <Image
+                              src={selectedImage}
+                              alt="Selected image"
+                              layout="fill"
+                              objectFit="contain"
+                              objectPosition="center"
+                              style={{ background: "white", width: "100%" }}
+                            />
+                          </ModalBody>
+                        </ModalContent>
+                      </Modal>
                     </div>
+                  ))} */}
+              {uploadedImages &&
+                uploadedImages
+                  .slice(0)
+                  .reverse()
+                  .map((link, index) => (
+                    <motion.div
+                      key={index}
+                      className="w-[19.2%] relative cursor-pointer"
+                      style={{ paddingBottom: "19.2%" }}
+                      onClick={() =>
+                        handleImageClick(uploadedImages.length - index - 1)
+                      }
+                    >
+                      <motion.div
+                        className="w-full h-full absolute top-0 left-0"
+                        style={{
+                          background: "white",
+                          backgroundImage: `url(${link})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      />
+                    </motion.div>
                   ))}
             </div>
           </div>
         </section>
+        {selectedImageIndex !== null && (
+          <ImageModal
+            imageUrl={uploadedImages[selectedImageIndex]}
+            onClose={() => setSelectedImageIndex(null)}
+          />
+        )}
         <section
           id="codex"
           className="bg-white h-96 min-h-screen  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none md:absolute md:top-8 md:left-1/2 md:w-[48%]"
