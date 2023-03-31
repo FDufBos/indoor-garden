@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "source": ".firebase/indoor-garden-b4585/functions"
+  },
   "storage": {
     "rules": "storage.rules"
   },
