@@ -190,7 +190,7 @@ const ImageModal = ({
 
   return (
     <motion.div
-      className="fixed z-50 top-0 left-0 w-full h-screen pt-8 bg-water-100 overflow-hidden"
+      className="fixed z-50 top-0 left-0 w-full h-screen bg-water-100 overflow-hidden"
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -212,7 +212,7 @@ const ImageModal = ({
       )}
 
         <motion.img
-          className={`mx-auto h-[80%] ${!isImageLoaded ? "hidden" : ""}`}
+          className={`mx-auto w-full h-auto p-8 md:px-48 lg:px-96 ${!isImageLoaded ? "hidden" : ""}`}
           src={imageUrl}
           alt="Full version of the thumbnail"
           initial={{ opacity: 0, y: "5%" }}
@@ -298,7 +298,7 @@ export const PlantPage: React.FC<
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [uploadedImages, setUploadedImages] = useState(() => images || []);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [, setIsModalOpen] = useState(false);
 
   const handleThumbnailClick = (index: number) : void => {
     setSelectedImageIndex(index);
