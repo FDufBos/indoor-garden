@@ -51,8 +51,12 @@ export const Homepage: React.FC = ({  }) => {
   } = useFirestoreQuery<Plant>("plants");
   // return the base days between watering from the codex for each plant
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const getBaseDaysBetweenWatering = (plant: Plant) =>
-    plant.baseDaysBetweenWatering;
+  const getBaseDaysBetweenWatering = (plant: Plant) => {
+    if (!plant) {
+      return 0; // or another default value
+    }
+    return plant.baseDaysBetweenWatering;
+  };
     
 
   // Framer Animation Variants
