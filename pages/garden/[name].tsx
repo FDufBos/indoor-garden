@@ -59,9 +59,11 @@ export const Plant: React.FC = () => {
             baseDaysBetweenWatering={codexPlant.baseDaysBetweenWatering}
             soilType={codexPlant.soilType}
             bloomTime={codexPlant.bloomTime}
-            plantId = {router.query.name}
-            user = {user.id}
-            images={plant.images && plant.images.map((image: Image) => image.url)}
+            plantId={router.query.name}
+            user={user.id}
+            images={
+              plant.images && plant.images.map((image: Image) => image.url)
+            }
           />
         </div>
       ) : (
