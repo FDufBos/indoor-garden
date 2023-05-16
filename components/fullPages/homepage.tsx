@@ -52,7 +52,7 @@ export const Homepage: React.FC = ({  }) => {
   // return the base days between watering from the codex for each plant
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const getBaseDaysBetweenWatering = (plant: Plant) =>
-    plant.baseDaysBetweenWatering;
+    plant?.baseDaysBetweenWatering;
     
 
   // Framer Animation Variants
