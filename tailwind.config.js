@@ -11,7 +11,9 @@ module.exports = {
         flexa: ["Flexa", "sans-serif"],
         alpina: ["Alpina", "serif"],
       },
-
+      spacing: {
+        '1/2': '50%',
+      },
       colors: {
         white: "#FCFEF8",
         purple: "#3f3cbb",
