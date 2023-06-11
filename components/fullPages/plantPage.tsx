@@ -1,5 +1,3 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable max-lines */
 import { ChevronLeftIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -10,30 +8,17 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
-import {
-  arrayUnion,
-  doc,
-  getFirestore,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+import ImageModal from "@main/components/molecules/ImageModal";
+import PlantImageDropzone from "@main/components/molecules/PlantImageDropzone";
 import { AnimatePresence, motion } from "framer-motion";
 import Head from "next/head";
 import Image from "next/image";
 import Router, { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useState } from "react";
 
 import { useUserAuth } from "../../contexts/AuthContext";
 import { deletePlant } from "../../data/firestore";
@@ -50,205 +35,6 @@ const variants = {
   exit: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
 };
 
-const storage = getStorage();
-const db = getFirestore();
-
-const PlantImageDropzone = ({
-  userId,
-  plantId,
-  setUploadedImages,
-}): JSX.Element => {
-  const [progress, setProgress] = useState(0);
-  const [uploading, setUploading] = useState(false);
-  const [uploadComplete, setUploadComplete] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
-
-  const handleImageUpload = (
-    userId: string,
-    plantId: string,
-    imageFile: File,
-    onUploadSuccess: (downloadURL: string) => void
-  ): void => {
-    const uniqueImageName = `${Date.now()}-${imageFile.name}`;
-    const imagePath = `users/${userId}/plants/${plantId}/${uniqueImageName}`;
-    const thumbnailPath = `${imagePath}+_100x100.webp`;
-    // eslint-disable-next-line no-console
-    console.log(thumbnailPath);
-
-    const storageRef = ref(storage, imagePath);
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
-
-    setUploading(true);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(progress);
-      },
-      (error) => {
-        // eslint-disable-next-line no-console
-        console.error(error);
-        setUploading(false);
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        const plantRef = doc(db, `users/${userId}/garden`, plantId);
-        await updateDoc(plantRef, {
-          images: arrayUnion({
-            url: downloadURL,
-            // thumbnail: thumbnailURL,
-            timestamp: Timestamp.now(),
-          }),
-        });
-        setUploadComplete(true);
-        setUploading(false);
-        onUploadSuccess(downloadURL); // Call the callback function with the new image URL
-      }
-    );
-    const thumbnailURL = getDownloadURL(ref(storage, thumbnailPath));
-    // eslint-disable-next-line no-console
-    console.log(thumbnailURL);
-  };
-
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      acceptedFiles.forEach((file) => {
-        handleImageUpload(userId, plantId, file, (downloadURL) => {
-          setUploadedImages((prevImages) => [...prevImages, downloadURL]);
-        });
-      });
-    },
-    [userId, plantId]
-  );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    onDragOver: () => {
-      setDragOver(true);
-    },
-    onDragLeave: () => {
-      setDragOver(false);
-    },
-  });
-
-  return (
-    <div
-      {...getRootProps()}
-      className={`w-full cursor-pointer p-3 ${
-        dragOver ? "bg-white bg-opacity-50" : ""
-      }`}
-    >
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the image files here...</p>
-      ) : (
-        <p className="text-center">
-          Drag and drop an image file here, or click to select a file
-        </p>
-      )}
-      {uploading ? (
-        <div className="border-1 border-white rounded">
-          <div
-            className="bg-water-100 h-3 rounded"
-            style={{ width: `${progress}%`, transition: "width 1s" }}
-          />
-        </div>
-      ) : null}
-      {uploadComplete ? (
-        <div className="text-monstera-800 font-semibold text-lg rounded p-2 m-2 flex items-center justify-center">
-          <p className="">Upload complete!</p>
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-const ImageModal = ({
-  imageUrl,
-  onClose,
-  uploadedImages,
-  setSelectedImageIndex,
-}): JSX.Element => {
-  const [isImageLoaded, setIsImageLoaded] = React.useState(false);
-  // Add event listener to the body to disable scrolling when modal is open
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
-
-  const handleImageLoad = (): void => {
-    setIsImageLoaded(true);
-  };
-
-  const handleImageClick = (index: number): void => {
-    setSelectedImageIndex(index);
-  };
-
-  return (
-    <motion.div
-      className="fixed z-50 top-0 left-0 w-full h-screen bg-water-100 overflow-hidden"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      // onClick={onClose}
-      layout
-    >
-      <div className="absolute top-0 right-0 p-4 z-10 cursor-pointer">
-        <CloseIcon
-          boxSize="1rem"
-          focusable
-          color="gray.800"
-          onClick={onClose}
-        />
-      </div>
-      {!isImageLoaded && (
-        <div className="flex items-center justify-center w-full h-full">
-          <Spinner color="gray.500" />
-        </div>
-      )}
-
-        <motion.img
-          className={`mx-auto w-full h-auto p-8 md:px-48 lg:px-96 ${!isImageLoaded ? "hidden" : ""}`}
-          src={imageUrl}
-          alt="Full version of the thumbnail"
-          initial={{ opacity: 0, y: "5%" }}
-          animate={{ opacity: 1, y: "0%" }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
-          onClick={onClose}
-          onLoad={handleImageLoad}
-        />
-
-      <div className="flex flex-wrap pt-8 gap-1 flex-shrink-0 h-[100px] w-full overflow-hidden">
-        {uploadedImages &&
-          uploadedImages
-            .slice(0)
-            .reverse()
-            .map((imageURL: string, index: number) => (
-              <div key={index}>
-                <Image
-                  key={index}
-                  className="cursor-pointer"
-                  src={imageURL}
-                  alt="plant thumbnail"
-                  width="fill"
-                  height="fill"
-                  quality="50"
-                  onClick={() => {
-                    handleImageClick(uploadedImages.length - index - 1);
-                  }}
-                />
-              </div>
-            ))}
-      </div>
-    </motion.div>
-  );
-};
-
 const Thumbnail = ({ imageUrl, onClick }): JSX.Element => (
   <motion.div
     className="thumbnail w-[19.2%] relative cursor-pointer"
@@ -263,7 +49,7 @@ const Thumbnail = ({ imageUrl, onClick }): JSX.Element => (
         <Image
           className="w-full h-full absolute top-0 left-0"
           src={imageUrl}
-          alt="Thumbnail version of the image"
+          alt="🌱"
           layout="responsive"
           objectFit="cover" // Add this to ensure the image fills the container without stretching
           quality={1}
@@ -300,10 +86,11 @@ export const PlantPage: React.FC<
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [, setIsModalOpen] = useState(false);
 
-  const handleThumbnailClick = (index: number) : void => {
-    setSelectedImageIndex(index);
+  const handleThumbnailClick = (index: number): void => {
+    setSelectedImageIndex(uploadedImages.length - index - 1);
     setIsModalOpen(true);
   };
+  
 
   const router = useRouter();
 
@@ -470,16 +257,17 @@ export const PlantPage: React.FC<
             </div>
           </div>
         </section>
-        <AnimatePresence>
           {selectedImageIndex !== null && (
             <ImageModal
-              imageUrl={uploadedImages[selectedImageIndex]}
+              imageUrl={
+                uploadedImages[uploadedImages.length - selectedImageIndex - 1]
+              }
               onClose={() => setSelectedImageIndex(null)}
               uploadedImages={uploadedImages}
               setSelectedImageIndex={setSelectedImageIndex}
+              selectedImageIndex={selectedImageIndex}
             />
           )}
-        </AnimatePresence>
         <section
           id="codex"
           className="bg-white h-96 min-h-screen  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none md:absolute md:top-8 md:left-1/2 md:w-[48%]"
