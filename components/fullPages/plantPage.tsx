@@ -12,10 +12,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { GardenItem, Plant } from "@main/common-types";
-import { motion } from "framer-motion";
+import ImageModal from "@main/components/molecules/ImageModal";
+import PlantImageDropzone from "@main/components/molecules/PlantImageDropzone";
+import { AnimatePresence, motion } from "framer-motion";
 import Head from "next/head";
+import Image from "next/image";
 import Router, { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 
 import { useUserAuth } from "../../contexts/AuthContext";
 import { deletePlant } from "../../data/firestore";
@@ -32,7 +35,38 @@ const variants = {
   exit: { x: "20%", opacity: 0, transition: { ease: "easeIn", duration: 0.3 } },
 };
 
-export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
+const Thumbnail = ({ imageUrl, onClick }): JSX.Element => (
+  <motion.div
+    className="thumbnail w-[19.2%] relative cursor-pointer"
+    style={{ paddingBottom: "19.2%" }}
+    whileHover={{ scale: 1.0 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onClick}
+    layout
+  >
+    <AnimatePresence>
+      <motion.div layout>
+        <Image
+          className="w-full h-full absolute top-0 left-0"
+          src={imageUrl}
+          alt="🌱"
+          layout="responsive"
+          objectFit="cover" // Add this to ensure the image fills the container without stretching
+          quality={1}
+        />
+      </motion.div>
+    </AnimatePresence>
+  </motion.div>
+);
+
+export const PlantPage: React.FC<
+  Partial<GardenItem & Plant> & {
+    /** plantId : ID of plant from router */
+    plantId;
+    /** user ID */
+    user: string;
+  }
+> = ({
   nickname,
   commonName,
   icon,
@@ -43,9 +77,20 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
   baseDaysBetweenWatering,
   soilType,
   bloomTime,
+  plantId,
+  images,
 }) => {
   const { user, setFirestorePlants, firestorePlants } = useUserAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [uploadedImages, setUploadedImages] = useState(() => images || []);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [, setIsModalOpen] = useState(false);
+
+  const handleThumbnailClick = (index: number): void => {
+    setSelectedImageIndex(uploadedImages.length - index - 1);
+    setIsModalOpen(true);
+  };
+  
 
   const router = useRouter();
 
@@ -54,29 +99,28 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
     Router.push("/garden");
   };
 
-
-  const codexItems = [{
-    title: "Name",
-    value: commonName,
-  },
-  {
-    title: "Sun Exposure",
-    value: sunExposure,
-  },
-  {
-    title: "Days between watering",
-    value: baseDaysBetweenWatering,
-  },
-  {
-    title: "Soil Type",
-    value: soilType,
-  },
-  {
-    title: "Bloom Time",
-    value: bloomTime,
-  },
-]
-
+  const codexItems = [
+    {
+      title: "Name",
+      value: commonName,
+    },
+    {
+      title: "Sun Exposure",
+      value: sunExposure,
+    },
+    {
+      title: "Days between watering",
+      value: baseDaysBetweenWatering,
+    },
+    {
+      title: "Soil Type",
+      value: soilType,
+    },
+    {
+      title: "Bloom Time",
+      value: bloomTime,
+    },
+  ];
 
   return (
     <motion.div
@@ -89,7 +133,7 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
         <title>{nickname} | Indoor Garden</title>
         <meta name="description" content="An Indoor Garden for Ya" />
         <link rel="icon" href="/favicon.ico" />
-        < meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
 
@@ -181,37 +225,70 @@ export const PlantPage: React.FC<Partial<GardenItem & Plant>> = ({
             className="flex justify-between items-baseline"
           >
             <h1>Memory Lane</h1>
-            <h2 className="text-water-100 font-alpina">View More</h2>
+            {/* <h2 className="text-water-100 font-alpina">View More</h2> */}
           </div>
           <hr />
           <div
-            id="recent-plant-pics"
-            className="mt-2 h-24 flex gap-2 justify-between"
+            className="w-full h-full border border-water-100 
+            border-dashed rounded-sm flex justify-center items-center text-white
+             bg-slate-50 bg-opacity-25"
           >
-            <div className="w-full rounded bg-slate-400" />
-            <div className="w-full rounded bg-slate-400" />
-            <div className="w-full rounded bg-slate-400" />
-            <div className="w-full rounded bg-slate-400" />
+            <PlantImageDropzone
+              userId={user.uid}
+              plantId={plantId}
+              setUploadedImages={setUploadedImages}
+            />
+          </div>
+          <div id="recent-plant-pics" className="mt-1">
+            <div className="flex flex-wrap gap-x-[1%] gap-y-[4px]">
+              {uploadedImages &&
+                uploadedImages
+                  .slice(0)
+                  .reverse()
+                  .map((link, index) => (
+                    <Thumbnail
+                      key={index}
+                      imageUrl={link}
+                      onClick={() =>
+                        handleThumbnailClick(uploadedImages.length - index - 1)
+                      }
+                    />
+                  ))}
+            </div>
           </div>
         </section>
+          {selectedImageIndex !== null && (
+            <ImageModal
+              imageUrl={
+                uploadedImages[uploadedImages.length - selectedImageIndex - 1]
+              }
+              onClose={() => setSelectedImageIndex(null)}
+              uploadedImages={uploadedImages}
+              setSelectedImageIndex={setSelectedImageIndex}
+              selectedImageIndex={selectedImageIndex}
+            />
+          )}
         <section
           id="codex"
           className="bg-white h-96 min-h-screen  mt-8 mx-2 px-4 pt-4 rounded-xl rounded-b-none md:absolute md:top-8 md:left-1/2 md:w-[48%]"
         >
           <h1 className="text-monstera-400 text-lg font-bold">Codex</h1>
           <hr className="bg-monstera-400 h-[1px] " />
-          
-          {
-            codexItems && codexItems.map((item, index) => (
+
+          {codexItems &&
+            codexItems.map((item, index) => (
               <div key={index} className="flex flex-col gap-2 mt-4">
                 <div className="flex justify-between">
-                  <h2 className="text-monstera-400 font shrink-0">{item.title}</h2>
-                  <div className="relative bottom-[6px] mx-2 w-full border-t-2 border-monstera-300 border-dotted shrink self-end"/>
-                  <h2 className="text-monstera-400 font-semibold shrink-0">{item.value}</h2>
+                  <h2 className="text-monstera-400 font shrink-0">
+                    {item.title}
+                  </h2>
+                  <div className="relative bottom-[6px] mx-2 w-full border-t-2 border-monstera-300 border-dotted shrink self-end" />
+                  <h2 className="text-monstera-400 font-semibold shrink-0">
+                    {item.value}
+                  </h2>
                 </div>
               </div>
-            ))
-          }
+            ))}
         </section>
       </div>
     </motion.div>
